@@ -90,7 +90,7 @@ timesignature = list()
 deltat = list()
 
 import csv
-with open(r'C:\Users\Thiago.DESKTOP-13409IC\Desktop\Midicsv/localizacaocompassobpm3.csv', newline='') as f:
+with open(r'localizacaocompassobpm3.csv', newline='') as f:
     reader = csv.reader(f)
     for row in reader:
         deltat.append(row[1])
