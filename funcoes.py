@@ -36,9 +36,9 @@ def compasso_uc(num,den,ppq):
 
 def compasso_nt(num,vuc):
     if num == 2 or 3 or 4:
-        NT = UC/num
+        NT = vuc/num
     elif num == 6 or 9 or 12:
-        NT = UC/num/2
+        NT = vuc/num/2
     else:
         raise ValueError('numerador nao encontrado')
     return NT
