@@ -1,10 +1,10 @@
 #loop que monta ListaIntervalo a partir de ListaNota
-def listaIntervalo(listaNota):
-    listaIntervalo = []
+def lista_intervalo(listaNota):
+    lista_int = []
     for posicao in range(len(listaNota)):
 	    if posicao <= len(listaNota)-2:
-		    listaIntervalo.append(listaNota[posicao+1] - listaNota[posicao])
-
+		    lista_int.append(listaNota[posicao+1] - listaNota[posicao])
+    return lista_int
 
 #segmenta e localiza ListaIntervalo e ListaDuracao
 def SegLoc(ListaLocalizacao, ListaIntervalo, ListaDuracao):
@@ -15,3 +15,30 @@ def SegLoc(ListaLocalizacao, ListaIntervalo, ListaDuracao):
     else:
         print("listas de tamanhos diferentes")
         print("len(ListaLocalizacao) ==", len(ListaLocalizacao), "len(listaintervalo) ==", len(ListaIntervalo), "len(listaduracao) ==", len(ListaDuracao)) 
+
+
+def compasso_uc(num,den,ppq):
+    if den == 0:
+        UC = ppq*4*num
+    elif den == 1:
+	    UC = ppq*2*num
+    elif den == 2:
+        UC = ppq*num
+    elif den == 3:
+        UC = ppq/2*num
+    elif den == 4:
+        UC = ppq/4*num
+    else:
+        raise ValueError('Denominador nao encontrado')
+    return UC
+
+
+
+def compasso_nt(num,vuc):
+    if num == 2 or 3 or 4:
+        NT = UC/num
+    elif num == 6 or 9 or 12:
+        NT = UC/num/2
+    else:
+        raise ValueError('numerador nao encontrado')
+    return NT
