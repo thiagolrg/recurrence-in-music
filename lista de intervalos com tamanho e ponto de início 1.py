@@ -8,7 +8,7 @@ for posicao in range(len(listanota)):
 	if posicao <= len(listanota)-2:
 		listaintervalo.append(listanota[posicao+1] - listanota[posicao])
 
-# monta todos os segmentos a partir da lista intervalo, imprimi a posição corresponde na listalocalização e tamanho
+# monta todos os segmentos a partir da lista intervalo, imprime a posição corresponde na listalocalização e tamanho
 
 for posicao1 in range(len(listaintervalo)):
 	for posicao2 in range(posicao1, len(listaintervalo)):
