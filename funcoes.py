@@ -6,7 +6,7 @@ def listaIntervalo(listaNota):
 		    listaIntervalo.append(listaNota[posicao+1] - listaNota[posicao])
 
 #segmenta e localiza ListaIntervalo e ListaDuracao
-def SegLoc(ListaLocalizacao, ListaIntervalo, ListaDuracao)
+def SegLoc(ListaLocalizacao, ListaIntervalo, ListaDuracao):
     if len(ListaLocalizacao) == len(ListaIntervalo) == len(ListaDuracao):
         for posicao1 in range(len(ListaIntervalo)):
             for posicao2 in range(posicao1, len(ListaIntervalo)):
