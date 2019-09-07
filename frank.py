@@ -50,7 +50,7 @@ else:
 
 tempo = 666666
 denominador = 3
-bpm = round((((tempo/2)*denominador)/1000000)*60)
+bpm = round(60000000/tempo))
 print(bpm)
 
 #a dificuldade e que o denominador de referencia muda a depender do deltaT
@@ -65,23 +65,6 @@ print(bpm)
 
 #extrai todos os deltat para a lista deltat
 #extrai todos os Time_signature com seus deltat para a lista timesignature
-compasso = list()
-deltat = list()
-ppq = int
-
-import csv
-
-def compasso_filtra(arquivo)
-        with open(r'localizacaocompassobpm3.csv', newline='') as f:
-        reader = csv.reader(f)
-    for row in reader:
-        if ' Header' in row:
-                ppq = row[-1:-1]
-        if ' Time_signature' in row:
-                compasso.append(row[3:4],ppq)
-
-print(timesignature)
-print(deltat)
 
 # para calcular a posicao em compassos de um deltat
 # (((deltat atual - deltat da time signature anterior)/U.C. da anterior)+ valor em compassos da anterior)
@@ -100,6 +83,33 @@ for posicaod in range(len(deltat)):
 #passei um tempao tentando resolver a logica desse loop e ainda parece ruim,
 #o problema e que a conta e feita com na posicao seguinte de timesignature
 #nao sei tambem se essa abordagem de transformar tudo em listas para fazer as contas a partir delas e a melhor de qualquer forma...
+
+#monta lista_intervalo a partir de lista_nota
+def lista_intervalo(lista_nota):
+    lista_int = []
+    for posicao in range(len(lista_nota)):
+	    if posicao <= len(lista_nota)-2:
+		    lista_int.append(lista_nota[posicao+1] - lista_nota [posicao])
+    return lista_int
+
+#talvez tenha como juntar listaintervalo, listaduracao e listalocalizacao em um unico loop.
+#na verdade o importante é que cada lista tenha o mesmo tamanho, desde que isso aconteça tanto faz qual lista eu puxo para medir o tamanho
+#e posso colocar todas em um mesmo loop	
+#o que o loop faz é:
+#verifica se as 3 listas tem o mesmo tamanho antes do loop
+#imprime a posição na listalocalozação
+#imprime a diferença entre as posições dos subloop e do loop(equivalente a quantidade de notas)
+#imprime os pedaços na listaintervalo e na listaduracao
+#segmenta e localiza lista_intervalo e lista_duracao
+def seg_loc(lista_localizacao, lista_intervalo, lista_duracao):
+    if len(lista_localizacao) == len(lista_intervalo) == len(lista_duracao):
+        for posicao1 in range(len(lista_intervalo)):
+            for posicao2 in range(posicao1, len(lista_intervalo)):
+                print(lista_localizacao[posicao1], (posicao2+1) - posicao1, lista_intervalo[posicao1:posicao2+1], lista_duracao[posicao1:posicao2+1])
+    else:
+        print("listas de tamanhos diferentes")
+        print("len(lista_localizacao) ==", len(lista_localizacao), "len(lista_intervalo) ==", len(lista_intervalo), "len(lista_duracao) ==", len(lista_duracao))
+
 
 
 
