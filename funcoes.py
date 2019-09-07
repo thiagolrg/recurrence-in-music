@@ -16,3 +16,4 @@ def SegLoc(ListaLocalizacao, ListaIntervalo, ListaDuracao):
         print("len(ListaLocalizacao) ==", len(ListaLocalizacao), "len(listaintervalo) ==", len(ListaIntervalo), "len(listaduracao) ==", len(ListaDuracao)) 
 
 Thiago Gomes
+cristiano
