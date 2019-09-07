@@ -1,5 +1,6 @@
-from exp5 import compasso
 
-if compasso(2,3,1000) != "3":
+
+
+if(2+3 != "3"):
     raise ValueError('Erro na funcao compasso')
     
