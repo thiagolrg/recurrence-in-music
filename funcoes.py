@@ -5,6 +5,7 @@ def listaIntervalo(listaNota):
 	    if posicao <= len(listaNota)-2:
 		    listaIntervalo.append(listaNota[posicao+1] - listaNota[posicao])
 
+
 #segmenta e localiza ListaIntervalo e ListaDuracao
 def SegLoc(ListaLocalizacao, ListaIntervalo, ListaDuracao):
     if len(ListaLocalizacao) == len(ListaIntervalo) == len(ListaDuracao):
