@@ -1,29 +1,8 @@
-#Do arquivo CSV vem as listas de nota duracao e localizacao
-listanota = [1,2,4,7,11,16]
-listalocalizacao = [[1,1],[2,1],[3,1],[4,1],[5,1]]
-listaduracao = [1,2,3,4,5]
-
-#loop que monta listaintervalo a partir de listanota
-listaintervalo = []
-for posicao in range(len(listanota)):
-	if posicao <= len(listanota)-2:
-		listaintervalo.append(listanota[posicao+1] - listanota[posicao])
-
 #loop que imprime localizacao tamanho e segmentos de intervalo
 		
 ##for posicao1 in range(len(listaintervalo)):
 ##	for posicao2 in range(posicao1, len(listaintervalo)):
 ##		print(listalocalizacao[posicao1], (posicao2+1) - posicao1, listaintervalo[posicao1:posicao2+1])
-
-#talvez tenha como juntar listaintervalo, listaduracao e listalocalizacao em um unico loop.
-#na verdade o importante é que cada lista tenha o mesmo tamanho, desde que isso aconteça tanto faz qual lista eu puxo para medir o tamanho
-#e posso colocar todas em um mesmo loop
-		
-#o que o loop faz é:
-#verifica se as 3 listas tem o mesmo tamanho antes do loop
-#imprime a posição na listalocalozação
-#imprime a diferença entre as posições dos subloop e do loop(equivalente a quantidade de notas)
-#imprime os pedaços na listaintervalo e na listaduracao
 		
 if len(listalocalizacao) == len(listaintervalo) == len(listaduracao):
         for posicao1 in range(len(listaintervalo)):
@@ -108,11 +87,12 @@ print(deltat)
 # (((deltat atual - deltat da time signature anterior)/U.C. da anterior)+ valor em compassos da anterior)
 # para a posição em tempo com partes de tempo em sao os decimais de compasso * numero de tempos
 
-#Identifica as timesignatures referenciais para cada deltat
+#Identifica as timesignatures referenciais
+
 for posicaod in range(len(deltat)):
 	for posicaot in range(len(timesignature)):
 		if posicaot+1 == len(timesignature): #gambiarra
-		       p-rint(deltat[posicaod], timesignature[posicaot])
+		        print(deltat[posicaod], timesignature[posicaot])
 		elif int(timesignature[posicaot+1][0]) >= int(deltat[posicaod]):
 			print(deltat[posicaod], timesignature[posicaot])
 			break
