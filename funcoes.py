@@ -1,3 +1,27 @@
+#Do arquivo CSV vem as listas de nota duracao e localizacao
+
+
+import csv
+
+#faz uma lista contendo o arquivo de entrada completo
+def entrada_csv(caminho_csv):
+    entrada = []
+    with open(camimnho_csv) as arquivo:
+        reader = csv.reader(arquivo)
+        for row in reader:
+            entrada.append(row)
+    return entrada
+
+#faz uma lista cópia do arquivo de entrada acrescentando as localizações em cada linha
+def comloc_csv(entrada)
+for posicaod in range(len(entrada)):
+	for posicaot in range(len(timesignature)):
+		if posicaot+1 == len(timesignature): #gambiarra
+		        print(entrada[posicaod][1], timesignature[posicaot])
+		elif int(timesignature[posicaot+1][0]) >= int(deltat[posicaod]):
+			print(deltat[posicaod], timesignature[posicaot])
+			break
+
 #monta lista_intervalo a partir de lista_nota
 def lista_intervalo(lista_nota):
     lista_int = []
@@ -6,6 +30,14 @@ def lista_intervalo(lista_nota):
 		    lista_int.append(lista_nota[posicao+1] - lista_nota [posicao])
     return lista_int
 
+#talvez tenha como juntar listaintervalo, listaduracao e listalocalizacao em um unico loop.
+#na verdade o importante é que cada lista tenha o mesmo tamanho, desde que isso aconteça tanto faz qual lista eu puxo para medir o tamanho
+#e posso colocar todas em um mesmo loop	
+#o que o loop faz é:
+#verifica se as 3 listas tem o mesmo tamanho antes do loop
+#imprime a posição na listalocalozação
+#imprime a diferença entre as posições dos subloop e do loop(equivalente a quantidade de notas)
+#imprime os pedaços na listaintervalo e na listaduracao
 #segmenta e localiza lista_intervalo e lista_duracao
 def seg_loc(lista_localizacao, lista_intervalo, lista_duracao):
     if len(lista_localizacao) == len(lista_intervalo) == len(lista_duracao):
@@ -43,16 +75,14 @@ def timesig_nt(num,vuc):
         raise ValueError('numerador nao encontrado')
     return NT
 
-import csv
 def timesig_filtra(camimnho_csv):
-    ppq = int()
     timesignature = list()
     with open(camimnho_csv) as arquivo:
         reader = csv.reader(arquivo)
         for row in reader:
-            if ' Header' in row:
-                ppq = row[-1:-1]
             if ' Time_signature' in row:
-                timesignature.append(row[3:4], ppq)
+                junta = row[1:2]+row[3:5]
+                timesignature.append(junta)
+                junta = []
     return timesignature
 
