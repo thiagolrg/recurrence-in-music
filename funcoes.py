@@ -15,3 +15,4 @@ def SegLoc(ListaLocalizacao, ListaIntervalo, ListaDuracao):
         print("listas de tamanhos diferentes")
         print("len(ListaLocalizacao) ==", len(ListaLocalizacao), "len(listaintervalo) ==", len(ListaIntervalo), "len(listaduracao) ==", len(ListaDuracao)) 
 
+cristiano
