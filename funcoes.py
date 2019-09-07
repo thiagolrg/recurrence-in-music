@@ -42,3 +42,14 @@ def compasso_nt(num,vuc):
     else:
         raise ValueError('numerador nao encontrado')
     return NT
+
+import csv
+def filtra_timesig(camimnho_csv):
+    timesignature = list()
+    with open(camimnho_csv) as arquivo:
+        reader = csv.reader(arquivo)
+        for row in reader:
+            if ' Time_signature' in row:
+                timesignature.append(row)
+    return timesignature
+
