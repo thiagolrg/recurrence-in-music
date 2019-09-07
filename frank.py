@@ -86,16 +86,20 @@ print(bpm)
 
 #extrai todos os deltat para a lista deltat
 #extrai todos os Time_signature com seus deltat para a lista timesignature
-timesignature = list()
+compasso = list()
 deltat = list()
+ppq = int
 
 import csv
-with open(r'localizacaocompassobpm3.csv', newline='') as f:
-    reader = csv.reader(f)
+
+def compasso_filtra(arquivo)
+        with open(r'localizacaocompassobpm3.csv', newline='') as f:
+        reader = csv.reader(f)
     for row in reader:
-        deltat.append(row[1])
+        if ' Header' in row:
+                ppq = row[-1:-1]
         if ' Time_signature' in row:
-                timesignature.append(row)
+                compasso.append(row[3:4],ppq)
 
 print(timesignature)
 print(deltat)
@@ -104,11 +108,11 @@ print(deltat)
 # (((deltat atual - deltat da time signature anterior)/U.C. da anterior)+ valor em compassos da anterior)
 # para a posição em tempo com partes de tempo em sao os decimais de compasso * numero de tempos
 
-#Identifica as timesignatures referencias para cada deltat
+#Identifica as timesignatures referenciais para cada deltat
 for posicaod in range(len(deltat)):
 	for posicaot in range(len(timesignature)):
 		if posicaot+1 == len(timesignature): #gambiarra
-		       print(deltat[posicaod], timesignature[posicaot])
+		       p-rint(deltat[posicaod], timesignature[posicaot])
 		elif int(timesignature[posicaot+1][0]) >= int(deltat[posicaod]):
 			print(deltat[posicaod], timesignature[posicaot])
 			break
