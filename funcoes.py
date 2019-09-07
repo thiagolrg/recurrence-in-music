@@ -44,7 +44,7 @@ def timesig_nt(num,vuc):
     return NT
 
 import csv
-def Timesig_filtra(camimnho_csv):
+def timesig_filtra(camimnho_csv):
     ppq = int()
     timesignature = list()
     with open(camimnho_csv) as arquivo:
