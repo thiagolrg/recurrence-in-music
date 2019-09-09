@@ -28,8 +28,10 @@ if complista[0][1] == 0:
 else:
    raise ValueError('compasso nao comeca no inicio')
 
+#faz uma lista copia da entradalimpa acrescentando localizacoes em todas as linhas
 entradacomloc = []
- for linha in entradalimpa:
+
+for linha in entradalimpa:
    comp = funcoes.comp_ref(linha, compcomloc)
    uc = funcoes.comp_uc(comp[1], ppq)
    nt = funcoes.comp_nt(comp[1])

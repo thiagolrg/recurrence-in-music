@@ -94,15 +94,6 @@ def comp_nt(comp):
         """aqui vao ser usadas as funções comp_"""
 
 #faz uma lista cópia da lista de entrada acrescentando coluna BPM nas mensagens tempo
-def com_bpm(lista):
-    bpm = int()
-    combpm = []
-    for linha in lista[:]:
-        if ' Tempo' in linha:
-            temp = linha
-            bpm = int(60000000/int(linha[3]))
-            temp.insert(4,bpm)
-            combpm.append(temp)
-        else:
-            combpm.append(linha)
-    return combpm
+def bpm(linha):
+    bpm = int(60000000/int(linha[1][3]))
+    return bpm
