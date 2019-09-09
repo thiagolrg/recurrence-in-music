@@ -41,9 +41,11 @@ else:
 # o valor tempo tem que ser /2(valor da seminima) *pelodenominador, depois /1000000 para conversão em segundos e *60 para minutos
 # isso resolve para as formulas comuns 2/2 3/2 4/2 2/4 3/4 4/4 3/8 6/8 9/8 12/8, 3/8 seria um 1/4 com tercina
 # essas decisão de interpretar compassos também envolve andamentos o que significa que envolve análise perceptiva
+    # a ideia era fazer uma funcao para todos as formulas de compasso, mas nao consegui chegar nessa funcao e nem acho que existe
+    # fiz um case para cada formula de compasso
 # quando um 4/4 deve ser marcado como um binário? quando um 3/8 deve ser marcado como unário?
 # de qualquer forma essa formula seria um padrão eficiente
-# marca semínima pontuada quando o denominador e colcheia
+# marca colcheia quando o denominador e colcheia
 # marca seminima quando o denominador e seminima
 # marca minima quando o denominador e minima
 # sera um problema para compassos irregulares
