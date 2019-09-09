@@ -4,6 +4,7 @@
 
 #faz uma lista contendo o arquivo de entrada completo
 def entrada_csv(caminho_csv):
+    import csv
     entrada = []
     with open(caminho_csv) as arquivo:
         reader = csv.reader(arquivo)
@@ -12,10 +13,11 @@ def entrada_csv(caminho_csv):
     return entrada
 
 #tira todos os espacos e transforma numeros em int na lista de entrada
-def limpeza_entrada(list):
+def limpeza(lista):
+    lista = lista
     listalimpa = []
-    linhalimpa = []
     for linha in lista:
+        linhalimpa = []
         for valor in linha:
             valor = valor.strip()
             if valor.isdigit():
@@ -25,33 +27,43 @@ def limpeza_entrada(list):
     return listalimpa
 
 #tira ppq da lista
-def tira_ppq(lista)
-    ppq = lista[0][-1:]
+def tira_ppq(lista):
+    ppq = int(lista[0][5])
     return ppq
 
-#faz lista com os compassos filtrados da lista de entrada
-def comp_lista(list):
-    complista = list()
+ #faz lista com os compassos filtrados da lista de entrada
+def comp_lista(lista):
+    complista = []
     for row in lista:
-         if ' Time_signature' in row:
-            junta = row[1:2]+row[3:5]
-            complista.append(junta)
+         if 'Time_signature' in row:
+            complista.append(row)
     return complista
 
-#recebe uma linha e a lista de compassos filtrados
-#devolve o compasso referencia para a linha
+#faz uma lista com os tempos filtrados da lista de entrada
+def tempo_lista(lista):
+    tempolista = []
+    for row in lista:
+         if 'Tempo' in row:
+            tempolista.append(row)
+    return tempolista
+
+#recebe uma lista e a lista de compassos/tempos filtrados
+#faz uma lista com a linha e o compasso ref para cada linha
 def comp_ref(linha,listacomp):
     comp = []
-    for posicaot in range(len(timesig)):
-        if posicaot+1 == len(timesig):
-            comp = timesig[posicaot]
-        elif int(timesig[posicaot+1][0]) >= int(linha[1]):
-            comp = timesig[posicaot]
+    for posicaot in range(len(listacomp)):
+        if posicaot+1 == len(listacomp):
+            comp = listacomp[posicaot]
+        elif listacomp[posicaot+1][1][1] >= linha[1]:
+            comp = listacomp[posicaot]
             break
-    return comp
+    return  comp
 
 #calcula unidade de compasso em ppq
-def comp_uc(num,den,ppq):
+def comp_uc(compasso,ppq):
+    num = compasso[3]
+    den = compasso[4]
+    uc = int()
     if den == 0:
         uc = ppq*4*num
     elif den == 1:
@@ -61,19 +73,20 @@ def comp_uc(num,den,ppq):
     elif den == 3:
         uc = ppq/2*num
     elif den == 4:
-        UC = ppq/4*num
+        uc = ppq/4*num
     else:
         raise ValueError('Denominador nao encontrado')
-    return UC
+    return uc
 
 #calcula o numero de tempos de um compasso
-def comp_nt(num,vuc):
+def comp_nt(comp):
+    num = comp[3]
     if num == 2 or 3 or 4:
         nt = num
     elif num == 6 or 9 or 12:
         nt = num/2
     else:
-        raise ValueError('numerador nao encontrado')
+        raise ValueError('Numerador nao encontrado')
     return nt
 
 #faz uma lista cópia da lista de entrada acrescentando colunas localizações(compasso e tempo de compasso) em cada linha
@@ -81,7 +94,7 @@ def comp_nt(num,vuc):
         """aqui vao ser usadas as funções comp_"""
 
 #faz uma lista cópia da lista de entrada acrescentando coluna BPM nas mensagens tempo
-def com_bpm(list):
+def com_bpm(lista):
     bpm = int()
     combpm = []
     for linha in lista[:]:
