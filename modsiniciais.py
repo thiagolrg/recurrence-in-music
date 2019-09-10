@@ -25,7 +25,7 @@ if complista[0][1] == 0:
    for posicao in range(len(complista)):
       if posicao+1 < len(complista):
          uc = funcoes.comp_uc(complista[posicao], ppq)
-         nt = funcoes.comp_nt(complista[posicao])
+         nt = complista[posicao][3] #o numerador direto como o valor e mais tolerante a compassos diferentes, melhor do que tentar prever qual o tamanho do tempo
          loc = (complista[posicao+1][1] - complista[posicao][1])/uc + compcomloc[posicao][0][0]
          locc = int(loc)
          loct = ((loc%1)*nt)+1
