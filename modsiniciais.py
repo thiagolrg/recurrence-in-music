@@ -31,8 +31,6 @@ if complista[0][1] == 0:
          loct = ((loc%1)*nt)+1
          junta = [[locc, loct], complista[posicao+1]]
          compcomloc.append(junta)
-else:
-   raise ValueError('compasso nao comeca no inicio')
 
 #faz uma lista copia da entrada acrescentando compasso bpm e localizacao em todas as linhas
 entradacomloc = []
@@ -59,4 +57,7 @@ for linha in entradalimpa:
       #acho que vale a pena tentar isso amanha antes de seguir adiante
 
    #tambem verificar se e possivel calcular as duracoes
-   # ou se e necessario recalcular a partir dos deltaT
+   #ou se e necessario recalcular a partir dos deltaT
+      #optei por fazer as duracoes do inicio ao fim do arquivo
+
+#todos esses comentarios anteriores foram resolvidos na v2, se mostraram eficientes
