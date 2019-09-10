@@ -89,10 +89,6 @@ def comp_nt(comp):
         raise ValueError('Numerador nao encontrado')
     return nt
 
-#faz uma lista cópia da lista de entrada acrescentando colunas localizações(compasso e tempo de compasso) em cada linha
-    def com_loc(list):
-        """aqui vao ser usadas as funções comp_"""
-
 #faz uma lista cópia da lista de entrada acrescentando coluna BPM nas mensagens tempo
 def bpm(linha):
     bpm = int(60000000/int(linha[1][3]))
