@@ -4,6 +4,9 @@
 
 #esse arquivo precisa melhorar porque as funcoes locdur e compbpm sao chamadas
 #varias vezes desnecessariamente
+#do jeito que esta aqui cada def funciona independentemente, o que e legal
+#mas quando se chama uma atras da outra no arquivo geral as locdur e compbpm
+#sao chamadas varias vezes para o mesmo resultado
 
 def locdur(linha,mapa):
     for posicaot in range(len(mapa)):
@@ -45,7 +48,7 @@ def locR(linha,mapa,ppq,ref=list()):
 def locT(linha,mapa,ppq,ref=list()):
     if ref == []:
         ref = locdur(linha,mapa[0])
-    locT = ((locR(linha,mapa,ppq,ref)%1)*ref[1][0])+1
+    locT = round(((locR(linha,mapa,ppq,ref)%1)*ref[1][0])+1,2)
     return locT
 
 def locC(linha,mapa,ppq,ref=list()):
@@ -66,15 +69,26 @@ def durI(linha,mapa,ppq,ref=list()):
     durI = durR(linha,mapa,ppq,ref) + ref[3]
     return durI
 
-def tudo(linha,mapa,ppq)
-    refcomp = compbpm(linha[0],mapa)
-    refbpm = compbpm(linha[1],mapa)
-    reflocdur = locdur(linha,mapa)
-    comp = refcomp[1]
-    bpm = refbpm[1]
-    locR
-    locC
-    locT
-    durR
-    durI
-    return
+#nao prestou
+
+#def tudo(linha,mapa,lista,ppq):
+#    refcomp = compbpm(linha,mapa[0])
+#    refbpm = compbpm(linha,mapa[1])
+#    reflocdur = locdur(linha,mapa[0])
+#    locR = (linha[1] - reflocdur[0])/uc(reflocdur,ppq)
+#    durR = locR*reflocdur[1][0]
+#    if 'comp' in lista:
+#        comp = refcomp[1]
+#        return comp
+#    if 'bpm' in lista:
+#       bpm = refbpm[1]
+#        return bpm
+#    if 'locC' in lista:
+#        locC = int(locR + reflocdur[2][0])
+#        return locC
+#    if 'locT' in lista:
+#        locT = ((locR%1)*reflocdur[1][0])+1
+#        return locT
+#    if 'durI' in lista:
+#        durI = durR + reflocdur[3]
+#        return durI

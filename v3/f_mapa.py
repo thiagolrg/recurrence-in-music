@@ -57,7 +57,7 @@ def temp_comp(linha,lista):
 #retorna o valor de metronomo e o bpm
 def bpmf(templinha,complinha):
     m = metron(complinha)
-    bpmf = [m, bpm1(templinha)/m]
+    bpmf = [m, round(bpm1(templinha)/m,2)]
     return bpmf
 
 #valor de tempo para calculo do bpm final

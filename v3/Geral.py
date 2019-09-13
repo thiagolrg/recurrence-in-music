@@ -68,7 +68,11 @@ for linha in entradalimpa:
     duri = f_ref.durI(linha,mapa,ppq)
     entradapronta.append([comp,bpm,locc,loct,duri,linha])
 
-
+loc = f_ref.locT(entradalimpa[84],mapa,ppq)
+import csv
+with open('entradaprontav3.csv', 'w+', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerows(entradapronta)
 
 #entrada
 #entradalimpa
