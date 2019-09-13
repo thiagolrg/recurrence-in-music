@@ -18,14 +18,14 @@ ppq = f_limpaextrai.tira_ppq(entradalimpa)
 #chega ate o mapa usado para calcular as caracteristicas de qualquer linha da entrada limpa
 import f_mapa
 
-#mapa da convesao da lista tempo em bpm
+#mapa da conversao da lista tempo em bpm
 mapabpm = []
 for linha in templimp:
     compref = f_mapa.temp_comp(linha,complista)
     bpm = f_mapa.bpmf(linha,compref)
     mapabpm.append([linha[1], bpm])
 
-#mapa conversao da lista compasso em formulas localizações e durações
+#mapa da conversao da lista compasso em formulas localizações e durações
 if complista[0][1] == 0:
     mapacomplocdur = []
     mapacomplocdur.append([0, [1, 1.0],0.0])
