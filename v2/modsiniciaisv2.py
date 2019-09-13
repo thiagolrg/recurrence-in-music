@@ -33,8 +33,8 @@ else:
 #faz uma lista acrescentando bpm e tamanho de tempo de ref para cada mensagem tempo
 tempcombpm = []
 for linha in templista:
-    bpm1 = funcoesv2.bpm_1(linha)
     compref = funcoesv2.temp_comp(linha, complista)
+    bpm1 = funcoesv2.bpm1(linha)
     metron = funcoesv2.metron(compref)
     bpmf = bpm1/metron
     junta = [[metron, bpmf], linha]

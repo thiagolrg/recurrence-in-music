@@ -53,17 +53,6 @@ def temp_lista(lista):
 #encontrar um compasso ou tempo de ref. para calculo de
 #localizacoes duracoes e BPM
 
-#recebe a templista e retorna o compasso.ref
-def temp_comp(linha,lista):
-    comp = []
-    for posicaot in range(len(lista)):
-        if posicaot+1 == len(lista):
-            comp = lista[posicaot]
-        elif lista[posicaot+1][1] > linha[1]:
-            comp = lista[posicaot]
-            break
-    return  comp
-
 #recebe a entrada limpa e a lista de compcomloc, retorna o compasso.ref
 def comp_ref(linha,lista):
     comp = []
@@ -71,6 +60,17 @@ def comp_ref(linha,lista):
         if posicaot+1 == len(lista):
             comp = lista[posicaot]
         elif lista[posicaot+1][2][1] >= linha[1]:
+            comp = lista[posicaot]
+            break
+    return  comp
+
+#recebe a templista e retorna o compasso.ref
+def temp_comp(linha,lista):
+    comp = []
+    for posicaot in range(len(lista)):
+        if posicaot+1 == len(lista):
+            comp = lista[posicaot]
+        elif lista[posicaot+1][1] > linha[1]:
             comp = lista[posicaot]
             break
     return  comp
@@ -112,7 +112,7 @@ def nt(complinha):
 
 # BPM = (60000000/usec)/(MClock/24)
 # BPM = bpm_1/metron
-def bpm_1(tempolinha):
+def bpm1(tempolinha):
     bpm1 = 60000000/tempolinha[3]
     return bpm1
 
