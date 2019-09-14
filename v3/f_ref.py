@@ -7,6 +7,7 @@
 #do jeito que esta aqui cada def funciona independentemente, o que e legal
 #mas quando se chama uma atras da outra no arquivo geral as locdur e compbpm
 #sao chamadas varias vezes para o mesmo resultado
+import entrada
 
 def locdur(linha,mapa):
     for posicaot in range(len(mapa)):
@@ -26,51 +27,50 @@ def compbpm(linha,mapa):
             break
     return  ref
 
-def comp(linha,mapa):
+def comp(linha,mapa=entrada.mapa):
     ref = compbpm(linha,mapa[0])[1]
     return ref
 
-def bpm(linha,mapa):
+def bpm(linha,mapa=entrada.mapa):
     bpmref = compbpm(linha,mapa[1])[1]
     return bpmref
 
-def uc(linha,ppq):
+def uc(linha,ppq=entrada.ppq):
     uc = ((ppq*4)/linha[1][1])*linha[1][0]
     return uc
 
 #essas funcoes chamam locdur e compbpm mais vezes que o necessário
-def locR(linha,mapa,ppq,ref=list()):
+def locR(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
     if ref == []:
         ref = locdur(linha,mapa[0])
     locR = (linha[1] - ref[0])/uc(ref,ppq)
     return locR
 
-def locT(linha,mapa,ppq,ref=list()):
+def locT(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
     if ref == []:
         ref = locdur(linha,mapa[0])
     locT = round(((locR(linha,mapa,ppq,ref)%1)*ref[1][0])+1,2)
     return locT
 
-def locC(linha,mapa,ppq,ref=list()):
+def locC(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
     if ref == []:
         ref = locdur(linha,mapa[0])
     locC = int(locR(linha,mapa,ppq,ref) + ref[2][0])
     return locC
 
-def durR(linha,mapa,ppq,ref=list()):
+def durR(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
     if ref == []:
         ref = locdur(linha,mapa[0])
     durR = locR(linha,mapa,ppq,ref)*ref[1][0]
     return durR
 
-def durI(linha,mapa,ppq,ref=list()):
+def durI(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
     if ref == []:
         ref = locdur(linha,mapa[0])
     durI = durR(linha,mapa,ppq,ref) + ref[3]
     return durI
 
 #nao prestou
-
 #def tudo(linha,mapa,lista,ppq):
 #    refcomp = compbpm(linha,mapa[0])
 #    refbpm = compbpm(linha,mapa[1])

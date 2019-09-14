@@ -2,14 +2,14 @@
 #limpa o arquivo de entrada e extrai as listas e constantes necessarias
 import f_limpaextrai
 
-entrada = f_limpaextrai.entrada_csv("localizacaocompassobpm3.csv")
-entradalimpa = f_limpaextrai.limpeza(entrada)
+entra = f_limpaextrai.entrada_csv("midistresstest960tpqn.csv")
+entrada = f_limpaextrai.limpeza(entra)
 
-complista = f_limpaextrai.comp_lista(entradalimpa)
-templista = f_limpaextrai.temp_lista(entradalimpa)
+complista = f_limpaextrai.comp_lista(entrada)
+templista = f_limpaextrai.temp_lista(entrada)
 templimp = f_limpaextrai.templimp(templista)
 
-ppq = f_limpaextrai.tira_ppq(entradalimpa)
+ppq = f_limpaextrai.tira_ppq(entrada)
 #nome
 #tom
 #modo
@@ -18,14 +18,14 @@ ppq = f_limpaextrai.tira_ppq(entradalimpa)
 #chega ate o mapa usado para calcular as caracteristicas de qualquer linha da entrada limpa
 import f_mapa
 
-#mapa da conversao da lista tempo em bpm
+#conversao da lista tempo em mapa de bpm
 mapabpm = []
 for linha in templimp:
     compref = f_mapa.temp_comp(linha,complista)
     bpm = f_mapa.bpmf(linha,compref)
     mapabpm.append([linha[1], bpm])
 
-#mapa da conversao da lista compasso em formulas localizações e durações
+#conversao da lista compasso em mapa de formulas localizações e durações
 if complista[0][1] == 0:
     mapacomplocdur = []
     mapacomplocdur.append([0, [1, 1.0],0.0])
@@ -52,27 +52,11 @@ if complista[0][1] == 0:
             #durI = duracao em tempos desde o inicio em tempos de compasso
 else:
     raise ValueError('compasso nao comeca no 0')
+
+
 mapa = [mapacomplocdur, mapabpm]
-
-#______________________________________________________________________________
-#a lista mapa é usada para calcular todas as carácteristicas de qualquer linha da entrada limpa
+#a lista mapa é usada por f_ref calcular as carácteristicas de qualquer linha da entrada limpa usando
 #formula de compasso, bpm, localização e duração de qualquer linha do arquivo
-import f_ref
-
-entradapronta = []
-for linha in entradalimpa:
-    comp = f_ref.comp(linha,mapa)
-    bpm = f_ref.bpm(linha, mapa)
-    loct = f_ref.locT(linha,mapa,ppq)
-    locc = f_ref.locC(linha,mapa,ppq)
-    duri = f_ref.durI(linha,mapa,ppq)
-    entradapronta.append([comp,bpm,locc,loct,duri,linha])
-
-loc = f_ref.locT(entradalimpa[84],mapa,ppq)
-import csv
-with open('entradaprontav3.csv', 'w+', newline='') as f:
-    writer = csv.writer(f)
-    writer.writerows(entradapronta)
 
 #entrada
 #entradalimpa
