@@ -2,7 +2,7 @@
 #limpa o arquivo de entrada e extrai as listas e constantes necessarias
 import f_limpaextrai
 
-entra = f_limpaextrai.entrada_csv("midistresstest960tpqn.csv")
+entra = f_limpaextrai.entrada_csv("entradacsv2.960tpqn.csv")
 entrada = f_limpaextrai.limpeza(entra)
 
 complista = f_limpaextrai.comp_lista(entrada)
