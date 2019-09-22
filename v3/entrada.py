@@ -32,10 +32,7 @@ for linha in templimp:
     compref = f_mapa.temp_comp(linha,complista)
     bpm = f_mapa.bpmf(linha,compref)
     mapabpm.append([linha[1], bpm])
-
-#conversao da lista compasso em mapa de formulas de compasso
-#conversao da lista compasso em mapa 
-
+ 
 #conversao da lista compasso em mapa de formulas localizações e durações
 if complista[0][1] == 0:
     mapacomplocdur = []
@@ -50,7 +47,12 @@ if complista[0][1] == 0:
             locC = int(locR + mapacomplocdur[posicao][2])
             durI = durR + mapacomplocdur[posicao][4]
             mapacomplocdur.append([complista[posicao+1][1], locC, locT, durI])
-            #estou pensando seriamente se tiro o locT dai e sempre assumo ele como 1.0
+else:
+    raise ValueError('compasso nao comeca no 0')
+
+mapa = [mapacomplocdur, mapabpm]
+
+ #estou pensando seriamente se tiro o locT dai e sempre assumo ele como 1.0
             #afinal mudancas de compasso estao obrigatoriamente no inicio do compasso
             
             #fiz diferente
@@ -61,11 +63,6 @@ if complista[0][1] == 0:
             #locC = localizacao absolusta em compassos
             #durR = duracao em tempos relativa a formula de compasso ref.
             #durI = duracao em tempos desde o inicio em tempos de compasso
-else:
-    raise ValueError('compasso nao comeca no 0')
-
-
-mapa = [mapacomplocdur, mapabpm]
 #a lista mapa é usada por f_ref calcular as carácteristicas de qualquer linha da entrada limpa usando
 #formula de compasso, bpm, localização e duração de qualquer linha do arquivo
 
