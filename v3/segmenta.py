@@ -11,10 +11,11 @@ for voz in vozeslista:
         if linha+1 < len(voz):
 
             if 'Note_on_c' in voz[linha]:
-                comp = f_ref.comp(voz[linha])
-                bpm =  f_ref.bpm(voz[linha])
-                locC = f_ref.locC(voz[linha])
-                locT = f_ref.locT(voz[linha])
+                comp = f_ref.comp_bpm(voz[linha],entrada.mapa,'comp')
+                bpm = f_ref.comp_bpm(voz[linha],entrada.mapa,'bpm')
+                reflocdur = f_ref.locdur(voz[linha],entrada.mapa[0])
+                locC = f_ref.locC(voz[linha],ref=reflocdur)
+                locT = f_ref.locT(voz[linha],ref=reflocdur)
                 loc[p].append([comp, bpm, locC, locT])
 
                 non = []

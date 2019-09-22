@@ -18,22 +18,20 @@ def locdur(linha,mapa):
             break
     return  ref
 
-def compbpm(linha,mapa):
+def comp_bpm(linha,mapa,compbpm):
+    if compbpm == 'comp':
+        mapa = mapa[0]
+    elif compbpm == 'bpm':
+        mapa = mapa[1]
+    else:
+        raise ValueError('escolha comp ou bpm')  
     for posicaot in range(len(mapa)):
         if posicaot+1 == len(mapa):
             ref = mapa[posicaot]
         elif mapa[posicaot+1][0] > linha[1]:
-            ref = mapa[posicaot]
+            ref = mapa[posicaot][1]
             break
     return  ref
-
-def comp(linha,mapa=entrada.mapa):
-    ref = compbpm(linha,mapa[0])[1]
-    return ref
-
-def bpm(linha,mapa=entrada.mapa):
-    bpmref = compbpm(linha,mapa[1])[1]
-    return bpmref
 
 def uc(linha,ppq=entrada.ppq):
     uc = ((ppq*4)/linha[1][1])*linha[1][0]
