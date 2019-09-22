@@ -1,6 +1,16 @@
 #___________________________________________________
-#entrada limpeza e extracao das listas e variaveis importante
-#essas sao lista de compassos, lista de tempo e ppq
+#funcoes para transformar o arquivo de entrada em uma lista
+#tirar espacos dessas listas e reconhecer os dígitos como int
+
+#extrair da lista de entra as constantes e listas:
+#nome da música
+#tom
+#modo
+#resolusao (ppq)
+
+#compassos
+#tempos
+#vozes
 
 #faz uma lista contendo o arquivo de entrada completo
 def entrada_csv(caminho_csv):
@@ -24,6 +34,23 @@ def limpeza(lista):
             linhalimpa.append(valor)
         listalimpa.append(linhalimpa)
     return listalimpa
+
+#def tira_nome fazer
+#nome do arquivo
+
+#def tira_tom fazer
+#primeira mensagem no midi
+
+#def tira_modo fazer
+#primeira mensagem no midi
+
+#tira ppq da lista
+def tira_ppq(lista):
+    if 'Header' in lista[0]:
+        ppq = int(lista[0][5])
+        return ppq
+    else:
+        raise ValueError("Header nao identificado")
 
 #faz lista com os compassos filtrados da lista de entrada
 def comp_lista(lista):
@@ -55,13 +82,23 @@ def templimp(templista):
             templimp.append(templista[posicao])
     return(templimp)
 
-#def tira_nome fazer
-#def tira_tom fazer
-#def tira_modo fazer
-#tira ppq da lista
-def tira_ppq(lista):
-    if 'Header' in lista[0]:
-        ppq = int(lista[0][5])
-        return ppq
-    else:
-        raise ValueError("Header nao identificado")
+#faz lista com as notas filtradas da lista de entrada
+def notas_lista(lista):
+    notaslista = []
+    for linha in lista:
+        if 'Note_on_c' in linha or 'Note_off_c' in linha:
+            notaslista.append(linha)
+    return notaslista
+
+#separa a lista notas por vozes(cada voz deve estar em uma track diferente do MIDI)
+def vozes_lista(lista):
+    voz = 0
+    vozes = [[]]
+    lista = lista
+    for posicao in range(len(lista)):
+        vozes[voz].append(lista[posicao])
+        if posicao+1 < len(lista):
+            if lista[posicao+1][0] != lista[posicao][0]:
+                vozes.append([])
+                voz = voz + 1
+    return vozes

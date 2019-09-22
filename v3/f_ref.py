@@ -55,7 +55,7 @@ def locT(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
 def locC(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
     if ref == []:
         ref = locdur(linha,mapa[0])
-    locC = int(locR(linha,mapa,ppq,ref) + ref[2][0])
+    locC = int(locR(linha,mapa,ppq,ref) + ref[2])
     return locC
 
 def durR(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
@@ -67,7 +67,7 @@ def durR(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
 def durI(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
     if ref == []:
         ref = locdur(linha,mapa[0])
-    durI = durR(linha,mapa,ppq,ref) + ref[3]
+    durI = durR(linha,mapa,ppq,ref) + ref[4]
     return durI
 
 #nao prestou

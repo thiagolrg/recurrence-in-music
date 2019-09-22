@@ -2,17 +2,25 @@
 #limpa o arquivo de entrada e extrai as listas e constantes necessarias
 import f_limpaextrai
 
-entra = f_limpaextrai.entrada_csv("entradacsv2.960tpqn.csv")
-entrada = f_limpaextrai.limpeza(entra)
+entrada = f_limpaextrai.entrada_csv("entradacsv2.960tpqn.csv")
+entradalimpa = f_limpaextrai.limpeza(entrada)
 
-complista = f_limpaextrai.comp_lista(entrada)
-templista = f_limpaextrai.temp_lista(entrada)
+complista = f_limpaextrai.comp_lista(entradalimpa)
+templista = f_limpaextrai.temp_lista(entradalimpa)
 templimp = f_limpaextrai.templimp(templista)
+notaslista = f_limpaextrai.notas_lista(entradalimpa)
+vozeslista = f_limpaextrai.vozes_lista(notaslista)
 
-ppq = f_limpaextrai.tira_ppq(entrada)
+ppq = f_limpaextrai.tira_ppq(entradalimpa)
+
 #nome
+#nome do arquivo
+
 #tom
+#primeira mensagem no midi
+
 #modo
+#primeira mensagem no midi
 
 #______________________________________________________
 #chega ate o mapa usado para calcular as caracteristicas de qualquer linha da entrada limpa
@@ -25,10 +33,13 @@ for linha in templimp:
     bpm = f_mapa.bpmf(linha,compref)
     mapabpm.append([linha[1], bpm])
 
+#conversao da lista compasso em mapa de formulas de compasso
+#conversao da lista compasso em mapa 
+
 #conversao da lista compasso em mapa de formulas localizações e durações
 if complista[0][1] == 0:
     mapacomplocdur = []
-    mapacomplocdur.append([0, [1, 1.0],0.0])
+    mapacomplocdur.append([0, 1, 1.0, 0.0])
     for posicao in range(len(complista)):
         comp = f_mapa.comp(complista[posicao])
         mapacomplocdur[posicao].insert(1,comp)
@@ -36,9 +47,9 @@ if complista[0][1] == 0:
             locR = f_mapa.locR(complista[posicao+1],complista[posicao],ppq)
             locT = f_mapa.locT(complista[posicao+1],complista[posicao],ppq)
             durR = f_mapa.durR(complista[posicao+1],complista[posicao],ppq)
-            locC = int(locR + mapacomplocdur[posicao][2][0])
-            durI = durR + mapacomplocdur[posicao][3]
-            mapacomplocdur.append([complista[posicao+1][1], [locC, locT], durI])
+            locC = int(locR + mapacomplocdur[posicao][2])
+            durI = durR + mapacomplocdur[posicao][4]
+            mapacomplocdur.append([complista[posicao+1][1], locC, locT, durI])
             #estou pensando seriamente se tiro o locT dai e sempre assumo ele como 1.0
             #afinal mudancas de compasso estao obrigatoriamente no inicio do compasso
             

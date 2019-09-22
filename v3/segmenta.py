@@ -1,84 +1,48 @@
-#preciso acessar, nome, tom, modo, ppq,entradalimpa e mapa de qualquer arquivo
-#preciso que o proprio python crie novas variaveis sob demanda para acomodar as diferentes melodias
-#para cada melodia tem que existir uma lista de intervalos e duracoes, com deltat para cada posicao
-#o deltat sera usado para as refs depois da segmentacao
-#aceitar melodias com pausas!
 import entrada, f_ref
 
-#__________________________________________
-#tira todas as mensagens note on e note off da entrada
-melo = []
-for linha in entrada.entrada:
-    if 'Note_on_c' in linha or 'Note_off_c' in linha:
-        melo.append(linha)
-
-# coloca as caracteristicas em cada mensagem
-melodi = []
-for linha in melo:
-    comp = f_ref.comp(linha)
-    bpm =  f_ref.bpm(linha)
-    locC = f_ref.locC(linha)
-    locT = f_ref.locT(linha)
-    durI = f_ref.durI(linha)
-    melodi.append([comp,bpm,locC,locT,durI,linha])
-
-#separa cada melodia em uma posicao na lista
-melodias = [[]]
+vozeslista = entrada.vozeslista
 p = 0
-for posicao in range(len(melodi)):
-    melodias[p].append(melodi[posicao])
-    if posicao+1 < len(melodi):
-        if melodi[posicao+1][0] != melodi[posicao][0]:
-            melodias.append([])
-            p = p + 1
+loc = [[]]
+inte = [[]]
+dur = [[]]
 
-# monta a lista loc inte, dur e segmenta cada melodia
+for voz in vozeslista:
+    for linha in range(len(voz)):
+        if linha+1 < len(voz):
+
+            if 'Note_on_c' in voz[linha]:
+                comp = f_ref.comp(voz[linha])
+                bpm =  f_ref.bpm(voz[linha])
+                locC = f_ref.locC(voz[linha])
+                locT = f_ref.locT(voz[linha])
+                loc[p].append([comp, bpm, locC, locT])
+
+                non = []
+                noff = []
+                for busca in range(linha+1,len(voz)):
+                    if noff == [] or non == []:
+                        if 'Note_off_c'  in voz[busca]:
+                            noff = voz[busca]
+                        if 'Note_on_c' in voz[busca]:
+                            non =voz[busca]
+                    else:
+                        linhadur = f_ref.durI(voz[linha])
+                        nondur = f_ref.durI(non)
+                        noffdur = f_ref.durI(noff)
+                        inte[p].append(non[4]-voz[linha][4])
+                        dur[p].append(nondur-linhadur)
+                        #dur[p].append([nondur-linhadur, nondur-noffdur])
+                        break
+    
+        else:
+            if len(loc) != len(vozeslista):
+                loc.append([])
+                inte.append([])
+                dur.append([])
+                p = p + 1
+
 final = []
-loc = []
-inte = []
-dur = []
-for posicao1 in range(len(melodias)):
-    for posicao2 in range(len(melodias[posicao1])):
-        if 'Note_on_c' in melodias[posicao1][posicao2][5]:
-            noff = []
-            non = []
-            for posicao3 in range(posicao2+1, len(melodias[posicao1])):
-                if noff == [] or non == []:
-                    if 'Note_off_c'  in melodias[posicao1][posicao3][5]:
-                        noff = melodias[posicao1][posicao3]
-                    if 'Note_on_c' in melodias[posicao1][posicao3][5]:
-                        non = melodias[posicao1][posicao3]
-                else:
-                    loc.append(melodias[posicao1][posicao2][0:5])
-                    inte.append(non[5][4] - melodias[posicao1][posicao2][5][4])
-                    dur.append(non[4] - melodias[posicao1][posicao2][4])
-                    #dur.append([non[4] - melodia[posicao1][posicao2][4], non[4] - noff[4]])
-                    break
-    if len(loc) == len(inte) == len(dur):
-        for posicao2 in range(len(loc)):
-            for posicao3 in range(posicao2, len(loc)):
-                final.append(loc[posicao2][0:2] + [posicao1] + loc[posicao2][2:4]  + [sum(dur[posicao2:posicao3+1])] + [(posicao3+1) - posicao2] + [inte[posicao2:posicao3+1]] + [dur[posicao2:posicao3+1]])
-    else:
-        print("listas de tamanhos diferentes")
-        print("len(loc) ==", len(loc), "len(inte) ==", len(inte), "len(dur) ==", len(dur))
-    loc = []
-    inte = []
-    dur = []
-
-import csv
-with open('saidev2.2.csv', 'w+', newline='') as f:
-    writer = csv.writer(f)
-    writer.writerows(final)
-
-#melodia = []
-#for linha in saidateste:
-#    if linha[5][0] == 2 and ('Note_on_c' in linha[5] or 'Note_off_c' in linha[5]):
-#        melodia.append(linha[0:5] + [linha[5][2]] + [linha[5][4]])
-
-#for posicao1 in range(len(melodiap)):
-#    for posicao2 in range(posicao1, len(melodiap)):
-#        durseg.append(melodiap[posicao1][6]:posicao2+1][6])
-#        inteseg.append(inte[posicao1][5]:posicao2+1][5])
-#else:
-#        print("listas de tamanhos diferentes")
-#        print("len(listalocalizacao) ==", len(listalocalizacao), "len(listaintervalo) ==", len(listaintervalo), "len(listaduracao) ==", len(listaduracao)) 
+for locvoz, intevoz, durvoz in zip(loc,inte,dur):
+    for posicao1 in range(len(intevoz)):
+        for posicao2 in range(posicao1, len(intevoz)):
+            final.append([locvoz[posicao1], intevoz[posicao1:posicao2+1], durvoz[posicao1:posicao2+1]])
