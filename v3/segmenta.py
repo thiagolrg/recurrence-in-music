@@ -28,10 +28,9 @@ p = 0
 for posicao in range(len(melodi)):
     melodias[p].append(melodi[posicao])
     if posicao+1 < len(melodi):
-        if melodi[posicao+1][5][0] != melodi[posicao][5][0]:
+        if melodi[posicao+1][0] != melodi[posicao][0]:
             melodias.append([])
             p = p + 1
-
 
 # monta a lista loc inte, dur e segmenta cada melodia
 final = []
