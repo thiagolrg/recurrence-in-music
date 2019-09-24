@@ -27,7 +27,7 @@ for voz in vozeslista:
                         if 'Note_on_c' in voz[busca]:
                             non =voz[busca]
                     else:
-                        linhadur = f_ref.durI(voz[linha])
+                        linhadur = f_ref.durI(voz[linha],ref=reflocdur)
                         nondur = f_ref.durI(non)
                         noffdur = f_ref.durI(noff)
                         inte[p].append(non[4]-voz[linha][4])
@@ -47,3 +47,5 @@ for locvoz, intevoz, durvoz in zip(loc,inte,dur):
     for posicao1 in range(len(intevoz)):
         for posicao2 in range(posicao1, len(intevoz)):
             final.append([locvoz[posicao1], intevoz[posicao1:posicao2+1], durvoz[posicao1:posicao2+1]])
+
+debug = final

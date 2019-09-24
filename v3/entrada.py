@@ -2,7 +2,7 @@
 #limpa o arquivo de entrada e extrai as listas e constantes necessarias
 import f_limpaextrai
 
-entrada = f_limpaextrai.entrada_csv("entradacsv2.960tpqn.csv")
+entrada = f_limpaextrai.midi_csv("localizacaocompassobpm3.mid")
 entradalimpa = f_limpaextrai.limpeza(entrada)
 
 complista = f_limpaextrai.comp_lista(entradalimpa)
@@ -36,17 +36,16 @@ for linha in templimp:
 #conversao da lista compasso em mapa de formulas localizações e durações
 if complista[0][1] == 0:
     mapacomplocdur = []
-    mapacomplocdur.append([0, 1, 1.0, 0.0])
+    mapacomplocdur.append([0, 1, 0.0])
     for posicao in range(len(complista)):
         comp = f_mapa.comp(complista[posicao])
         mapacomplocdur[posicao].insert(1,comp)
         if posicao+1 < len(complista):
             locR = f_mapa.locR(complista[posicao+1],complista[posicao],ppq)
-            locT = f_mapa.locT(complista[posicao+1],complista[posicao],ppq)
             durR = f_mapa.durR(complista[posicao+1],complista[posicao],ppq)
             locC = int(locR + mapacomplocdur[posicao][2])
-            durI = durR + mapacomplocdur[posicao][4]
-            mapacomplocdur.append([complista[posicao+1][1], locC, locT, durI])
+            durI = durR + mapacomplocdur[posicao][3]
+            mapacomplocdur.append([complista[posicao+1][1], locC, durI])
 else:
     raise ValueError('compasso nao comeca no 0')
 

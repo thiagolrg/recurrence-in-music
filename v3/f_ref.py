@@ -65,7 +65,7 @@ def durR(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
 def durI(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
     if ref == []:
         ref = locdur(linha,mapa[0])
-    durI = durR(linha,mapa,ppq,ref) + ref[4]
+    durI = durR(linha,mapa,ppq,ref) + ref[3]
     return durI
 
 #nao prestou

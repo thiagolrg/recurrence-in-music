@@ -11,6 +11,16 @@
 #compassos
 #tempos
 #vozes
+#import subprocess
+#converte um arquivo midi em uma lista csv, substitui o entrada_csv
+def midi_csv(nome):
+    import subprocess
+    entrada = []
+    listacsv = subprocess.run(['Midicsv.exe', nome], text=True, capture_output=True, shell=True)
+    separalinha = listacsv.stdout.splitlines()
+    for linha in separalinha: #separa por virgula
+        entrada.append(linha.split(','))
+    return entrada
 
 #faz uma lista contendo o arquivo de entrada completo
 def entrada_csv(caminho_csv):
