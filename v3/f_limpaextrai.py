@@ -11,18 +11,34 @@
 #compassos
 #tempos
 #vozes
-#import subprocess
-#converte um arquivo midi em uma lista csv, substitui o entrada_csv
+
+#retorna uma lista com o caminho de todos os arquivos midi de um diretório
+def caminhos_midi(diretorio):
+    import os
+    path = diretorio
+    caminhos = []
+    # r=root, d=directories, f = files
+    for r, d, f in os.walk(path):
+        for file in f:
+            if '.mid' in file:
+                caminhos.append(os.path.join(r, file))
+    return caminhos
+
+#rece o caminho de um arquivo midi
+#cria uma lista em csv a partir do midi correspondente ao caminho
+#substitui o entrada_csv
 def midi_csv(nome):
     import subprocess
     entrada = []
     listacsv = subprocess.run(['Midicsv.exe', nome], text=True, capture_output=True, shell=True)
+    # o midicsv.exe é executado externamente e não pode estar em outro diretório
     separalinha = listacsv.stdout.splitlines()
     for linha in separalinha: #separa por virgula
         entrada.append(linha.split(','))
     return entrada
 
 #faz uma lista contendo o arquivo de entrada completo
+#substituido pela midi_csv
 def entrada_csv(caminho_csv):
     import csv
     entrada = []
@@ -45,8 +61,14 @@ def limpeza(lista):
         listalimpa.append(linhalimpa)
     return listalimpa
 
-#def tira_nome fazer
-#nome do arquivo
+#recebe o caminho midi e tira o nome do arquivo
+#o usuário tem que colocar o nome do arquivo como nome da música 
+def tira_nome(caminhomidi):
+    for linha in caminhomidi.split('\\'):
+        if '.mid' in linha:
+            nome = linha.replace('.mid','')
+            break
+    return nome
 
 #def tira_tom fazer
 #primeira mensagem no midi

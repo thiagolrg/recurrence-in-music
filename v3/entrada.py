@@ -2,8 +2,12 @@
 #limpa o arquivo de entrada e extrai as listas e constantes necessarias
 import f_limpaextrai
 
-entrada = f_limpaextrai.midi_csv("localizacaocompassobpm3.mid")
-entradalimpa = f_limpaextrai.limpeza(entrada)
+caminhosmidi = f_limpaextrai.caminhos_midi('C:\\Users\\Thiago.DESKTOP-13409IC\\Desktop\\Midicsv\\MIDIs')
+
+for caminhomidi in caminhosmidi:
+    entrada = f_limpaextrai.midi_csv(caminhomidi)
+    entradalimpa = f_limpaextrai.limpeza(entrada)
+    nomemusica = f_limpaextrai.tira_nome(caminhomidi)
 
 complista = f_limpaextrai.comp_lista(entradalimpa)
 templista = f_limpaextrai.temp_lista(entradalimpa)
@@ -12,9 +16,6 @@ notaslista = f_limpaextrai.notas_lista(entradalimpa)
 vozeslista = f_limpaextrai.vozes_lista(notaslista)
 
 ppq = f_limpaextrai.tira_ppq(entradalimpa)
-
-#nome
-#nome do arquivo
 
 #tom
 #primeira mensagem no midi
@@ -48,7 +49,7 @@ if complista[0][1] == 0:
             mapacomplocdur.append([complista[posicao+1][1], locC, durI])
 else:
     raise ValueError('compasso nao comeca no 0')
-
+ 
 mapa = [mapacomplocdur, mapabpm]
 
  #estou pensando seriamente se tiro o locT dai e sempre assumo ele como 1.0
