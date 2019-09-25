@@ -8,6 +8,8 @@ for caminhomidi in caminhosmidi:
     entrada = f_limpaextrai.midi_csv(caminhomidi)
     entradalimpa = f_limpaextrai.limpeza(entrada)
     nomemusica = f_limpaextrai.tira_nome(caminhomidi)
+    tom = f_limpaextrai.tira_tom(entradalimpa)
+    modo = f_limpaextrai.tira_modo(entradalimpa)
 
 complista = f_limpaextrai.comp_lista(entradalimpa)
 templista = f_limpaextrai.temp_lista(entradalimpa)
@@ -16,12 +18,6 @@ notaslista = f_limpaextrai.notas_lista(entradalimpa)
 vozeslista = f_limpaextrai.vozes_lista(notaslista)
 
 ppq = f_limpaextrai.tira_ppq(entradalimpa)
-
-#tom
-#primeira mensagem no midi
-
-#modo
-#primeira mensagem no midi
 
 #______________________________________________________
 #chega ate o mapa usado para calcular as caracteristicas de qualquer linha da entrada limpa
@@ -49,7 +45,9 @@ if complista[0][1] == 0:
             mapacomplocdur.append([complista[posicao+1][1], locC, durI])
 else:
     raise ValueError('compasso nao comeca no 0')
- 
+
+#ideialmente o mapa tinha que ser separado para sustentas a criação de mais mapas
+#para fazer isso tenho que mudar todas as funcoes do f_ref
 mapa = [mapacomplocdur, mapabpm]
 
  #estou pensando seriamente se tiro o locT dai e sempre assumo ele como 1.0

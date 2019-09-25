@@ -9,7 +9,11 @@ dur = [[]]
 for voz in vozeslista:
     for linha in range(len(voz)):
         if linha+1 < len(voz):
-
+            
+            #idealmente todos os compassos e bpms do segmento devem ser impressos
+            #nao so os de inicio
+            #talvez montar funcoes separadas com cada dessas
+            #ou uma funcao com varios argumentos para ativar e desativar partes dessa
             if 'Note_on_c' in voz[linha]:
                 comp = f_ref.comp_bpm(voz[linha],entrada.mapa,'comp')
                 bpm = f_ref.comp_bpm(voz[linha],entrada.mapa,'bpm')
