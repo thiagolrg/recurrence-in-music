@@ -54,6 +54,7 @@ def limpeza(lista):
     for linha in lista:
         linhalimpa = []
         for valor in linha:
+            valor = valor.replace('\"','')
             valor = valor.strip()
             if valor.isdigit():
                 valor = int(valor)
@@ -70,11 +71,89 @@ def tira_nome(caminhomidi):
             break
     return nome
 
-#def tira_tom fazer
-#primeira mensagem no midi
+#tira da lista o tom em letras: c = dó d = ré...
+def tira_tom(lista):
+    tom = []
+    for row in lista:
+        if 'Key_signature' in row:
+            if 'major' in row:
+                if row[3] == 0:
+                    tom = 'C'
+                elif row[3] == 1:
+                    tom = 'G'
+                elif row[3] == -1:
+                    tom = 'F'
+                elif row[3] == 2:
+                    tom = 'D'
+                elif row[3] == -2:
+                    tom = 'Bb'
+                elif row[3] == 3:
+                    tom = 'A'
+                elif row[3] == -3:
+                    tom = 'Eb'
+                elif row[3] == 4:
+                    tom = 'E'
+                elif row[3] == -4:
+                    tom = 'Ab'
+                elif row[3] == 5:
+                    tom = 'B'
+                elif row[3] == -5:
+                    tom = 'Db'
+                elif row[3] == 6:
+                    tom = 'F#'
+                elif row[3] == -6:
+                    tom = 'Gb'
+                elif row[3] == 7:
+                    tom = 'C#'
+                elif row[3] == -7:
+                    tom = 'Cb'
+                break
+            if 'minor' in row:
+                if row[3] == 0:
+                    tom = 'a'
+                elif row[3] == 1:
+                    tom = 'e'
+                elif row[3] == -1:
+                    tom = 'd'
+                elif row[3] == 2:
+                    tom = 'b'
+                elif row[3] == -2:
+                    tom = 'g'
+                elif row[3] == 3:
+                    tom = 'f#'
+                elif row[3] == -3:
+                    tom = 'c'
+                elif row[3] == 4:
+                    tom = 'c#'
+                elif row[3] == -4:
+                    tom = 'f'
+                elif row[3] == 5:
+                    tom = 'g#'
+                elif row[3] == -5:
+                    tom = 'bb'
+                elif row[3] == 6:
+                    tom = 'd#'
+                elif row[3] == -6:
+                    tom = 'eb'
+                elif row[3] == 7:
+                    tom = 'a#'
+                elif row[3] == -7:
+                    tom = 'ab'
+                break
+    return tom
 
-#def tira_modo fazer
-#primeira mensagem no midi
+#retorna major ou minor a partir da lista
+def tira_modo(lista):
+    modo = []
+    for row in lista:
+        if 'Key_signature' in row:
+            if 'major' in row:
+                modo = 'major'
+                break            
+            elif 'minor' in row:
+                modo = 'minor'
+                break
+    return modo
 
 #tira ppq da lista
 def tira_ppq(lista):
