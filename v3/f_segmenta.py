@@ -1,3 +1,5 @@
+import limpaextraimapa
+
 #____________________________________________________________________________________
 #formulas Ref.
 # recebem a linha e o mapa, retornam o compasso, bpm, localizacao e duracao
@@ -7,9 +9,9 @@
 #do jeito que esta aqui cada def funciona independentemente, o que e legal
 #mas quando se chama uma atras da outra no arquivo geral as locdur e compbpm
 #sao chamadas varias vezes para o mesmo resultado
-import entrada
 
-def locdur(linha,mapa):
+#retorna a linha referencia para calculo das loc e dur
+def ref_locdur(linha,mapa):
     for posicaot in range(len(mapa)):
         if posicaot+1 == len(mapa):
             ref = mapa[posicaot]
@@ -18,13 +20,10 @@ def locdur(linha,mapa):
             break
     return  ref
 
-def comp_bpm(linha,mapa,compbpm):
-    if compbpm == 'comp':
-        mapa = mapa[0]
-    elif compbpm == 'bpm':
-        mapa = mapa[1]
-    else:
-        raise ValueError('escolha comp ou bpm')  
+#retorna o compasso ou o tempo referente a linha
+#para compasso recebe o mapacomplocdur
+#para tempo recebe o mapabpm
+def comp_bpm(linha,mapa): 
     for posicaot in range(len(mapa)):
         if posicaot+1 == len(mapa):
             ref = mapa[posicaot]
@@ -33,38 +32,38 @@ def comp_bpm(linha,mapa,compbpm):
             break
     return  ref
 
-def uc(linha,ppq=entrada.ppq):
+def uc(linha,ppq=limpaextraimapa.ppq):
     uc = ((ppq*4)/linha[1][1])*linha[1][0]
     return uc
 
-#essas funcoes chamam locdur e compbpm mais vezes que o necessário
-def locR(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
+#funcoes que usam mapacomplocdur
+def locR(linha,mapa=limpaextraimapa.mapacomplocdur,ppq=limpaextraimapa.ppq,ref=list()):
     if ref == []:
-        ref = locdur(linha,mapa[0])
+        ref = ref_locdur(linha,mapa)
     locR = (linha[1] - ref[0])/uc(ref,ppq)
     return locR
 
-def locT(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
+def locT(linha,mapa=limpaextraimapa.mapacomplocdur,ppq=limpaextraimapa.ppq,ref=list()):
     if ref == []:
-        ref = locdur(linha,mapa[0])
+        ref = ref_locdur(linha,mapa)
     locT = round(((locR(linha,mapa,ppq,ref)%1)*ref[1][0])+1,2)
     return locT
 
-def locC(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
+def locC(linha,mapa=limpaextraimapa.mapacomplocdur,ppq=limpaextraimapa.ppq,ref=list()):
     if ref == []:
-        ref = locdur(linha,mapa[0])
+        ref = ref_locdur(linha,mapa)
     locC = int(locR(linha,mapa,ppq,ref) + ref[2])
     return locC
 
-def durR(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
+def durR(linha,mapa=limpaextraimapa.mapacomplocdur,ppq=limpaextraimapa.ppq,ref=list()):
     if ref == []:
-        ref = locdur(linha,mapa[0])
+        ref = ref_locdur(linha,mapa)
     durR = locR(linha,mapa,ppq,ref)*ref[1][0]
     return durR
 
-def durI(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
+def durI(linha,mapa=limpaextraimapa.mapacomplocdur,ppq=limpaextraimapa.ppq,ref=list()):
     if ref == []:
-        ref = locdur(linha,mapa[0])
+        ref = ref_locdur(linha,mapa)
     durI = durR(linha,mapa,ppq,ref) + ref[3]
     return durI
 
