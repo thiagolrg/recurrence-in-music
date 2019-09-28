@@ -13,9 +13,9 @@
 #vozes
 
 #retorna uma lista com o caminho de todos os arquivos midi de um diretório
-def caminhos_midi(path):
+def caminhos_midi(diretorio):
     import os
-    path
+    path = diretorio
     caminhos = []
     # r=root, d=directories, f = files
     for r, d, f in os.walk(path):
@@ -24,13 +24,13 @@ def caminhos_midi(path):
                 caminhos.append(os.path.join(r, file))
     return caminhos
 
-#recebe o caminho de um arquivo midi
+#rece o caminho de um arquivo midi
 #cria uma lista em csv a partir do midi correspondente ao caminho
 #substitui o entrada_csv
-def midi_csv(caminho):
+def midi_csv(nome):
     import subprocess
     entrada = []
-    listacsv = subprocess.run(['Midicsv.exe', caminho], text=True, capture_output=True, shell=True)
+    listacsv = subprocess.run(['Midicsv.exe', nome], text=True, capture_output=True, shell=True)
     # o midicsv.exe é executado externamente e não pode estar em outro diretório
     separalinha = listacsv.stdout.splitlines()
     for linha in separalinha: #separa por virgula
