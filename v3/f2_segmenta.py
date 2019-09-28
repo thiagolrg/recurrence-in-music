@@ -2,7 +2,7 @@
 #Segmenta
 import f1_segmenta
 
-def tabela_final(vozeslista,mapacomplocdur, mapabpm, ppq, final):
+def tabela_final(nome, tom, modo, vozeslista, mapacomplocdur, mapabpm, ppq, final):
     p = 0
     lcomp = [[]]
     lbpm = [[]]
@@ -63,7 +63,7 @@ def tabela_final(vozeslista,mapacomplocdur, mapabpm, ppq, final):
                     if valorbpm not in bpmpronto:
                         bpmpronto.append(valorbpm)
 
-                final.append([comppronto, bpmpronto, locCvoz[posicao1], locTvoz[posicao1], (posicao2+1)-posicao1, sum(durvoz[posicao1:posicao2+1]), intevoz[posicao1:posicao2+1], durvoz[posicao1:posicao2+1]])
+                final.append([nome, tom, modo, comppronto, bpmpronto, locCvoz[posicao1], locTvoz[posicao1], (posicao2+1)-posicao1, sum(durvoz[posicao1:posicao2+1]), intevoz[posicao1:posicao2+1], durvoz[posicao1:posicao2+1]])
                 #preiso acrescentar a duração do segmento em compassos alem de tempos
                 #para isso preciso acrescentar no mapa complocdur a duracao em compassos
                 #mudar as formulas f_ref para dar a duracao em compassos
