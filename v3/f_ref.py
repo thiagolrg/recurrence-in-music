@@ -1,5 +1,9 @@
+<<<<<<< HEAD:v3/f_ref.py
 <<<<<<< HEAD:v3/f_segmenta.py
 '''import limpaextraimapa
+=======
+import limpaextraimapa
+>>>>>>> parent of 7cc848b... zuei tudo e vou voltar para outro commit:v3/f_segmenta.py
 
 =======
 >>>>>>> parent of 767f250... baguncei tudo e ajeitei tudo de novo tentando fazer o loop no programa todo:v3/f_ref.py
@@ -94,4 +98,4 @@ def durI(linha,mapa=entrada.mapa,ppq=entrada.ppq,ref=list()):
 #        return locT
 #    if 'durI' in lista:
 #        durI = durR + reflocdur[3]
-#        return durI'''
+#        return durI

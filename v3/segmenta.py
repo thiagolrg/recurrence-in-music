@@ -1,5 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 '''import limpaextraimapa, f_segmenta
+=======
+import limpaextraimapa, f_segmenta
+>>>>>>> parent of 7cc848b... zuei tudo e vou voltar para outro commit
 
 vozeslista = limpaextraimapa.vozeslista
 nome = limpaextraimapa.nomemusica
