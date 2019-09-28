@@ -1,5 +1,3 @@
-import limpaextraimapa
-
 #____________________________________________________________________________________
 #formulas Ref.
 # recebem a linha e o mapa, retornam o compasso, bpm, localizacao e duracao
@@ -32,39 +30,39 @@ def comp_bpm(linha,mapa):
             break
     return  ref
 
-def uc(linha,ppq=tudaoteste.ppq):
+def uc(linha,ppq):
     uc = ((ppq*4)/linha[1][1])*linha[1][0]
     return uc
 
 #funcoes que usam mapacomplocdur
-def locR(linha,mapa=tudaoteste.mapacomplocdur,ppq=tudaoteste.ppq,ref=list()):
+def locR(linha,mapacomplocdur,ppq,ref=list()):
     if ref == []:
-        ref = ref_locdur(linha,mapa)
+        ref = ref_locdur(linha,mapacomplocdur)
     locR = (linha[1] - ref[0])/uc(ref,ppq)
     return locR
 
-def locT(linha,mapa=tudaoteste.mapacomplocdur,ppq=tudaoteste.ppq,ref=list()):
+def locT(linha,mapacomplocdur,ppq,ref=list()):
     if ref == []:
-        ref = ref_locdur(linha,mapa)
-    locT = round(((locR(linha,mapa,ppq,ref)%1)*ref[1][0])+1,2)
+        ref = ref_locdur(linha,mapacomplocdur)
+    locT = round(((locR(linha,mapacomplocdur,ppq,ref)%1)*ref[1][0])+1,2)
     return locT
 
-def locC(linha,mapa=tudaoteste.mapacomplocdur,ppq=tudaoteste.ppq,ref=list()):
+def locC(linha,mapacomplocdur,ppq,ref=list()):
     if ref == []:
-        ref = ref_locdur(linha,mapa)
-    locC = int(locR(linha,mapa,ppq,ref) + ref[2])
+        ref = ref_locdur(linha,mapacomplocdur)
+    locC = int(locR(linha,mapacomplocdur,ppq,ref) + ref[2])
     return locC
 
-def durR(linha,mapa=tudaoteste.mapacomplocdur,ppq=tudaoteste.ppq,ref=list()):
+def durR(linha,mapacomplocdur,ppq,ref=list()):
     if ref == []:
-        ref = ref_locdur(linha,mapa)
-    durR = locR(linha,mapa,ppq,ref)*ref[1][0]
+        ref = ref_locdur(linha,mapacomplocdur)
+    durR = locR(linha,mapacomplocdur,ppq,ref)*ref[1][0]
     return durR
 
-def durI(linha,mapa=tudaoteste.mapacomplocdur,ppq=tudaoteste.ppq,ref=list()):
+def durI(linha,mapacomplocdur,ppq,ref=list()):
     if ref == []:
-        ref = ref_locdur(linha,mapa)
-    durI = durR(linha,mapa,ppq,ref) + ref[3]
+        ref = ref_locdur(linha,mapacomplocdur)
+    durI = durR(linha,mapacomplocdur,ppq,ref) + ref[3]
     return durI
 
 #nao prestou
