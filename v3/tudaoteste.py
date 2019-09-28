@@ -2,7 +2,7 @@
 #limpa o arquivo de entrada e extrai as listas e constantes necessarias
 import f_limpaextrai
 import f_mapa
-import f_segmenta
+#import f_segmenta
 
 userinput = input('diretorio com arquivos midi de entrada: ')
 diretorio = f_limpaextrai.caminhos_midi(userinput)
@@ -22,35 +22,17 @@ notaslista = f_limpaextrai.notas_lista(entradalimpa)
 vozeslista = f_limpaextrai.vozes_lista(notaslista)
 
 #______________________________________________________
-#chega ate o mapa usado para calcular as caracteristicas de qualquer linha da entrada limpa
+#mapa
 
-#conversao da lista tempo em mapa de bpm
-mapabpm = []
-for linha in templimp:
-    compref = f_mapa.temp_comp(linha,complista)
-    bpm = f_mapa.bpmf(linha,compref)
-    mapabpm.append([linha[1], bpm])
- 
-#conversao da lista compasso em mapa de formulas localizações e durações
-if complista[0][1] == 0:
-    mapacomplocdur = []
-    mapacomplocdur = [[0, 1, 0.0]]
-    for posicao in range(len(complista)):
-        comp = f_mapa.comp(complista[posicao])
-        mapacomplocdur[posicao].insert(1,comp)
-        if posicao+1 < len(complista):
-            locR = f_mapa.locR(complista[posicao+1],complista[posicao],ppq)
-            durR = f_mapa.durR(complista[posicao+1],complista[posicao],ppq)
-            locC = int(locR + mapacomplocdur[posicao][2])
-            durI = durR + mapacomplocdur[posicao][3]
-            mapacomplocdur.append([complista[posicao+1][1], locC, durI])
-else:
-    raise ValueError('compasso nao comeca no 0')
+mapabpm = f_mapa.mapa_bpm(templimp, complista)
+mapalocdur = f_mapa.mapa_locdur(complista)
+mapacomplocdur = f_mapa.mapa_complocdur(mapalocdur, complista)
+
 
 #____________________________________________________________________
 #Segmenta
 
-p = 0
+'''p = 0
 lcomp = [[]]
 lbpm = [[]]
 llocC = [[]]
@@ -121,4 +103,4 @@ for compvoz, bpmvoz, locCvoz, locTvoz, intevoz, durvoz in zip(lcomp, lbpm, llocC
             #para isso preciso acrescentar no mapa complocdur a duracao em compassos
             #mudar as formulas f_ref para dar a duracao em compassos
 
-debug = final
+debug = final'''

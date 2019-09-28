@@ -1,3 +1,41 @@
+#as formulas mapa_ chaman todas as outras desses arquivo de formas diferentes
+#sao as unicas usadas diretamente pelo programa
+#conversao da lista tempo em mapa de bpm
+from tudaoteste import ppq as ppq
+
+
+def mapa_bpm(templimp,complista):
+    mapabpm = []
+    for linha in templimp:
+        compref = temp_comp(linha,complista)
+        bpm = bpmf(linha,compref)
+        mapabpm.append([linha[1], bpm])
+    return mapabpm
+ 
+#conversao da lista compasso em mapa de formulas localizações e durações
+def mapa_locdur(complista):
+    import f_mapa
+    if complista[0][1] == 0:
+        mapalocdur = [[0, 1, 0.0]]
+        for posicao in range(len(complista)):
+            if posicao+1 < len(complista):
+                locRr = locR(complista[posicao+1],complista[posicao],ppq)
+                durRr = durR(complista[posicao+1],complista[posicao],ppq)
+                locCr = int(locRr + mapalocdur[posicao][2])
+                durIr = durRr + mapalocdur[posicao][3]
+                mapalocdur.append([complista[posicao+1][1], locCr, durIr])
+    else:
+        raise ValueError('compasso nao comeca no 0')
+    return mapalocdur
+
+def mapa_complocdur(mapalocdur, complista):
+    for posicao in range(len(complista)):
+        mapacomplocdur = []
+        comp = comp(complista[posicao])
+        mapacomplocdur = mapalocdur[posicao].insert(1,comp)
+    return mapacomplocdur
+
+#____________________________________________________________________________________
 #recebe a mensagem de compasso e retorna a formula de compasso como musicos conhecem
 def comp(complinha):
     complinha = [num(complinha), den(complinha)]

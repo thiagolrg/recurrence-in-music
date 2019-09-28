@@ -1,4 +1,4 @@
-import limpaextraimapa
+'''import limpaextraimapa
 
 #____________________________________________________________________________________
 #formulas Ref.
@@ -88,4 +88,4 @@ def durI(linha,mapa=limpaextraimapa.mapacomplocdur,ppq=limpaextraimapa.ppq,ref=l
 #        return locT
 #    if 'durI' in lista:
 #        durI = durR + reflocdur[3]
-#        return durI
+#        return durI'''

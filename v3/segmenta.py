@@ -1,4 +1,4 @@
-import limpaextraimapa, f_segmenta
+'''import limpaextraimapa, f_segmenta
 
 vozeslista = limpaextraimapa.vozeslista
 nome = limpaextraimapa.nomemusica
