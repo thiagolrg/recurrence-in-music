@@ -1,3 +1,4 @@
+#____________________________________________________________________________________
 #recebe a mensagem de compasso e retorna a formula de compasso como musicos conhecem
 def comp(complinha):
     complinha = [num(complinha), den(complinha)]

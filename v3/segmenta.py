@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 '''import limpaextraimapa, f_segmenta
 =======
 import limpaextraimapa, f_segmenta
@@ -67,4 +65,4 @@ for locvoz, intevoz, durvoz in zip(loc,inte,dur):
         for posicao2 in range(posicao1, len(intevoz)):
             final.append([locvoz[posicao1], intevoz[posicao1:posicao2+1], durvoz[posicao1:posicao2+1]])
 
-debug = final
+debug = final'''

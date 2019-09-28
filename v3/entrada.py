@@ -4,20 +4,19 @@ import f_limpaextrai
 
 caminhosmidi = f_limpaextrai.caminhos_midi('C:\\Users\\Thiago.DESKTOP-13409IC\\Desktop\\Midicsv\\MIDIs')
 
-for caminhomidi in caminhosmidi:
-    entrada = f_limpaextrai.midi_csv(caminhomidi)
-    entradalimpa = f_limpaextrai.limpeza(entrada)
-    nomemusica = f_limpaextrai.tira_nome(caminhomidi)
-    tom = f_limpaextrai.tira_tom(entradalimpa)
-    modo = f_limpaextrai.tira_modo(entradalimpa)
+entrada = f_limpaextrai.midi_csv(caminhosmidi[0])
+entradalimpa = f_limpaextrai.limpeza(entrada)
+
+nomemusica = f_limpaextrai.tira_nome(caminhosmidi[0])
+tom = f_limpaextrai.tira_tom(entradalimpa)
+modo = f_limpaextrai.tira_modo(entradalimpa)
+ppq = f_limpaextrai.tira_ppq(entradalimpa)
 
 complista = f_limpaextrai.comp_lista(entradalimpa)
 templista = f_limpaextrai.temp_lista(entradalimpa)
 templimp = f_limpaextrai.templimp(templista)
 notaslista = f_limpaextrai.notas_lista(entradalimpa)
 vozeslista = f_limpaextrai.vozes_lista(notaslista)
-
-ppq = f_limpaextrai.tira_ppq(entradalimpa)
 
 #______________________________________________________
 #chega ate o mapa usado para calcular as caracteristicas de qualquer linha da entrada limpa
