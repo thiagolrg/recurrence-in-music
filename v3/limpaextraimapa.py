@@ -4,8 +4,8 @@ import f2_segmenta
 
 final = []
 
-userinput = input('diretorio com arquivos midi de entrada: ')
-listacaminhos = f_l.caminhos_midi(userinput)
+inputdiretorio = input('diretorio com arquivos midi de entrada: ')
+listacaminhos = f_l.caminhos_midi(inputdiretorio)
 
 for caminho in listacaminhos:
     entrada = f_l.midi_csv(caminho)
@@ -26,6 +26,6 @@ for caminho in listacaminhos:
     mapalocdur= f2_m.mapa_locdur(complista,ppq)
     mapacomplocdur = f2_m.mapa_complocdur(mapalocdur, complista)
 
-    final = f2_segmenta.tabela_final(nomemusica,tom, modo, vozeslista,mapacomplocdur, mapabpm, ppq, final)
+    final = f2_segmenta.tabela_final(nomemusica,tom, modo, vozeslista, mapacomplocdur, mapabpm, ppq, final)
 
 debug = final
