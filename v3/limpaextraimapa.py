@@ -1,11 +1,13 @@
 import f_limpaextrai as f_l
 import f2_mapa as f2_m
-import f2_segmenta
+import f2_segmenta as f2_s
 
 final = []
 
-inputdiretorio = input('diretorio com arquivos midi de entrada: ')
-listacaminhos = f_l.caminhos_midi(inputdiretorio)
+diretorio = input('diretorio com arquivos midi de entrada: ')
+nomecsv = input('nome do arquivo csv de saida: ')
+diretoriosaida = diretorio + '\\' + nomecsv +'.csv'
+listacaminhos = f_l.caminhos_midi(diretorio)
 
 for caminho in listacaminhos:
     entrada = f_l.midi_csv(caminho)
@@ -26,6 +28,11 @@ for caminho in listacaminhos:
     mapalocdur= f2_m.mapa_locdur(complista,ppq)
     mapacomplocdur = f2_m.mapa_complocdur(mapalocdur, complista)
 
-    final = f2_segmenta.tabela_final(nomemusica,tom, modo, vozeslista, mapacomplocdur, mapabpm, ppq, final)
+    final = f2_s.tabela_final(nomemusica,tom, modo, vozeslista, mapacomplocdur, mapabpm, ppq, final)
 
 debug = final
+
+import csv
+with open(diretoriosaida, 'w', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerows(final)
