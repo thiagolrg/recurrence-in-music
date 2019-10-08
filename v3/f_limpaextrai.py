@@ -37,7 +37,7 @@ def midi_csv(nome):
         entrada.append(linha.split(','))
     return entrada
 
-#faz uma lista contendo o arquivo de entrada completo
+#faz uma lista contendo o arquivo csv de entrada completo
 #substituido pela midi_csv
 def entrada_csv(caminho_csv):
     import csv
@@ -54,9 +54,10 @@ def limpeza(lista):
     for linha in lista:
         linhalimpa = []
         for valor in linha:
-            valor = valor.replace('\"','')
             valor = valor.strip()
-            if valor.isdigit():
+            valor = valor.replace('\"','')
+            valor = valor.replace('\'','')
+            if valor.lstrip('-').isdigit():
                 valor = int(valor)
             linhalimpa.append(valor)
         listalimpa.append(linhalimpa)
@@ -72,74 +73,69 @@ def tira_nome(caminhomidi):
     return nome
 
 #tira da lista o tom em letras: c = dó d = ré...
-def tira_tom(lista):
-    tom = []
-    for row in lista:
-        if 'Key_signature' in row:
-            if 'major' in row:
-                if row[3] == 0:
-                    tom = 'C'
-                elif row[3] == 1:
-                    tom = 'G'
-                elif row[3] == -1:
-                    tom = 'F'
-                elif row[3] == 2:
-                    tom = 'D'
-                elif row[3] == -2:
-                    tom = 'Bb'
-                elif row[3] == 3:
-                    tom = 'A'
-                elif row[3] == -3:
-                    tom = 'Eb'
-                elif row[3] == 4:
-                    tom = 'E'
-                elif row[3] == -4:
-                    tom = 'Ab'
-                elif row[3] == 5:
-                    tom = 'B'
-                elif row[3] == -5:
-                    tom = 'Db'
-                elif row[3] == 6:
-                    tom = 'F#'
-                elif row[3] == -6:
-                    tom = 'Gb'
-                elif row[3] == 7:
-                    tom = 'C#'
-                elif row[3] == -7:
-                    tom = 'Cb'
-                break
-            if 'minor' in row:
-                if row[3] == 0:
-                    tom = 'a'
-                elif row[3] == 1:
-                    tom = 'e'
-                elif row[3] == -1:
-                    tom = 'd'
-                elif row[3] == 2:
-                    tom = 'b'
-                elif row[3] == -2:
-                    tom = 'g'
-                elif row[3] == 3:
-                    tom = 'f#'
-                elif row[3] == -3:
-                    tom = 'c'
-                elif row[3] == 4:
-                    tom = 'c#'
-                elif row[3] == -4:
-                    tom = 'f'
-                elif row[3] == 5:
-                    tom = 'g#'
-                elif row[3] == -5:
-                    tom = 'bb'
-                elif row[3] == 6:
-                    tom = 'd#'
-                elif row[3] == -6:
-                    tom = 'eb'
-                elif row[3] == 7:
-                    tom = 'a#'
-                elif row[3] == -7:
-                    tom = 'ab'
-                break
+def tira_tom(row):
+    if 'major' in row:
+        if row[3] == 0:
+            tom = 'C'
+        elif row[3] == 1:
+            tom = 'G'
+        elif row[3] == -1:
+            tom = 'F'
+        elif row[3] == 2:
+            tom = 'D'
+        elif row[3] == -2:
+            tom = 'Bb'
+        elif row[3] == 3:
+            tom = 'A'
+        elif row[3] == -3:
+            tom = 'Eb'
+        elif row[3] == 4:
+            tom = 'E'
+        elif row[3] == -4:
+            tom = 'Ab'
+        elif row[3] == 5:
+            tom = 'B'
+        elif row[3] == -5:
+            tom = 'Db'
+        elif row[3] == 6:
+            tom = 'F#'
+        elif row[3] == -6:
+            tom = 'Gb'
+        elif row[3] == 7:
+            tom = 'C#'
+        elif row[3] == -7:
+            tom = 'Cb'
+    if 'minor' in row:
+        if row[3] == 0:
+            tom = 'a'
+        elif row[3] == 1:
+            tom = 'e'
+        elif row[3] == -1:
+            tom = 'd'
+        elif row[3] == 2:
+            tom = 'b'
+        elif row[3] == -2:
+            tom = 'g'
+        elif row[3] == 3:
+            tom = 'f#'
+        elif row[3] == -3:
+            tom = 'c'
+        elif row[3] == 4:
+            tom = 'c#'
+        elif row[3] == -4:
+            tom = 'f'
+        elif row[3] == 5:
+            tom = 'g#'
+        elif row[3] == -5:
+            tom = 'bb'
+        elif row[3] == 6:
+            tom = 'd#'
+        elif row[3] == -6:
+            tom = 'eb'
+        elif row[3] == 7:
+            tom = 'a#'
+        elif row[3] == -7:
+            tom = 'ab'
     return tom
 
 #retorna major ou minor a partir da lista
@@ -147,12 +143,8 @@ def tira_modo(lista):
     modo = []
     for row in lista:
         if 'Key_signature' in row:
-            if 'major' in row:
-                modo = 'major'
-                break            
-            elif 'minor' in row:
-                modo = 'minor'
-                break
+            modo = row[4]
+            break
     return modo
 
 #tira ppq da lista
@@ -176,10 +168,16 @@ def temp_lista(lista):
     tempolista = []
     for row in lista:
          if 'Tempo' in row:
-            tempolista.append(row)
+            if tempolista != []:
+                if tempolista[len(tempolista)-1][1] == row[1]:
+                    tempolista[len(tempolista)-1] = row
+                else:
+                    tempolista.append(row)
+            else:
+                tempolista.append(row)  
     return tempolista
 
-#tira repeticoes da templimp
+#tira repeticoes da templista
 def templimp(templista):
     templimp = []
     for posicao in range(len(templista)):
@@ -205,7 +203,6 @@ def notas_lista(lista):
 def vozes_lista(lista):
     voz = 0
     vozes = [[]]
-    lista = lista
     for posicao in range(len(lista)):
         vozes[voz].append(lista[posicao])
         if posicao+1 < len(lista):

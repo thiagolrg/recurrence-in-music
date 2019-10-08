@@ -24,7 +24,7 @@ def ref_locdur(linha,mapa):
 def comp_bpm(linha,mapa): 
     for posicaot in range(len(mapa)):
         if posicaot+1 == len(mapa):
-            ref = mapa[posicaot]
+            ref = mapa[posicaot][1]
         elif mapa[posicaot+1][0] > linha[1]:
             ref = mapa[posicaot][1]
             break
@@ -44,7 +44,7 @@ def locR(linha,mapacomplocdur,ppq,ref=list()):
 def locT(linha,mapacomplocdur,ppq,ref=list()):
     if ref == []:
         ref = ref_locdur(linha,mapacomplocdur)
-    locT = round(((locR(linha,mapacomplocdur,ppq,ref)%1)*ref[1][0])+1,2)
+    locT = round(((locR(linha,mapacomplocdur,ppq,ref)%1)*ref[1][0]),2)
     return locT
 
 def locC(linha,mapacomplocdur,ppq,ref=list()):

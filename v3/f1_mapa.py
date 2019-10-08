@@ -1,7 +1,7 @@
 #____________________________________________________________________________________
 #recebe a mensagem de compasso e retorna a formula de compasso como musicos conhecem
 def comp(complinha):
-    complinha = [num(complinha), den(complinha)]
+    complinha = (num(complinha), den(complinha))
     return  complinha
 
 #numerador do compasso
@@ -58,7 +58,7 @@ def temp_comp(linha,lista):
 #retorna o valor de metronomo e o bpm
 def bpmf(templinha,complinha):
     m = metron(complinha)
-    bpmf = [m, round(bpm1(templinha)/m,2)]
+    bpmf = (m, round(bpm1(templinha)/m,2))
     return bpmf
 
 #valor de tempo para calculo do bpm final
