@@ -19,5 +19,6 @@ for caminho in listacaminhos:
     #talvez tenha um jeito de fazer formulas unicas ou reduzir a quantidade de formulas
     mapaseg = f2_s.mapa_seg(notas, mapacomploc, mapabpm, ppq)
 
-    for locCvoz, locTvoz, intevoz, durvoz, compvoz, tempvoz in mapaseg:
-         debug = locCvoz
+    interunicosloc = f2_s.interunicos_loc(mapaseg)
+
+    debug = interunicosloc

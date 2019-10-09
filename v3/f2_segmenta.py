@@ -39,26 +39,30 @@ def mapa_seg(notas, mapacomploc, mapabpm, ppq):
                     mapaseg.append([])
                     p = p + 1
     return mapaseg
-'''
-    for compvoz, bpmvoz, locCvoz, locTvoz, intevoz, durvoz in zip(compvozes, tempvozes, locCvozes, locTvozes, intevozes, durvozes):
+
+def interunicos_loc(mapaseg):
+    interunicosloc = {}
+    v = 0
+    for locCvoz, locTvoz, intevoz, durvoz, compvoz, bpmvoz in mapaseg:
         v = v+1
         for posicao1 in range(len(intevoz)):
             for posicao2 in range(posicao1, len(intevoz)):
+                if (posicao2+1)-posicao1 > 6:
+                    break
+                if interunicosloc.get(tuple(intevoz[posicao1:posicao2+1])) == None: 
+                    interunicosloc.setdefault(tuple(intevoz[posicao1:posicao2+1]),
+                                    [(v, locCvoz[posicao1], locTvoz[posicao1], (posicao2+1)-posicao1)])
+                else:
+                     interunicosloc.setdefault(tuple(intevoz[posicao1:posicao2+1]),
+                                    interunicosloc.get(tuple(intevoz[posicao1:posicao2+1])).append((v, locCvoz[posicao1], locTvoz[posicao1], (posicao2+1)-posicao1)))
+    return interunicosloc
 
+'''         
                 musica.setdefault((v, locCvoz[posicao1], locTvoz[posicao1], (posicao2+1)-posicao1), 
                                  (tuple(intevoz[posicao1:posicao2+1]),
                                  tuple(durvoz[posicao1:posicao2+1]),
                                  tuple(compvoz[posicao1:posicao2+1]),
-                                 tuple(bpmvoz[posicao1:posicao2+1])))
-
-                if tuple(intevoz[posicao1:posicao2+1]) in teste.values(): 
-                    teste.setdefault(tuple(intevoz[posicao1:posicao2+1]),
-                                    (teste.get(tuple(intevoz[posicao1:posicao2+1])),
-                                    (v, locCvoz[posicao1], locTvoz[posicao1], (posicao2+1)-posicao1)))
-                else:
-                    teste.setdefault(tuple(intevoz[posicao1:posicao2+1]),
-                                    (v, locCvoz[posicao1], locTvoz[posicao1], (posicao2+1)-posicao1))
-                                    
+                                 tuple(bpmvoz[posicao1:posicao2+1])))                    
                 
                 comppronto = []
                 bpmpronto = []
@@ -74,4 +78,5 @@ def mapa_seg(notas, mapacomploc, mapabpm, ppq):
                                 comppronto, bpmpronto])
     testet = teste.items()
     finaldic.setdefault(nome, musica)
-    return (finalcsv, finaldic)'''
+    return (finalcsv, finaldic)
+'''
