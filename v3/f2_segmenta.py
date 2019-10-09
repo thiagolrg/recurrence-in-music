@@ -1,56 +1,64 @@
 #____________________________________________________________________
 #Segmenta
-import f1_segmenta
+import f1_segmenta as f1_s
 
-def musica_final(nome, tom, modo, vozeslista, mapacomplocdur, mapabpm, ppq, finalcsv, finaldic):
+def mapa_seg(notas, mapacomploc, mapabpm, ppq):
     p = 0
-    v = 0
-    lcomp = [[]]
-    lbpm = [[]]
-    llocC = [[]]
-    llocT = [[]]
-    inte = [[]]
-    dur = [[]]
-    musica = {'tom' : tom, 'modo' : modo}
-    for voz in vozeslista:
+    mapaseg = [[]]
+    for voz in notas:
+        locCvoz = []
+        locTvoz = []
+        intevoz = []
+        durvoz = []
+        compvoz = []
+        tempvoz = []
         for linha in range(len(voz)):
             if linha+1 < len(voz): 
-                comp = f1_segmenta.comp_bpm(voz[linha][0],mapacomplocdur)
-                bpm = f1_segmenta.comp_bpm(voz[linha][0],mapabpm)
-                reflocdur = f1_segmenta.ref_locdur(voz[linha][0],mapacomplocdur)
-                locC = f1_segmenta.locC(voz[linha][0], mapacomplocdur, ppq, ref=reflocdur)
-                locT = f1_segmenta.locT(voz[linha][0], mapacomplocdur, ppq, ref=reflocdur)
-                lcomp[p].append(comp)
-                lbpm[p].append(bpm)
-                llocC[p].append(locC)
-                llocT[p].append(locT)
+                reflocdur = f1_s.ref_locdur(voz[linha][0],mapacomploc)
                 non = voz[linha+1][0]
                 noff = voz[linha][1]
-                linhadur = f1_segmenta.durI(voz[linha][0],mapacomplocdur,ppq,ref=reflocdur)
-                nondur = f1_segmenta.durI(non,mapacomplocdur,ppq)
-                noffdur = f1_segmenta.durI(noff,mapacomplocdur,ppq)
-                inte[p].append(non[4]-voz[linha][0][4])
-                dur[p].append(nondur-linhadur)
-                #dur[p].append([nondur-linhadur, nondur-noffdur])
-            else:
-                if len(llocC) != len(vozeslista):
-                    lcomp.append([])
-                    lbpm.append([])
-                    llocC.append([])
-                    llocT.append([])
-                    inte.append([])
-                    dur.append([])
-                    p = p + 1
+                linhadur = f1_s.durI(voz[linha][0],mapacomploc,ppq,ref=reflocdur)
+                nondur = f1_s.durI(non,mapacomploc,ppq)
+                noffdur = f1_s.durI(noff,mapacomploc,ppq)
 
-    for compvoz, bpmvoz, locCvoz, locTvoz, intevoz, durvoz in zip(lcomp, lbpm, llocC, llocT, inte, dur):
+                locCvoz.append(f1_s.locC(voz[linha][0], mapacomploc, ppq, ref=reflocdur))
+                locTvoz.append(f1_s.locT(voz[linha][0], mapacomploc, ppq, ref=reflocdur))
+                intevoz.append(non[4]-voz[linha][0][4])
+                durvoz.append(nondur-linhadur)
+                compvoz.append(f1_s.comp_bpm(voz[linha][0],mapacomploc))
+                tempvoz.append(f1_s.comp_bpm(voz[linha][0],mapabpm))
+                #durvozes.append([nondur-linhadur, nondur-noffdur])
+            else:
+                mapaseg[p].append(tuple(locCvoz))
+                mapaseg[p].append(tuple(locTvoz))
+                mapaseg[p].append(tuple(intevoz))
+                mapaseg[p].append(tuple(durvoz))
+                mapaseg[p].append(tuple(compvoz))
+                mapaseg[p].append(tuple(tempvoz))
+                if len(mapaseg) != len(notas):
+                    mapaseg.append([])
+                    p = p + 1
+    return mapaseg
+'''
+    for compvoz, bpmvoz, locCvoz, locTvoz, intevoz, durvoz in zip(compvozes, tempvozes, locCvozes, locTvozes, intevozes, durvozes):
         v = v+1
         for posicao1 in range(len(intevoz)):
             for posicao2 in range(posicao1, len(intevoz)):
+
                 musica.setdefault((v, locCvoz[posicao1], locTvoz[posicao1], (posicao2+1)-posicao1), 
                                  (tuple(intevoz[posicao1:posicao2+1]),
                                  tuple(durvoz[posicao1:posicao2+1]),
                                  tuple(compvoz[posicao1:posicao2+1]),
                                  tuple(bpmvoz[posicao1:posicao2+1])))
+
+                if tuple(intevoz[posicao1:posicao2+1]) in teste.values(): 
+                    teste.setdefault(tuple(intevoz[posicao1:posicao2+1]),
+                                    (teste.get(tuple(intevoz[posicao1:posicao2+1])),
+                                    (v, locCvoz[posicao1], locTvoz[posicao1], (posicao2+1)-posicao1)))
+                else:
+                    teste.setdefault(tuple(intevoz[posicao1:posicao2+1]),
+                                    (v, locCvoz[posicao1], locTvoz[posicao1], (posicao2+1)-posicao1))
+                                    
                 
                 comppronto = []
                 bpmpronto = []
@@ -64,5 +72,6 @@ def musica_final(nome, tom, modo, vozeslista, mapacomplocdur, mapabpm, ppq, fina
                                 (v, locCvoz[posicao1], locTvoz[posicao1], (posicao2+1)-posicao1),
                                 tuple(intevoz[posicao1:posicao2+1]), tuple(durvoz[posicao1:posicao2+1]),
                                 comppronto, bpmpronto])
+    testet = teste.items()
     finaldic.setdefault(nome, musica)
-    return (finalcsv, finaldic)
+    return (finalcsv, finaldic)'''

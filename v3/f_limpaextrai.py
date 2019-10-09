@@ -27,7 +27,7 @@ def caminhos_midi(diretorio):
 #rece o caminho de um arquivo midi
 #cria uma lista em csv a partir do midi correspondente ao caminho
 #substitui o entrada_csv
-def midi_csv(nome):
+def entrada_midi(nome):
     import subprocess
     entrada = []
     listacsv = subprocess.run(['Midicsv.exe', nome], text=True, capture_output=True, shell=True)
@@ -35,17 +35,6 @@ def midi_csv(nome):
     separalinha = listacsv.stdout.splitlines()
     for linha in separalinha: #separa por virgula
         entrada.append(linha.split(','))
-    return entrada
-
-#faz uma lista contendo o arquivo csv de entrada completo
-#substituido pela midi_csv
-def entrada_csv(caminho_csv):
-    import csv
-    entrada = []
-    with open(caminho_csv) as arquivo:
-        reader = csv.reader(arquivo)
-        for row in reader:
-            entrada.append(row)
     return entrada
 
 #tira todos os espacos e transforma numeros em int na lista de entrada
@@ -56,7 +45,6 @@ def limpeza(lista):
         for valor in linha:
             valor = valor.strip()
             valor = valor.replace('\"','')
-            valor = valor.replace('\'','')
             if valor.lstrip('-').isdigit():
                 valor = int(valor)
             linhalimpa.append(valor)
@@ -138,75 +126,52 @@ def tira_tom(row):
             tom = 'ab'
     return tom
 
-#retorna major ou minor a partir da lista
-def tira_modo(lista):
-    modo = []
-    for row in lista:
-        if 'Key_signature' in row:
-            modo = row[4]
-            break
-    return modo
-
-#tira ppq da lista
-def tira_ppq(lista):
-    if 'Header' in lista[0]:
-        ppq = int(lista[0][5])
-        return ppq
-    else:
-        raise ValueError("Header nao identificado")
-
-#faz lista com os compassos filtrados da lista de entrada
-def comp_lista(lista):
-    complista = []
-    for linha in lista:
-         if 'Time_signature' in linha:
-            complista.append(linha)
-    return complista
-
-#faz lista com os tempos filtrados da lista de entrada
-def temp_lista(lista):
-    tempolista = []
-    for row in lista:
-         if 'Tempo' in row:
-            if tempolista != []:
-                if tempolista[len(tempolista)-1][1] == row[1]:
-                    tempolista[len(tempolista)-1] = row
-                else:
-                    tempolista.append(row)
-            else:
-                tempolista.append(row)  
-    return tempolista
-
-#tira repeticoes da templista
-def templimp(templista):
-    templimp = []
-    for posicao in range(len(templista)):
-        if posicao+1 == len(templista):
-            if templista[posicao][1] == templista[posicao-1][1]:
-                templimp.append(templista[posicao])
-            break
-        elif templista[posicao+1][1] == templista[posicao][1]:
-            continue
-        else:
-            templimp.append(templista[posicao])
-    return(templimp)
-
-#faz lista com as notas filtradas da lista de entrada
-def notas_lista(lista):
-    notaslista = []
-    for linha in lista:
-        if 'Note_on_c' in linha or 'Note_off_c' in linha:
-            notaslista.append(linha)
-    return notaslista
-
-#separa a lista notas por vozes(cada voz deve estar em uma track diferente do MIDI)
-def vozes_lista(lista):
+def limpa_extrai(entradalimpa):
     voz = 0
-    vozes = [[]]
-    for posicao in range(len(lista)):
-        vozes[voz].append(lista[posicao])
-        if posicao+1 < len(lista):
-            if lista[posicao+1][0] != lista[posicao][0]:
-                vozes.append([])
+    notas = [[]]
+    compassos = []
+    tempos = []
+    tom = str()
+    modo = str()
+    ppq = int()
+    for linha in entradalimpa:
+        if 'Note_on_c' in linha:
+            if notas == [[]]:
+                notas[voz].append(linha)
+            elif notas[voz][len(notas[voz])-1][1][0] == linha[0]:
+                notas[voz].append(linha)
+            else:
+                notas.append([])
                 voz = voz + 1
-    return vozes
+                notas[voz].append(linha)
+        elif 'Note_off_c' in linha:
+            if notas[voz][len(notas[voz])-1][4] == linha[4]:
+                notas[voz][len(notas[voz])-1] = [notas[voz][len(notas[voz])-1], linha]
+            else:
+                raise ValueError('Note_on_c correspondente nao encontrado')
+        elif 'Time_signature' in linha:
+            compassos.append(linha)
+        elif 'Tempo' in linha:
+            if tempos == []:
+                tempos.append(linha)
+            elif tempos[len(tempos)-1][1] != linha[1]:
+                tempos.append(linha)
+            else:
+                tempos[len(tempos)-1] = linha
+        elif 'Key_signature' in linha:
+            tom = tira_tom(linha)
+            modo = linha[4]
+        elif 'Header' in linha:
+            ppq = int(linha[5])
+    return(tom, modo, ppq, compassos, tempos, notas)
+
+#faz uma lista contendo o arquivo csv de entrada completo
+#substituido pela midi_csv
+def entrada_csv(caminho_csv):
+    import csv
+    entrada = []
+    with open(caminho_csv) as arquivo:
+        reader = csv.reader(arquivo)
+        for row in reader:
+            entrada.append(row)
+    return entrada
