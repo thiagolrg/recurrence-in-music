@@ -1,6 +1,7 @@
 import f_limpaextrai as f_l
 import f2_mapa as f2_m
 import f2_segmenta as f2_s
+import timeit
 
 finaldic = {}
 finalcsv = []
@@ -56,10 +57,11 @@ for caminho in listacaminhos:
     mapabpm = f2_m.mapa_bpm(tempos,compassos)
     mapacomploc = f2_m.mapa_locdur(compassos,ppq)
     finalcsv, finaldic = f2_s.musica_final(nomemusica, tom, modo, notas, mapacomploc, mapabpm, ppq, finalcsv, finaldic)
+    print(nomemusica, listacaminhos.index(caminho)+1, "de", len(listacaminhos), ((listacaminhos.index(caminho)+1)/(len(listacaminhos)))*100)
 
-debug = finalcsv
+debug = finaldic
 
-'''import csv
+'''
 with open(diretoriosaida, 'w', newline='') as f:
     writer = csv.writer(f)
     writer.writerows(final)'''
