@@ -15,10 +15,9 @@ for caminho in listacaminhos:
 
     mapabpm = f2_m.mapa_bpm(tempos,compassos)
     mapacomploc = f2_m.mapa_locdur(compassos,ppq)
-    #as formulas do mappcomploc (f1_m) e do mapaseg(f1_seg) são muito similares,
-    #talvez tenha um jeito de fazer formulas unicas ou reduzir a quantidade de formulas
     mapaseg = f2_s.mapa_seg(notas, mapacomploc, mapabpm, ppq)
 
     interunicosloc = f2_s.interunicos_loc(mapaseg)
+    interdurunicosloc = f2_s.interdurunicos_loc(mapaseg)
 
     debug = interunicosloc
