@@ -12,18 +12,6 @@
 #tempos
 #vozes
 
-#retorna uma lista com o caminho de todos os arquivos midi de um diretório
-def caminhos_midi(diretorio):
-    import os
-    path = diretorio
-    caminhos = []
-    # r=root, d=directories, f = files
-    for r, d, f in os.walk(path):
-        for file in f:
-            if '.mid' in file:
-                caminhos.append(os.path.join(r, file))
-    return caminhos
-
 #rece o caminho de um arquivo midi
 #cria uma lista em csv a partir do midi correspondente ao caminho
 #substitui o entrada_csv
@@ -50,15 +38,6 @@ def limpeza(lista):
             linhalimpa.append(valor)
         listalimpa.append(linhalimpa)
     return listalimpa
-
-#recebe o caminho midi e tira o nome do arquivo
-#o usuário tem que colocar o nome do arquivo como nome da música 
-def tira_nome(caminhomidi):
-    for linha in caminhomidi.split('\\'):
-        if '.mid' in linha:
-            nome = linha.replace('.mid','')
-            break
-    return nome
 
 #tira da lista o tom em letras: c = dó d = ré...
 def tira_tom(row):

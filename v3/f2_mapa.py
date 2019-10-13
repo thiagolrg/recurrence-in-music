@@ -12,7 +12,7 @@ def mapa_bpm(templimp,complista):
     return mapabpm
  
 #conversao da lista compasso em mapa de formulas localizações e durações
-def mapa_locdur(complista,ppq):
+def mapa_comploc(complista,ppq):
     if complista[0][1] == 0:
         mapalocdur = [[0, f1m.comp(complista[0]), 0, 0.0]]
         for posicao in range(len(complista)):
@@ -26,11 +26,3 @@ def mapa_locdur(complista,ppq):
     else:
         raise ValueError('compasso nao comeca no 0')
     return mapalocdur
-
-def mapa_complocdur(mapalocdur, complista):
-    mapacomplocdur = []
-    for posicao in range(len(complista)):
-        comp = f1m.comp(complista[posicao])
-        mapacomplocdur.append(mapalocdur[posicao])
-        mapacomplocdur[posicao].insert(1,comp)
-    return mapacomplocdur
