@@ -1,13 +1,6 @@
-a = {'inte1': [('nome1',1,2),('nome2',1,2),('nome2',1,2)], 'inte2': [('nome',1,2),('nome',1,2),('nome',1,2)]}
+import f_diretorios as f_d
 
-def emmaisdeuma(dicio):
-    musicas = set()
-    for valores in a['inte1']:
-        musicas.add(valores[0])
-    if len(musicas) > 1:
-        return ('inte1', valores)
-
-teste = emmaisdeuma(a)
-
-debug = teste
-
+diretorio = f_d.diretorio('ler', '.analise')
+caminho = f_d.caminhos_arquivo(diretorio, '.analise')
+pronto = f_d.le_arquivo(caminho[0], 'rb')
+debug = pronto
