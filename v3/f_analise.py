@@ -24,8 +24,13 @@ def sort_tamanhoSI(item):
 def sort_quantidadeLOC(item):
     return len(item[1])
 
-def interdurunicos_loc(mapamus, diretorio, nome, arquivo):
-    interdurunicosloc = {}
+def interdurunicos_loc(mapamus, arquivoanalise):
+    import pickle
+    try:
+        with open(arquivoanalise, 'rb') as arquivo:
+            analise = pickle.loads(arquivo.read())
+    except FileNotFoundError:
+        analise = {}
     for v, voz in mapamus['vozes'].items():
         for posicao1 in range(len(voz['inte'])):
             for posicao2 in range(posicao1, len(voz['inte'])):
@@ -37,19 +42,19 @@ def interdurunicos_loc(mapamus, diretorio, nome, arquivo):
                 tamanho = ((posicao2 + 1) - posicao1)
                 valor = (mapamus['nome'], v, locC, locT, tamanho)
 
-                interdurunicosloc.setdefault(intedurseg, []).append(valor)
-    f_d.grava_arquivo(diretorio, arquivo, '.analise', interdurunicosloc, 'w+b')
-    return (arquivo+' atualizado')
+                analise.setdefault(intedurseg, []).append(valor)
+    f_d.grava_arquivo(arquivoanalise, analise, 'w+b')
+    return (arquivoanalise+' atualizado')
 
 def filtro_maisde1musica(arquivo):
     arquivopronto = {}
-    for chave, valor in sorted(arquivo.items(), key=sort_quantidadeLOC, reverse=True):
+    for chave, valor in sorted(arquivo.items(), key=sort_tamanhoSI, reverse=True):
         musicas = set()
         if len(valor) > 1:
             for v in valor:
                 musicas.add(v[0])
-                if len(musicas) > 1:
-                    arquivopronto.setdefault(chave,valor)
+            if len(musicas) > 1:
+                arquivopronto.setdefault(chave,valor)
     return arquivopronto    
 
 '''                musica.setdefault((v, locCvoz[posicao1], locTvoz[posicao1], (posicao2+1)-posicao1), 
