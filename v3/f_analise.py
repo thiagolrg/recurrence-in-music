@@ -19,21 +19,16 @@ def interunicos_loc(mapamus):
     return interunicosloc
 
 def sort_tamanhoSI(item):
-    return item[1][0][3]
+    return len(item[0][0])
 
 def sort_quantidadeLOC(item):
     return len(item[1])
 
-def interdurunicos_loc(mapamus, arquivoanalise):
-    import pickle
-    try:
-        with open(arquivoanalise, 'rb') as arquivo:
-            analise = pickle.loads(arquivo.read())
-    except FileNotFoundError:
-        analise = {}
+def interdurunicos_loc(interdurunicoloc, mapamus, nomemapamus):
     for v, voz in mapamus['vozes'].items():
         for posicao1 in range(len(voz['inte'])):
             for posicao2 in range(posicao1, len(voz['inte'])):
+
                 inteseg = tuple(voz['inte'][posicao1:posicao2+1])
                 durseg = tuple(voz['dur'][posicao1:posicao2+1])
                 intedurseg = (inteseg, durseg)
@@ -42,20 +37,20 @@ def interdurunicos_loc(mapamus, arquivoanalise):
                 tamanho = ((posicao2 + 1) - posicao1)
                 valor = (mapamus['nome'], v, locC, locT, tamanho)
 
-                analise.setdefault(intedurseg, []).append(valor)
-    f_d.grava_arquivo(arquivoanalise, analise, 'w+b')
-    return (arquivoanalise+' atualizado')
+                interdurunicoloc.setdefault(intedurseg, []).append(valor)
+                if type(interdurunicoloc[intedurseg][0]) != dict:
+                    interdurunicoloc[intedurseg].insert(0 ,{'name' : set()})
+                interdurunicoloc[intedurseg][0]['name'].add(mapamus['nome'])
+    print(nomemapamus+' analisado')
+    return (interdurunicoloc)
 
-def filtro_maisde1musica(arquivo):
-    arquivopronto = {}
-    for chave, valor in sorted(arquivo.items(), key=sort_tamanhoSI, reverse=True):
-        musicas = set()
-        if len(valor) > 1:
-            for v in valor:
-                musicas.add(v[0])
-            if len(musicas) > 1:
-                arquivopronto.setdefault(chave,valor)
-    return arquivopronto    
+def filtro_maisde1musica(dicio):
+    pronto = {}
+    for chave, valor in sorted(dicio.items(), key=sort_tamanhoSI, reverse=True):
+        if len(valor[0]['name']) > 1:
+            pronto.setdefault(chave,valor[1:])
+    print('filtro_maisde1musica ok')
+    return pronto    
 
 '''                musica.setdefault((v, locCvoz[posicao1], locTvoz[posicao1], (posicao2+1)-posicao1), 
                                  (tuple(intevoz[posicao1:posicao2+1]),

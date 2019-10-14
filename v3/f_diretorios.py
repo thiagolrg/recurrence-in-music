@@ -37,22 +37,14 @@ def nome_arquivo(caminho, extensao):
             break
     return nome
 
-def grava_arquivo(diretorio, arquivo, write):
+def escreve_arquivo(diretorio, nome, arquivo, write):
    import pickle
-   try:
-      with open(diretorio, write) as f:
-         pickle.dump(arquivo, f)
-   except FileExistsError:
-      raise FileExistsError(diretorio+" ja existe. para truncar arquivos passe write='wb'")
-   if write == 'xb':
-      return(diretorio+' arquivo criado')
-   if write == 'wb':
-      return(diretorio+' arquivo truncado ou criado')
-   if write == 'ab':
-      return(diretorio+' arquivo acrescentado')
+   with open(diretorio+'\\'+nome, write) as f:
+      pickle.dump(arquivo, f)
+   return print(nome+' escrito')
 
-def le_mapamus(caminho, read):
+def le_arquivo(caminho, read):
    import pickle
-   with open(caminho, read) as arquivo:
-      mapamus = pickle.loads(arquivo.read())
-   return mapamus
+   with open(caminho, read) as f:
+      arquivo = pickle.loads(f.read())
+   return arquivo

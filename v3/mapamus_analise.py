@@ -4,13 +4,32 @@ import os
 
 dimapamus = f_d.diretorio('ler','.mapamus')
 dianalise = f_d.diretorio('gravar', '.analise')+'\\'+'analise'
+caminhosmapamusler = f_d.caminhos_arquivo(dimapamus, '.mapamus')
+os.makedirs(dianalise, exist_ok=True)
+
+interdurunicoloc = {}
+for caminho in caminhosmapamusler:
+    nomemapamus = f_d.nome_arquivo(caminho, '.mapamus')
+    mapamus = f_d.le_arquivo(caminho, 'rb')
+    interdurunicoloc = f_a.interdurunicos_loc(interdurunicoloc, mapamus, nomemapamus)
+    
+    print(caminhosmapamusler.index(caminho)+1,' de ',len(caminhosmapamusler))
+
+interdurunicoloc = f_a.filtro_maisde1musica(interdurunicoloc)
+f_d.escreve_arquivo(dianalise, 'interdurunico_loc.analise', interdurunicoloc, 'wb')
+pronto = f_d.le_arquivo(dianalise+'interdurunico_loc.analise', 'rb')
+
+
+
+'''dimapamus = f_d.diretorio('ler','.mapamus')
+dianalise = f_d.diretorio('gravar', '.analise')+'\\'+'analise'
 listacaminhos = f_d.caminhos_arquivo(dimapamus, '.mapamus')
 os.makedirs(dianalise, exist_ok=True)
 arquivoanalise = dianalise+'\\'+'interdur_loc em mais de uma musica.analise'
 
-'''ajeitar o caos do moludo f_d, principalmente as funcoes de escrever e ler arquivos
+ajeitar o caos do moludo f_d, principalmente as funcoes de escrever e ler arquivos
 definir um momento exato para declarar a existencia do arquivo de analise
-e manter essa declaracao durente todo esse modulo'''
+e manter essa declaracao durente todo esse modulo
 
 for caminho in listacaminhos:
     nomemus = f_d.nome_arquivo(caminho, '.mapamus')
@@ -20,4 +39,4 @@ for caminho in listacaminhos:
     print(interdurloc+' com '+nomemus)
 
 analise = f_d.le_mapamus(arquivoanalise, 'rb')
-resultado = f_a.filtro_maisde1musica(analise)
+resultado = f_a.filtro_maisde1musica(analise)'''
