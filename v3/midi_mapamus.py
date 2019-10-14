@@ -19,5 +19,5 @@ for caminho in listacaminhos:
     mapacomploc = f2_m.mapa_comploc(compassos,ppq)
     mapamus = f2_s.mapa_mus(nome, tom, modo, notas, mapacomploc, mapabpm, ppq)
 
-    salvo = f_d.grava_mapamus(dimapamus, mapamus, nome)
+    salvo = f_d.grava_arquivo(dimapamus, nome, '.mapamus', mapamus,'xb')
     print(salvo, (listacaminhos.index(caminho)+1),' de ',len(listacaminhos))
