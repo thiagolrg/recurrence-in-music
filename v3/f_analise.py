@@ -28,7 +28,7 @@ def filtro_maisde1musica(dicio):
 
     for chave1, valores1 in (pronto.copy()).items():
         for chave2, valores2 in (pronto.copy()).items():
-            if len(chave2[0]) < len(chave1[0]) and str(chave2[0]).strip('()') in str(chave1[0]) and str(chave2[1]).strip('()') in str(chave1[1]):
+            if len(chave2[0]) < len(chave1[0]) and lista_in(chave2, chave1) == True:
                 a=0
                 for valor1 in valores1:
                     p=0
@@ -43,6 +43,14 @@ def filtro_maisde1musica(dicio):
                     pronto.pop(chave2)
     print('filtro_maisde1musica ok')
     return pronto  
+
+def lista_in(menor, maior):
+    for posicao in range(len(maior[0])):
+        t1 = maior[0][posicao:(posicao+len(menor[0]))]
+        t2 = maior[1][posicao:(posicao+len(menor[1]))]
+        if t1 == menor[0] and t2 == menor[1]:
+            return True
+    return False
 
 def sort_tamanhoSI(item):
     return len(item[0][0])
