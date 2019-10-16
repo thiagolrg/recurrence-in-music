@@ -22,7 +22,7 @@ def interdurunicos_loc(interdurunicoloc, mapamus, nomemapamus):
 
 def filtro_maisde1musica(dicio):
     pronto = {}
-    for chave, valor in sorted(dicio.items(), key=sort_tamanhoSI, reverse=True):
+    for chave, valor in sorted(dicio.items(), key=lambda item: (len(item[0][0]), len(item[1])), reverse=True):
         if len(valor[0]['name']) > 1:
             pronto.setdefault(chave,valor[1:])
 
@@ -43,8 +43,13 @@ def filtro_maisde1musica(dicio):
                     pronto.pop(chave2)
                 elif a == 1 and len(set([x[0] for x in valores2])) == 1:
                     pronto.pop(chave2)
-    print('filtro_maisde1musica ok')
-    return pronto  
+
+    for chave, valores in pronto.items():
+        valoreslimpos = [valor[:-1] for valor in valores]
+        pronto.setdefault(chave, valoreslimpos)
+
+    print('filtros ok')
+    return pronto
 
 def lista_in(menor, maior):
     for posicao in range(len(maior[0])):
