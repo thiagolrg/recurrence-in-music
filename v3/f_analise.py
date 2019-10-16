@@ -27,6 +27,8 @@ def filtro_maisde1musica(dicio):
             pronto.setdefault(chave,valor[1:])
 
     for chave1, valores1 in (pronto.copy()).items():
+        if valores1 == []:
+            continue 
         for chave2, valores2 in (pronto.copy()).items():
             if len(chave2[0]) < len(chave1[0]) and lista_in(chave2, chave1) == True:
                 a=0
