@@ -1,7 +1,7 @@
 #chama um subprocesso para converer o midi em CSV
-def midi_csv(nome):
+def midi_csv(caminho):
     import subprocess
-    return subprocess.run(['Midicsv.exe', nome], text=True, capture_output=True, shell=True).stdout.splitlines()
+    return subprocess.run(['Midicsv.exe', caminho], text=True, capture_output=True, shell=True).stdout.splitlines()
     # o midicsv.exe é executado externamente e não pode estar em outro diretório
 
 #tira todos os espacos e transforma numeros em int na lista de entrada
