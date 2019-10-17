@@ -5,8 +5,9 @@ import f_diretorios as f_d
 import os
 
 dimidi = f_d.diretorio('ler','.mid')
-dimapamus = f_d.diretorio('gravar', '.mapamus')+'\\'+'mapamus'
 caminhosmidiler = f_d.caminhos_arquivo(dimidi, '.mid')
+
+dimapamus = f_d.diretorio('gravar', '.mapamus')+'\\'+'mapamus'
 os.makedirs(dimapamus, exist_ok=True)
 
 for caminho in caminhosmidiler:
@@ -16,7 +17,7 @@ for caminho in caminhosmidiler:
     tom, modo, ppq, compassos, tempos, notas = f_l.limpa_extrai(entradalimpa)
 
     mapabpm = f2_m.mapa_bpm(tempos,compassos)
-    mapacomploc = f2_m.mapa_comploc(compassos,ppq)
+    mapacomploc = f2_m .mapa_comploc(compassos,ppq)
     mapamus = f2_s.mapa_mus(nome, tom, modo, notas, mapacomploc, mapabpm, ppq)
 
     f_d.escreve_arquivo(dimapamus, nome+'.mapamus', mapamus,'xb')

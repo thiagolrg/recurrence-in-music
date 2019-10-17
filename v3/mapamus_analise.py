@@ -13,15 +13,21 @@ for caminho in caminhosmapamusler:
     nomemapamus = f_d.nome_arquivo(caminho, '.mapamus')
     mapamus = f_d.le_arquivo(caminho, 'rb')
     interdurunicoloc = f_a.interdurunicos_loc(interdurunicoloc, mapamus, nomemapamus)
-    
     print(caminhosmapamusler.index(caminho)+1,' de ',len(caminhosmapamusler))
 
 interdurunicoloc = f_a.filtro_maisde1musica(interdurunicoloc)
-f_d.escreve_arquivo(dianalise, nomeanalise+'.analise', interdurunicoloc, 'wb')
+interdurunicoloc = f_a.sort_tamSIquanLOC(interdurunicoloc)
+'''
+f_d.escreve_arquivo(dianalise, nomeanalise+', filtro mais de uma musica.analise', interdurunicoloc, 'wb')
+f_d.escreve_txt(dianalise, nomeanalise+', filtro mais de uma musica.txt', interdurunicoloc)
+interdurunicoloc_ni = f_a.nested_identificados(interdurunicoloc)
+f_d.escreve_arquivo(dianalise, nomeanalise+', nested marcados.analise', interdurunicoloc, 'wb')
+f_d.escreve_txt(dianalise, nomeanalise+', nested marcados.txt', interdurunicoloc)
+'''
+interdurunicoloc_fn = f_a.filtro_nested(interdurunicoloc)
+f_d.escreve_arquivo(dianalise, nomeanalise+', filtro nested.analise', interdurunicoloc, 'wb')
+f_d.escreve_txt(dianalise, nomeanalise+', filtro nested.txt', interdurunicoloc)
 
-with open(dianalise+'\\'+nomeanalise+'.txt', 'w') as f:
-    linha = 0
-    for items in interdurunicoloc.items():
-        linha = linha + 1
-        print(linha,'.   ',items,'\n',file=f)
-
+interdurunicoloc_limpo = f_a.limpa_posicoes(interdurunicoloc_fn)
+f_d.escreve_arquivo(dianalise, nomeanalise+', filtro nested sem posicoes.analise', interdurunicoloc, 'wb')
+f_d.escreve_txt(dianalise, nomeanalise+', filtro nested sem posicoes.txt', interdurunicoloc)

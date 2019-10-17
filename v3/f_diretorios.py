@@ -37,6 +37,14 @@ def nome_arquivo(caminho, extensao):
             break
     return nome
 
+def escreve_txt(diretorio, nome, parasalvar):
+    with open(diretorio+'\\'+nome, 'w') as f:
+        linha = 0
+        for items in parasalvar.items():
+            linha = linha + 1
+            print(linha,'.   ',items,'\n',file=f)
+    print(nome+' escrito')
+
 def escreve_arquivo(diretorio, nome, arquivo, write):
    import pickle
    with open(diretorio+'\\'+nome, write) as f:
@@ -48,3 +56,4 @@ def le_arquivo(caminho, read):
    with open(caminho, read) as f:
       arquivo = pickle.loads(f.read())
    return arquivo
+

@@ -17,39 +17,88 @@ def interdurunicos_loc(interdurunicoloc, mapamus, nomemapamus):
                 if type(interdurunicoloc[intedurseg][0]) != dict:
                     interdurunicoloc[intedurseg].insert(0 ,{'name' : set()})
                 interdurunicoloc[intedurseg][0]['name'].add(mapamus['nome'])
-    print(nomemapamus+' analisado')
+    print(nomemapamus+' analisado por interdurunicos_loc')
     return (interdurunicoloc)
 
-def filtro_maisde1musica(dicio):
+def filtro_maisde1musica(entrada):
     pronto = {}
-    for chave, valor in sorted(dicio.items(), key=lambda item: (len(item[0][0]), len(item[1])), reverse=True):
+    for chave, valor in entrada.items():
         if len(valor[0]['name']) > 1:
             pronto.setdefault(chave,valor[1:])
+    print('filtro_maisde1musica ok')
+    return pronto
 
-    for chave1, valores1 in (pronto.copy()).items():
+def sort_tamSIquanLOC(entrada):
+    pronto = {}
+    for chave, valor in sorted(entrada.items(), key=lambda item: (len(item[0][0]), len(item[1])), reverse=True):
+        pronto.setdefault(chave, valor)
+    print('sort_tamSIquanLOC ok')
+    return pronto
+
+def nested_identificados(entrada):
+    for chave1, valores1 in (entrada.copy()).items():
+        if 'caso 1' in valores1[0][0]:
+            continue 
+        for chave2, valores2 in (entrada.copy()).items():
+            if len(chave2[0]) < len(chave1[0]) and lista_in(chave2, chave1) == True:
+                a=0
+                for valor1 in valores1:
+                    if 'caso' in valor1[0]:
+                        continue
+                    p=0
+                    while p < len(valores2):
+                        if 'caso' in valores2[p][0]:
+                            p += 1
+                            continue
+                        if valores2[p][5][0] >= valor1[5][0] and valores2[p][5][1] <= valor1[5][1] and valores2[p][0:2] == valor1[0:2]:
+                            entrada[chave2].pop(entrada[chave2].index(valores2[p]))
+                            a = 1
+                        p += 1
+                p = 0
+                while p < len(valores2):
+                    if 'caso' in valores2[p][0]:
+                        p += 1
+                    else:
+                        break
+                if a == 1  and p == len(valores2):
+                    entrada.setdefault(chave2).insert(0, ('caso 1', chave1))
+                    continue
+                if a == 1 and len(set([x[0] for x in valores2[p:]])) == 1:
+                    entrada.setdefault(chave2).insert(0, ('caso 2', chave1))
+                    continue
+                if a == 1:
+                    entrada.setdefault(chave2).insert(0, ('caso 3', chave1))
+                    continue
+    print('nested_identificados ok')
+    return entrada
+
+def filtro_nested(entrada):
+    for chave1, valores1 in (entrada.copy()).items():
         if valores1 == []:
             continue 
-        for chave2, valores2 in (pronto.copy()).items():
+        for chave2, valores2 in (entrada.copy()).items():
             if len(chave2[0]) < len(chave1[0]) and lista_in(chave2, chave1) == True:
                 a=0
                 for valor1 in valores1:
                     p=0
                     while p < len(valores2):
                         if valores2[p][5][0] >= valor1[5][0] and valores2[p][5][1] <= valor1[5][1] and valores2[p][0:2] == valor1[0:2]:
-                            pronto[chave2].pop(pronto[chave2].index(valores2[p]))
+                            entrada[chave2].pop(entrada[chave2].index(valores2[p]))
                             a = 1
                         p += 1
                 if a == 1  and valores2 == []:
-                    pronto.pop(chave2)
+                    entrada.pop(chave2)
                 elif a == 1 and len(set([x[0] for x in valores2])) == 1:
-                    pronto.pop(chave2)
+                    entrada.pop(chave2)
+    print('filtro_nested ok')
+    return entrada
 
-    for chave, valores in pronto.items():
+def limpa_posicoes(entrada):
+    for chave, valores in entrada.items():
         valoreslimpos = [valor[:-1] for valor in valores]
-        pronto.setdefault(chave, valoreslimpos)
-
-    print('filtros ok')
-    return pronto
+        entrada.setdefault(chave, valoreslimpos)
+    print('limpa_posicoes ok')
+    return entrada
 
 def lista_in(menor, maior):
     for posicao in range(len(maior[0])):
@@ -59,15 +108,15 @@ def lista_in(menor, maior):
             return True
     return False
 
+'''
 def sort_tamanhoSI(item):
     return len(item[0][0])
 
 def sort_quantidadeLOC(item):
     return len(item[1])  
-
-'''                
+                
 def interunicos_loc(mapamus):
-    interunicosloc = {}
+    interunicosloc = 
     v = 0
     for locCvoz, locTvoz, intevoz, durvoz, compvoz, bpmvoz in mapamus:
         v = v+1
