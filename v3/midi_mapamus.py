@@ -1,24 +1,35 @@
-import f_limpaextrai as f_l 
-import f2_mapa as f2_m
-import f2_segmenta as f2_s
-import f_diretorios as f_d
 import os
+import diretorios as di
+import limpa_extrai as le
+import mapa_bpm as mb
+import mapa_complocdur as mcld
+import mapa_mus as mm
 
-dimidi = f_d.diretorio('ler','.mid')
-caminhosmidiler = f_d.caminhos_arquivo(dimidi, '.mid')
-
-dimapamus = f_d.diretorio('gravar', '.mapamus')+'\\'+'mapamus'
+#1 diretórios
+dimidi = di.diretorio('ler','.mid')
+caminhosmidiler = di.caminhos_arquivo(dimidi, '.mid')
+dimapamus = di.diretorio('gravar', '.mapamus')+'\\'+'mapamus'
 os.makedirs(dimapamus, exist_ok=True)
 
 for caminho in caminhosmidiler:
-    entrada = f_l.entrada_midi(caminho)
-    entradalimpa = f_l.limpeza(entrada)
-    nome = f_d.nome_arquivo(caminho,'.mid')
-    tom, modo, ppq, compassos, tempos, notas = f_l.limpa_extrai(entradalimpa)
+    #2 limpa extrai
+    nome = di.nome_arquivo(caminho,'.mid')
+    entrada = le.midi_csv(caminho)
+    entradalimpa = le.limpa(entrada)
+    tom, modo, ppq, compassos, tempos, notas = le.extrai(entradalimpa)
 
-    mapabpm = f2_m.mapa_bpm(tempos,compassos)
-    mapacomploc = f2_m .mapa_comploc(compassos,ppq)
-    mapamus = f2_s.mapa_mus(nome, tom, modo, notas, mapacomploc, mapabpm, ppq)
+    #3 mapabpm
+    mapabpm = mb.mapa_bpm(tempos,compassos)
 
-    f_d.escreve_arquivo(dimapamus, nome+'.mapamus', mapamus,'xb')
+    #4 mapacomplocdur
+    mapacomplocdur = mcld.mapa_complocdur(compassos,ppq)
+
+    #5 mapamus
+    mapamus = mm.mapa_mus(notas, mapacomplocdur, mapabpm, ppq)
+    mapamus.setdefault('nome', nome)
+    mapamus.setdefault('tom', tom)
+    mapamus.setdefault('modo', modo)
+    
+    #6 salva o resultado
+    di.escreve_arquivo(dimapamus, nome+'.mapamus', mapamus,'xb')
     print((caminhosmidiler.index(caminho)+1),' de ',len(caminhosmidiler))

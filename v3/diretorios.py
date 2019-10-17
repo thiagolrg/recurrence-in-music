@@ -33,9 +33,7 @@ def caminhos_arquivo(diretorio, extensao):
 def nome_arquivo(caminho, extensao):
     for linha in caminho.split('\\'):
         if extensao in linha:
-            nome = linha.replace(extensao,'')
-            break
-    return nome
+            return linha.replace(extensao,'')
 
 def escreve_txt(diretorio, nome, parasalvar):
     with open(diretorio+'\\'+nome, 'w') as f:
