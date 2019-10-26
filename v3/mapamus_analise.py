@@ -1,5 +1,5 @@
-import f_diretorios as f_d
-import f_analise as f_a
+import diretorios as f_d
+import analises as f_a
 import os
 
 dimapamus = f_d.diretorio('ler','.mapamus')
@@ -12,12 +12,19 @@ interdurunicoloc = {}
 for caminho in caminhosmapamusler:
     nomemapamus = f_d.nome_arquivo(caminho, '.mapamus')
     mapamus = f_d.le_arquivo(caminho, 'rb')
+    analise = f_a.interdurunicos_maisoumenos_loc(interdurunicoloc, mapamus, nomemapamus)
+    interdurunicoloc = f_a.filtro_maisde1musica(interdurunicoloc)
+    interdurunicoloc = f_a.sort_tamSIquanLOC(interdurunicoloc)
+    f_d.escreve_arquivo(dianalise, nomeanalise+', filtro mais de uma musica.analise', interdurunicoloc, 'wb')
+    f_d.escreve_txt(dianalise, nomeanalise+', filtro mais de uma musica.txt', interdurunicoloc)
+
+'''
     interdurunicoloc = f_a.interdurunicos_loc(interdurunicoloc, mapamus, nomemapamus)
     print(caminhosmapamusler.index(caminho)+1,' de ',len(caminhosmapamusler))
 
 interdurunicoloc = f_a.filtro_maisde1musica(interdurunicoloc)
 interdurunicoloc = f_a.sort_tamSIquanLOC(interdurunicoloc)
-'''
+
 f_d.escreve_arquivo(dianalise, nomeanalise+', filtro mais de uma musica.analise', interdurunicoloc, 'wb')
 f_d.escreve_txt(dianalise, nomeanalise+', filtro mais de uma musica.txt', interdurunicoloc)
 interdurunicoloc_ni = f_a.nested_identificados(interdurunicoloc)

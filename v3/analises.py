@@ -1,4 +1,4 @@
-import f_diretorios as f_d
+import diretorios as f_d
 
 def interdurunicos_loc(interdurunicoloc, mapamus, nomemapamus):
     for v, voz in mapamus['vozes'].items():
@@ -19,6 +19,47 @@ def interdurunicos_loc(interdurunicoloc, mapamus, nomemapamus):
                 interdurunicoloc[intedurseg][0]['name'].add(mapamus['nome'])
     print(nomemapamus+' analisado por interdurunicos_loc')
     return (interdurunicoloc)
+
+def interdurunicos_maisoumenos_loc(interdurunicoloc, mapamus, nomemapamus):
+    for v, voz in mapamus['vozes'].items():
+        for posicao1 in range(len(voz['inte'])):
+            for posicao2 in range(posicao1, len(voz['inte'])):
+                locA = (posicao1, posicao2+1)
+                inteseg = tuple(voz['inte'][posicao1:posicao2+1])
+                durseg = tuple(voz['dur'][posicao1:posicao2+1])
+                intedurseg = (inteseg, durseg)
+                locC = voz['locC'][posicao1]
+                locT = voz['locT'][posicao1]
+                tamanho = ((posicao2 + 1) - posicao1)
+                valor = (mapamus['nome'], v, locC, locT, tamanho, locA)
+
+                for seginte in interdurunicoloc.keys():
+                    if len(seginte[0]) == len(inteseg):
+                        maisoumenos = mais_ou_menos(inteseg, seginte[0])
+                        if maisoumenos == False:
+                            continue
+                        elif maisoumenos != 0 and seginte[1] == durseg:
+                            valor = (mapamus['nome'], v, locC, locT, tamanho, locA, maisoumenos)
+                            interdurunicoloc[seginte].append(valor)
+                
+                interdurunicoloc.setdefault(intedurseg, []).append(valor)
+                if type(interdurunicoloc[intedurseg][0]) != dict:
+                    interdurunicoloc[intedurseg].insert(0 ,{'name' : set()})
+                interdurunicoloc[intedurseg][0]['name'].add(mapamus['nome'])
+    print(nomemapamus+' analisado por interdurunicos_loc')
+    return (interdurunicoloc)
+
+def mais_ou_menos(seginte1, seginte2):
+    i = 0
+    for p in range(len(seginte1)):
+        if seginte1[p] == seginte2[p]:
+            continue
+        elif seginte1[p] + 1 == seginte2[p] or seginte1[p] - 1 == seginte2[p]:
+            i = i + 1
+        else:
+            return False
+    return i
+
 
 def filtro_maisde1musica(entrada):
     pronto = {}
