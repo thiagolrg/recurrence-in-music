@@ -12,13 +12,14 @@ interdurunicoloc = {}
 for caminho in caminhosmapamusler:
     nomemapamus = f_d.nome_arquivo(caminho, '.mapamus')
     mapamus = f_d.le_arquivo(caminho, 'rb')
-    analise = f_a.interdurunicos_maisoumenos_loc(interdurunicoloc, mapamus, nomemapamus)
+    interdurunicoloc = f_a.interdurunicos_loc(interdurunicoloc, mapamus, nomemapamus)
     interdurunicoloc = f_a.filtro_maisde1musica(interdurunicoloc)
     interdurunicoloc = f_a.sort_tamSIquanLOC(interdurunicoloc)
     f_d.escreve_arquivo(dianalise, nomeanalise+', filtro mais de uma musica.analise', interdurunicoloc, 'wb')
     f_d.escreve_txt(dianalise, nomeanalise+', filtro mais de uma musica.txt', interdurunicoloc)
 
 '''
+    analise = f_a.interdurunicos_maisoumenos_loc(interdurunicoloc, mapamus, nomemapamus)
     interdurunicoloc = f_a.interdurunicos_loc(interdurunicoloc, mapamus, nomemapamus)
     print(caminhosmapamusler.index(caminho)+1,' de ',len(caminhosmapamusler))
 
