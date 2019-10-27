@@ -20,6 +20,67 @@ def interdurunicos_loc(interdurunicoloc, mapamus, nomemapamus):
     print(nomemapamus+' analisado por interdurunicos_loc')
     return (interdurunicoloc)
 
+def interdurunicos_intmus_loc(interdurunicoloc, mapamus, nomemapamus):
+    for v, voz in mapamus['vozes'].items():
+        for posicao1 in range(len(voz['inte'])):
+            for posicao2 in range(posicao1, len(voz['inte'])):
+                locA = (posicao1, posicao2+1)
+                inteseg =intmus(voz['inte'][posicao1:posicao2+1])
+                durseg = tuple(voz['dur'][posicao1:posicao2+1])
+                intedurseg = (inteseg, durseg)
+                locC = voz['locC'][posicao1]
+                locT = voz['locT'][posicao1]
+                tamanho = ((posicao2 + 1) - posicao1)
+                valor = (mapamus['nome'], v, locC, locT, tamanho, locA)
+
+                interdurunicoloc.setdefault(intedurseg, []).append(valor)
+                if type(interdurunicoloc[intedurseg][0]) != dict:
+                    interdurunicoloc[intedurseg].insert(0 ,{'name' : set()})
+                interdurunicoloc[intedurseg][0]['name'].add(mapamus['nome'])
+    print(nomemapamus+' analisado por interdurunicos_loc')
+    return (interdurunicoloc)
+
+def intmus(inteseg):
+    intmus = []
+    for v in inteseg:
+        if v < 0:
+            mul = -1
+        else:
+            mul = 1
+
+        oit = 0
+        v = abs(v)
+        while v//12 != 0:
+            v = v - 12
+            oit = oit + 1
+        
+        if oit != 0:
+            oit = (oit*7)
+        if v == 0:
+            if oit == 0:
+                n = 0
+            else:
+                n = 1
+            intmus.append((0+(oit+n))*mul)
+        elif v == 1 or v == 2:
+            intmus.append((2+oit)*mul)
+        elif v == 3 or v == 4:
+            intmus.append((3+oit)*mul)
+        elif v == 5:
+            intmus.append((4+oit)*mul)
+        elif v == 6:
+            if mul < 0:
+                intmus.append('-'+str(int(oit/7))+'T')
+            else:
+                intmus.append(str(int(oit/7))+'T')
+        elif v == 7:
+            intmus.append((5+oit)*mul)
+        elif v == 8 or v == 9:
+            intmus.append((6+oit)*mul)
+        elif v == 10 or v == 11:
+            intmus.append((7+oit)*mul)
+    return tuple(intmus)
+
 def interdurunicos_maisoumenos_loc(interdurunicoloc, mapamus, nomemapamus):
     for v, voz in mapamus['vozes'].items():
         for posicao1 in range(len(voz['inte'])):
