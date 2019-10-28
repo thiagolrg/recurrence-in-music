@@ -174,6 +174,13 @@ def nested_identificados(entrada):
     print('nested_identificados ok')
     return entrada
 
+def filtro_nested_identificados(entrada):
+    for chave, valores in entrada.items():
+        if 'caso 1' or 'caso 2' in valores[0]:
+            continue
+        else:
+            
+
 def filtro_nested(entrada):
     for chave1, valores1 in (entrada.copy()).items():
         if valores1 == []:
