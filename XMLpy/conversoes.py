@@ -25,21 +25,97 @@ def duration_time(divisions,time,counter):
         durationTime = durationTime - uc
     return durationTime/ut
 
-def int_diatonic(nota1,nota2):
-    step_string = 'CDEFGABCDEFGABCDEFGABC'
-    oit = -1
-    int_lista = [-7,-6,-5,-4,-3,-2,1,2,3,4,5,6,7]
-
-    for p in range(len(step_string)):
-        if step_string[p] == nota1[0]:
-            step_string =  step_string[p+1:p+14]
+def int_diatonic(n1,n2):
+    n1step = n1[0]
+    n1octa = n1[1]
+    n2step = n2[0]
+    n2octa = n2[1]
+    octa = n2octa - n1octa
+    octa_base = [-1,-1,-1,-1,-1,-1,-1,0,0,0,0,0,0,0,1,1,1,1,1,1]
+    int_base = [-7,-6,-5,-4,-3,-2,0,2,3,4,5,6,7]
+    step_base = 'CDEFGABCDEFGABCDEFGA'
+    for p in range(len(step_base)):
+        if step_base[p] == n1step:
+            step_base =  step_base[p+1:p+14]
+            octa_base =  octa_base[p+1:p+14]
             break
-    
-    oit_list = []
-    for nota in step_string:
-        if nota == 'C':
-            oit += 1
-        oit_list.append(oit)
-    return step_string
+    if octa < 0:
+        for p in range(len(step_base)):
+        if step_base[p] == n2step and octa_base[p] <= octa:
+            octa = octa+(octa_base[p]*-1)
+            int_diatonic = int_base[p]+(7*octa)
+            break
+    if octa = 0:
+        for p in range(len(step_base)):
+        if step_base[p] == n2step and octa_base[p] == octa:
+            octa = octa+(octa_base[p]*-1)
+            int_diatonic = int_base[p]+(7*octa)
+            break
+    if octa > 0:
+        for p in range(len(step_base)):
+        if step_base[p] == n2step and octa_base[p] >= octa:
+            octa = octa+(octa_base[p]*-1)
+            int_diatonic = int_base[p]+(7*octa)
+            break
+    return int_diatonic
 
+
+int_diatonic(('C',3),('C',1))
+int_diatonic(('C',3),('D',1))
+int_diatonic(('C',3),('E',1))
+int_diatonic(('C',3),('F',1))
+int_diatonic(('C',3),('G',1))
+int_diatonic(('C',3),('A',1))
+int_diatonic(('C',3),('B',1))
+int_diatonic(('C',3),('C',2))
+int_diatonic(('C',3),('D',2))
+int_diatonic(('C',3),('E',2))
+int_diatonic(('C',3),('F',2))
+int_diatonic(('C',3),('G',2))
+int_diatonic(('C',3),('A',2))
+int_diatonic(('C',3),('B',2))
+int_diatonic(('C',3),('C',3))
+int_diatonic(('C',3),('D',3))
+int_diatonic(('C',3),('E',3))
+int_diatonic(('C',3),('F',3))
+int_diatonic(('C',3),('G',3))
+int_diatonic(('C',3),('A',3))
 int_diatonic(('C',3),('B',3))
+int_diatonic(('C',3),('C',4))
+int_diatonic(('C',3),('D',4))
+int_diatonic(('C',3),('E',4))
+int_diatonic(('C',3),('F',4))
+int_diatonic(('C',3),('G',4))
+int_diatonic(('C',3),('A',4))
+int_diatonic(('C',3),('B',4))
+int_diatonic(('C',3),('C',5))
+
+int_diatonic(('D',3),('D',1))
+int_diatonic(('D',3),('E',1))
+int_diatonic(('D',3),('F',1))
+int_diatonic(('D',3),('G',1))
+int_diatonic(('D',3),('A',1))
+int_diatonic(('D',3),('B',1))
+int_diatonic(('D',3),('C',2))
+int_diatonic(('D',3),('D',2))
+int_diatonic(('D',3),('E',2))
+int_diatonic(('D',3),('F',2))
+int_diatonic(('D',3),('G',2))
+int_diatonic(('D',3),('A',2))
+int_diatonic(('D',3),('B',2))
+int_diatonic(('D',3),('C',3))
+int_diatonic(('D',3),('D',3))
+int_diatonic(('D',3),('E',3))
+int_diatonic(('D',3),('F',3))
+int_diatonic(('D',3),('G',3))
+int_diatonic(('D',3),('A',3))
+int_diatonic(('D',3),('B',3))
+int_diatonic(('D',3),('C',4))
+int_diatonic(('D',3),('D',4))
+int_diatonic(('D',3),('E',4))
+int_diatonic(('D',3),('F',4))
+int_diatonic(('D',3),('G',4))
+int_diatonic(('D',3),('A',4))
+int_diatonic(('D',3),('B',4))
+int_diatonic(('D',3),('C',5))
+int_diatonic(('D',3),('D',5))
