@@ -2,131 +2,103 @@ import conversoes as f_c
 
 with open(r'arquivos teste\MusicXML\MIDIStressTest.xml') as f:
     xml = []
-    for linha in f.readlines():
-        linha = linha.strip()
-        if '<!' in linha:
+    for l in f.readlines():
+        if '<!' in l:
             continue
-        linha = linha.replace('"', '')
-        linha = linha.replace('\n', '')
-        xml.append(linha)
+        xml.append(l.strip().replace('"', '').replace('\n', ''))
 
 dicio = {}
-counter = 0
-duration = 0
-tie = 0
 p = 0
 while p < len(xml):
     if '<part id=' in xml[p]:
-        l = xml[p].lstrip('<part id=')
-        l = l.rstrip('>')
-        partID = str(l)
+        partID = str(xml[p].lstrip('<part id=').rstrip('>'))
         dicio.setdefault(partID,{})
+        counter = 0
+        duration = 0
+        tie_old = False
+        tie_new = False
         p += 1
         
     elif '</part>' in xml[p]:
-        counter = 0
         p += 1
         
     elif '<divisions>' in xml[p]:
-        l = xml[p].lstrip('<divisions>') 
-        l = l.rstrip('</divisions>')
-        divisions = int(l)
+        divisions = int(xml[p].lstrip('<divisions>').rstrip('</divisions>'))
         p += 1
         
     elif '<measure number=' in xml[p]:
-        l = xml[p].lstrip('<measure number=') 
-        l = l.split(' ')[0]
-        measureNumber = int(l)
+        measureNumber = int(xml[p].lstrip('<measure number=').split(' ')[0])
         p += 1
 
+    elif '<key ' in xml[p]:
+        keyList = []
+        while '</key>' not in xml[p]:
+            keyList.append(xml[p])
+            p += 1
+        for l in keyList:
+            if '<fifths>' in l:
+                fifths = int(l.lstrip('<fifths>').rstrip('</fifths>'))
+            elif '<mode>' in l:
+                mode = str(l.replace('<mode>','').rstrip('</mode>'))
+        key = f_c.key(fifths,mode)
+    
     elif '<time ' in xml[p]:
         timeList = []
-        for p2 in range(p,len(xml)):
-            if '</time>' in xml[p2]:
-                timeList.append(xml[p2])
-                p += 1
-                break
-            timeList.append(xml[p2])
+        while '</time>' not in xml[p]:
+            timeList.append(xml[p])
             p += 1
-        for linha in timeList:
-            if '<beats>' in linha:
-                l = linha.lstrip('<beats>') 
-                l = l.rstrip('</beats>')
-                beats = int(l)
-            elif '<beat-type>' in linha:
-                l = linha.lstrip('<beat-type>') 
-                l = l.rstrip('</beat-type>')
-                beatType = int(l)
+        for l in timeList:
+            if '<beats>' in l:
+                beats = int(l.lstrip('<beats>').rstrip('</beats>'))
+            elif '<beat-type>' in l:
+                beatType = int(l.lstrip('<beat-type>').rstrip('</beat-type>'))
         time = tuple([counter,(beats, beatType)])
 
     elif '<metronome ' in xml[p]:
         metronomeList = []
-        for p2 in range(p,len(xml)):
-            if '</metronome>' in xml[p2]:
-                metronomeList.append(xml[p2])
-                p += 1
-                break
-            metronomeList.append(xml[p2])
+        while '</metronome>' not in xml[p]:
+            metronomeList.append(xml[p])
             p += 1
-        for linha in metronomeList:
-            if '<beat-unit>' in linha:
-                l = linha.lstrip('<beat-unit>') 
-                l = l.rstrip('</beat-unit>')
-                beatUnit = str(l)
-            elif '<per-minute>' in linha:
-                l = linha.lstrip('<per-minute>') 
-                l = l.rstrip('</per-minute>')
-                perMinute = int(l)
+        for l in metronomeList:
+            if '<beat-unit>' in l:
+                beatUnit = str(l.lstrip('<beat-unit>').rstrip('</beat-unit>'))
+            elif '<per-minute>' in l:
+                perMinute = int(l.lstrip('<per-minute>').rstrip('</per-minute>'))
         metronome = tuple([beatUnit, perMinute])
 
     elif '<note ' in xml[p]:
         noteList = []
         alter = None
-        for p2 in range(p,len(xml)):
-            if '</note>' in xml[p2]:
-                noteList.append(xml[p2])
-                p += 1
-                break
-            noteList.append(xml[p2])
+        while '</note>' not in xml[p]:
+            noteList.append(xml[p])
             p += 1
-        for linha in noteList:
-            if '<rest />' in linha:
+        for l in noteList:
+            if '<rest />' in l:
                 step = None
                 octave = None
-            elif '<step>' in linha:
-                l = linha.lstrip('<step>') 
-                l = l.rstrip('</step>')
-                step = str(l)
-            elif '<alter>' in linha:
-                l = linha.lstrip('<alter>') 
-                l = l.rstrip('</alter>')
-                alter = int(l)
-            elif '<octave>' in linha:
-                l = linha.lstrip('<octave>') 
-                l = l.rstrip('</octave>')
-                octave = int(l)
-            elif '<duration>' in linha:
-                l = linha.lstrip('<duration>') 
-                l = l.rstrip('</duration>')
-                if tie == True:
-                    duration = int(l) + duration
+            elif '<step>' in l:
+                step = str(l.lstrip('<step>').rstrip('</step>'))
+            elif '<alter>' in l:
+                alter = int(l.lstrip('<alter>').rstrip('</alter>'))
+            elif '<octave>' in l:
+                octave = int(l.lstrip('<octave>').rstrip('</octave>'))
+            elif '<duration>' in l:
+                if tie_old == True:
+                    duration = int(l.lstrip('<duration>').rstrip('</duration>')) + duration
                 else:
-                    duration = int(l)
-            elif '<tie type=start />' in linha:
-                tie = 1
-            elif '<tie type=stop />' in linha:
-                tie = 0
+                    duration = int(l.lstrip('<duration>').rstrip('</duration>'))
+            elif '<tie type=start />' in l:
+                tie_new = True
+            elif '<tie type=stop />' in l:
+                tie_new = False
 
-        if tie == 1:
-            tie = True
-        elif tie == 0:
-            tie = False
+        tie_old = tie_new
+        if tie_old == False:
 
-        if tie == False:
-            
             durationTime = f_c.duration_time(divisions,time,counter)
             midiN = f_c.note_to_miniN(step,alter,octave)
 
+            dicio[partID].setdefault('key', []).append(key)
             dicio[partID].setdefault('step', []).append(step)
             dicio[partID].setdefault('alter', []).append(alter)
             dicio[partID].setdefault('octave', []).append(octave)

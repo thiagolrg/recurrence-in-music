@@ -50,12 +50,78 @@ def int_diatonic(n1,n2):
                 break
     return int_diatonic
 
+def key(fifths,mode):
+    if mode == 'major':
+        if fifths == 0:
+            return tuple(['C',mode])
+        if fifths == 1:
+            return tuple(['G',mode])
+        if fifths == -1:
+            return tuple(['F',mode])
+        if fifths == 2:
+            return tuple(['D',mode])
+        if fifths == -2:
+            return tuple(['Bb',mode])
+        if fifths == 3:
+            return tuple(['A',mode])
+        if fifths == -3:
+            return tuple(['Eb',mode])
+        if fifths == 4:
+            return tuple(['E',mode])
+        if fifths == -4:
+            return tuple(['Ab',mode])
+        if fifths == 5:
+            return tuple(['B',mode])
+        if fifths == -5:
+            return tuple(['Db',mode])
+        if fifths == 6:
+            return tuple(['F#',mode])
+        if fifths == -6:
+            return tuple(['Gb',mode])
+        if fifths == 7:
+            return tuple(['C#',mode])
+        if fifths == -7:
+            return tuple(['Cb',mode])
+    if mode == 'minor':
+        if fifths == 0:
+            return tuple(['a',mode])
+        if fifths == 1:
+            return tuple(['E',mode])
+        if fifths == -1:
+            return tuple(['D',mode])
+        if fifths == 2:
+            return tuple(['B',mode])
+        if fifths == -2:
+            return tuple(['G',mode])
+        if fifths == 3:
+            return tuple(['F#',mode])
+        if fifths == -3:
+            return tuple(['C',mode])
+        if fifths == 4:
+            return tuple(['C#',mode])
+        if fifths == -4:
+            return tuple(['F',mode])
+        if fifths == 5:
+            return tuple(['G#',mode])
+        if fifths == -5:
+            return tuple(['Bb',mode])
+        if fifths == 6:
+            return tuple(['D#',mode])
+        if fifths == -6:
+            return tuple(['Eb',mode])
+        if fifths == 7:
+            return tuple(['A#',mode])
+        if fifths == -7:
+            return tuple(['Ab',mode])
+
 #graus de escala a partir do tom modo e nota
 def scale_degrees():
     degrees = ['I','II','III','IV','V','VI','VII']
 
 #intevalos em semi-tons a partir do número MIDI
 def int_cromatic():
+    pass
 
 #intervalos em M m d a partir do int cromatico e int diatonico
 def int_qual(diat,cromat):
+    pass
