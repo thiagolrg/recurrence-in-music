@@ -1,55 +1,27 @@
-def note_to_miniN(step,alter,octave):
-    if step == 'C':
-        midiN = 60
-    elif step == 'D':
-        midiN = 62
-    elif step == 'E':
-        midiN = 64
-    elif step == 'F':
-        midiN = 65
-    elif step == 'G':
-        midiN = 67
-    elif step == 'A':
-        midiN = 69
-    elif step == 'B':
-        midiN = 71
-    if alter == None:
-        alter = 0
-    return (midiN+((octave - 4)*12))+alter
+#posicao de inicio dentro do compasso
+def position_measure(divisions,time,counter):
+    ut = ut_(divisions,time)
+    uc = uc_(divisions,time)
+    positionMeasure = counter - time[0][0]
+    while positionMeasure//uc > 0:
+        positionMeasure = positionMeasure - uc
+    return (positionMeasure/ut)+1
 
-def duration_time(divisions,time,counter):
-    ut = (divisions*4)/time[1][1]
-    uc = ut*time[1][0]
-    durationTime = counter - time[0]
-    while durationTime//uc > 0:
-        durationTime = durationTime - uc
-    return durationTime/ut
+def time_number(timeOld,time):
+    return ((time[0][1]-timeOld[0][1])*timeOld[1][0])+timeOld[0][2]
 
-def int_diatonic(n1,n2):
-    n1step = n1[0]
-    n1octa = n1[1]
-    n2step = n2[0]
-    n2octa = n2[1]
-    octa = n2octa - n1octa
-    octa_base = [0,0,0,0,0,0,0,1,1,1,1,1,1]
-    int_base = [1,2,3,4,5,6,7]
-    step_base = 'CDEFGABCDEFGA'
-    for p in range(len(step_base)):
-        if step_base[p] == n1step:
-            step_base =  step_base[p:p+7]
-            octa_base =  octa_base[p:p+7]
-            break
-    for p in range(len(step_base)):
-        if step_base[p] == n2step:
-            int_diatonic = int_base[p]
-            if octa >= octa_base[p]:
-                int_diatonic = int_diatonic+((octa - octa_base[p])*7)
-                break
-            else:
-                int_diatonic = (int_diatonic-9)+(((octa - octa_base[p]) + 1)*7)
-                break
-    return int_diatonic
 
+#graus de escala a partir do tom modo e nota
+def scale_degree(key,step):
+    if step == None:
+        return None
+    stepBase = step_base(key[0])
+    degrees = ['I','II','III','IV','V','VI','VII']
+    for p in range(len(stepBase)):
+        if stepBase[p] == step:
+            return degrees[p]
+
+#tom e modo a partir de fifths e mode
 def key(fifths,mode):
     if mode == 'major':
         if fifths == 0:
@@ -114,14 +86,148 @@ def key(fifths,mode):
         if fifths == -7:
             return tuple(['Ab',mode])
 
-#graus de escala a partir do tom modo e nota
-def scale_degrees():
-    degrees = ['I','II','III','IV','V','VI','VII']
+#numero MIDI a partir do step alter e octave da nota
+def note_to_miniN(step,alter,octave):
+    if step == 'C':
+        midiN = 60
+    elif step == 'D':
+        midiN = 62
+    elif step == 'E':
+        midiN = 64
+    elif step == 'F':
+        midiN = 65
+    elif step == 'G':
+        midiN = 67
+    elif step == 'A':
+        midiN = 69
+    elif step == 'B':
+        midiN = 71
+    if alter == None:
+        alter = 0
+    if step == None and octave == None:
+        return None
+    return (midiN+((octave - 4)*12))+alter
 
-#intevalos em semi-tons a partir do número MIDI
-def int_cromatic():
-    pass
+#intervalo diatonico a partir do step e octave de 2 notas
+def int_diatonic(n1step,n1octa,n2step,n2octa):
+    octa = n2octa - n1octa
+    stepBase = step_base(n1step)
+    octaBase = octa_base(n1step)
+    int_base = [1,2,3,4,5,6,7]
+    for p in range(len(stepBase)):
+        if stepBase[p] == n2step:
+            intDiatonic = int_base[p]
+            if octa >= octaBase[p]:
+                intDiatonic = intDiatonic+((octa - octaBase[p])*7)
+                break
+            else:
+                intDiatonic = (intDiatonic-9)+(((octa - octaBase[p]) + 1)*7)
+                break
+    return intDiatonic
 
-#intervalos em M m d a partir do int cromatico e int diatonico
-def int_qual(diat,cromat):
-    pass
+#intevalos cromaticos a partir do número MIDI
+def int_cromatic(midiN1,midiN2):
+    return midiN2-midiN1
+
+#qualidades dos intervalos em 'd m M A'
+#partir do intervalo cromatico e intervalo diatonico
+def int_quality(intDiatonic,intCromatic):
+    intDiatonic = abs(intDiatonic)
+    while intDiatonic > 7:
+        intDiatonic = intDiatonic -7
+    if intDiatonic == 1:
+        return intP(intDiatonic,intCromatic, 0)
+    if intDiatonic == 2:
+        return intMm(intDiatonic,intCromatic, 2)
+    if intDiatonic == 3:
+        return intMm(intDiatonic,intCromatic, 4)
+    if intDiatonic == 4:
+        return intP(intDiatonic,intCromatic, 5)
+    if intDiatonic == 5:
+        return intP(intDiatonic,intCromatic, 7)
+    if intDiatonic == 6:
+        return intMm(intDiatonic,intCromatic, 9)
+    if intDiatonic == 7:
+        return intMm(intDiatonic,intCromatic, 11)
+
+#usadas pelas outras funcoes
+def intMm(intDiatonic, intCromatic, M):
+        m = M-1
+        if intCromatic < m:
+            return 'd'*(m-intCromatic)
+        if intCromatic == m:
+            return 'm'
+        if intCromatic == M:
+            return 'M'
+        if intCromatic > M:
+            return 'A'*(intCromatic-M)
+def intP(intDiatonic, intCromatic, P):
+        if intCromatic < P:
+            return 'd'*(P-intCromatic)
+        if intCromatic == P:
+            return 'P'
+        if intCromatic > P:
+            return 'A'*(intCromatic-P)
+def ut_(divisions,time):
+    return (divisions*4)/time[1][1]
+def uc_(divisions,time):
+    return ut_(divisions,time)*time[1][0]
+def octa_base(step):
+    p = base(step)
+    octa_base = [0,0,0,0,0,0,0,1,1,1,1,1,1]
+    return octa_base[p:p+7]
+def step_base(step):
+    p = base(step)
+    stepBase = 'CDEFGABCDEFGA'
+    return stepBase[p:p+7]
+def base(step):
+    stepBase = 'CDEFGABCDEFGA'
+    for p in range(len(stepBase)):
+        if stepBase[p] == step:
+            return p
+
+a = int_quality(-15,-2)
+a = int_quality(-8,-1)
+a = int_quality(1,0)
+a = int_quality(8,1)
+a = int_quality(15,2)
+
+a = int_quality(-16,-1)
+a = int_quality(-9,0)
+a = int_quality(-2,1)
+a = int_quality(2,2)
+a = int_quality(9,3)
+a = int_quality(16,4)
+
+a = int_quality(-17,1)
+a = int_quality(-10,2)
+a = int_quality(-3,3)
+a = int_quality(3,4)
+a = int_quality(10,5)
+a = int_quality(17,6)
+
+a = int_quality(4,3)
+a = int_quality(4,4)
+a = int_quality(4,5)
+a = int_quality(4,6)
+a = int_quality(4,7)
+
+a = int_quality(5,5)
+a = int_quality(5,6)
+a = int_quality(5,7)
+a = int_quality(5,8)
+a = int_quality(5,9)
+
+a = int_quality(6,6)
+a = int_quality(6,7)
+a = int_quality(6,8)
+a = int_quality(6,9)
+a = int_quality(6,10)
+a = int_quality(6,11)
+
+a = int_quality(7,8)
+a = int_quality(7,9)
+a = int_quality(7,10)
+a = int_quality(7,11)
+a = int_quality(7,12)
+a = int_quality(7,13)
