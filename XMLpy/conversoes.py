@@ -50,5 +50,12 @@ def int_diatonic(n1,n2):
                 break
     return int_diatonic
 
+#graus de escala a partir do tom modo e nota
 def scale_degrees():
     degrees = ['I','II','III','IV','V','VI','VII']
+
+#intevalos em semi-tons a partir do número MIDI
+def int_cromatic():
+
+#intervalos em M m d a partir do int cromatico e int diatonico
+def int_qual(diat,cromat):
