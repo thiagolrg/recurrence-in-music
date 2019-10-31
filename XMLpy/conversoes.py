@@ -12,7 +12,8 @@ def time_number(timeOld,time):
 
 
 #graus de escala a partir do tom modo e nota
-def scale_degree(key,step):
+def scale_degree(key,note):
+    step = note[0]
     if step == None:
         return None
     stepBase = step_base(key[0])
@@ -87,7 +88,10 @@ def key(fifths,mode):
             return tuple(['Ab',mode])
 
 #numero MIDI a partir do step alter e octave da nota
-def note_to_miniN(step,alter,octave):
+def note_to_miniN(note):
+    step = note[0]
+    alter = note[1]
+    octave = note[2]
     if step == 'C':
         midiN = 60
     elif step == 'D':
@@ -109,25 +113,28 @@ def note_to_miniN(step,alter,octave):
     return (midiN+((octave - 4)*12))+alter
 
 #intervalo diatonico a partir do step e octave de 2 notas
-def int_diatonic(n1step,n1octa,n2step,n2octa):
-    octa = n2octa - n1octa
-    stepBase = step_base(n1step)
-    octaBase = octa_base(n1step)
+def int_diatonic(noteOld,note):
+    nOldstep = noteOld[0]
+    nOldocta = noteOld[2]
+    nstep = note[0]
+    nocta = note[2]
+    if nOldstep == None or nstep == None:
+        return None
+    octa = nocta - nOldocta
+    stepBase = step_base(nOldstep)
+    octaBase = octa_base(nOldstep)
     int_base = [1,2,3,4,5,6,7]
     for p in range(len(stepBase)):
-        if stepBase[p] == n2step:
+        if stepBase[p] == nstep:
             intDiatonic = int_base[p]
             if octa >= octaBase[p]:
-                intDiatonic = intDiatonic+((octa - octaBase[p])*7)
-                break
+                return intDiatonic+((octa - octaBase[p])*7)
             else:
-                intDiatonic = (intDiatonic-9)+(((octa - octaBase[p]) + 1)*7)
-                break
-    return intDiatonic
+                return (intDiatonic-9)+(((octa - octaBase[p]) + 1)*7)
 
 #intevalos cromaticos a partir do número MIDI
-def int_cromatic(midiN1,midiN2):
-    return midiN2-midiN1
+def int_cromatic(midiNOld,midiN):
+    return midiN-midiNOld
 
 #qualidades dos intervalos em 'd m M A'
 #partir do intervalo cromatico e intervalo diatonico

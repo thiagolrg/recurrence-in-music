@@ -49,15 +49,7 @@ while p < len(xml):
                 beats = int(l.replace('<beats>','').replace('</beats>',''))
             elif '<beat-type>' in l:
                 beatType = int(l.replace('<beat-type>','').replace('</beat-type>',''))
-        time = [[counter,measureNumber],(beats, beatType)]
-        if 'time' in dicio[partID].keys():
-            time[0].append(f_c.time_number(dicio[partID]['time'][-1:][0],time))
-            time[0] = tuple(time[0])
-            time = tuple(time)
-        else:
-            time[0].append(1)
-            time[0] = tuple(time[0])
-            time = tuple(time)
+        time = [[counter,measureNumber, 1],(beats, beatType)]
 
     elif '<metronome ' in xml[p]:
         metronomeList = []
@@ -96,20 +88,29 @@ while p < len(xml):
                 tie_new = True
             elif '<tie type=stop />' in l:
                 tie_new = False
+        note = tuple([step,alter,octave])
 
         tie_old = tie_new
         if tie_old == False:
 
+            if 'time' in dicio[partID].keys():
+                time[0].append(f_c.time_number(dicio[partID]['time'][-1:][0],time))
+                time[0] = tuple(time[0])
+                time = tuple(time)
+
             positionMeasure = f_c.position_measure(divisions,time,counter)
-            midiN = f_c.note_to_miniN(step,alter,octave)
-            degree = f_c.scale_degree(key,step)
+            midiN = f_c.note_to_miniN(note)
+            degree = f_c.scale_degree(key,note)
+            if 'note' in dicio[partID].keys():
+                noteOld = dicio[partID]['note'][-1:][0]
+                midiNold = dicio[partID]['midiN'][-1:][0]
+                intDiatonic = f_c.int_diatonic(noteOld,note)
+                intCromatic = f_c.int_cromatic(midiNold,midiN)
 
             dicio[partID].setdefault('degree', []).append(degree)
             dicio[partID].setdefault('midiN',[]).append(midiN)
             dicio[partID].setdefault('key', []).append(key)
-            dicio[partID].setdefault('step', []).append(step)
-            dicio[partID].setdefault('alter', []).append(alter)
-            dicio[partID].setdefault('octave', []).append(octave)
+            dicio[partID].setdefault('note', []).append(note)
             dicio[partID].setdefault('metronome', []).append(metronome)
             dicio[partID].setdefault('time', []).append(time)
             dicio[partID].setdefault('counter', []).append(counter)
