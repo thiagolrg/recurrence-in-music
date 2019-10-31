@@ -31,40 +31,32 @@ def int_diatonic(n1,n2):
     n2step = n2[0]
     n2octa = n2[1]
     octa = n2octa - n1octa
-    octa_base = [-1,-1,-1,-1,-1,-1,-1,0,0,0,0,0,0,0,1,1,1,1,1,1]
-    int_base = [-7,-6,-5,-4,-3,-2,0,2,3,4,5,6,7]
-    step_base = 'CDEFGABCDEFGABCDEFGA'
+    octa_base = [0,0,0,0,0,0,0,1,1,1,1,1,1]
+    int_base = [1,2,3,4,5,6,7]
+    step_base = 'CDEFGABCDEFGA'
     for p in range(len(step_base)):
         if step_base[p] == n1step:
-            step_base =  step_base[p+1:p+14]
-            octa_base =  octa_base[p+1:p+14]
+            step_base =  step_base[p:p+7]
+            octa_base =  octa_base[p:p+7]
             break
-    if octa < 0:
-        for p in range(len(step_base)):
-        if step_base[p] == n2step and octa_base[p] <= octa:
-            octa = octa+(octa_base[p]*-1)
-            int_diatonic = int_base[p]+(7*octa)
-            break
-    if octa = 0:
-        for p in range(len(step_base)):
-        if step_base[p] == n2step and octa_base[p] == octa:
-            octa = octa+(octa_base[p]*-1)
-            int_diatonic = int_base[p]+(7*octa)
-            break
-    if octa > 0:
-        for p in range(len(step_base)):
-        if step_base[p] == n2step and octa_base[p] >= octa:
-            octa = octa+(octa_base[p]*-1)
-            int_diatonic = int_base[p]+(7*octa)
-            break
+    for p in range(len(step_base)):
+        if step_base[p] == n2step:
+            int_diatonic = int_base[p]
+            if octa >= octa_base[p]:
+                int_diatonic = int_diatonic+((octa - octa_base[p])*7)
+            elif n2octa != n1octa:
+                int_diatonic = (int_diatonic-9)+((octa + 1)*7)
+            elif n2octa == n1octa:
+                int_diatonic = (int_diatonic-9)+(octa*7)
+                break
     return int_diatonic
 
 
-int_diatonic(('C',3),('C',1))
-int_diatonic(('C',3),('D',1))
-int_diatonic(('C',3),('E',1))
-int_diatonic(('C',3),('F',1))
-int_diatonic(('C',3),('G',1))
+int_diatonic(('D',3),('C',5))
+int_diatonic(('D',3),('C',4))
+int_diatonic(('D',3),('C',3))
+int_diatonic(('D',3),('C',2))
+int_diatonic(('D',3),('C',1))
 int_diatonic(('C',3),('A',1))
 int_diatonic(('C',3),('B',1))
 int_diatonic(('C',3),('C',2))
