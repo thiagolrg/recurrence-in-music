@@ -50,6 +50,10 @@ while p < len(xml):
             elif '<beat-type>' in l:
                 beatType = int(l.replace('<beat-type>','').replace('</beat-type>',''))
         time = [[counter,measureNumber, 1],(beats, beatType)]
+        if 'time' in dicio[partID].keys():
+            time[0][2] = (f_c.time_number(dicio[partID]['time'][-1:][0],time))
+            time[0] = tuple(time[0])
+            time = tuple(time)
 
     elif '<metronome ' in xml[p]:
         metronomeList = []
@@ -91,12 +95,10 @@ while p < len(xml):
         note = tuple([step,alter,octave])
 
         tie_old = tie_new
+        if step == None:
+            counter = counter+duration
+            continue
         if tie_old == False:
-
-            if 'time' in dicio[partID].keys():
-                time[0].append(f_c.time_number(dicio[partID]['time'][-1:][0],time))
-                time[0] = tuple(time[0])
-                time = tuple(time)
 
             positionMeasure = f_c.position_measure(divisions,time,counter)
             midiN = f_c.note_to_miniN(note)
@@ -106,7 +108,14 @@ while p < len(xml):
                 midiNold = dicio[partID]['midiN'][-1:][0]
                 intDiatonic = f_c.int_diatonic(noteOld,note)
                 intCromatic = f_c.int_cromatic(midiNold,midiN)
+                intQuality = f_c.int_quality(intDiatonic,intCromatic)
+                dicio[partID].setdefault('intCromatic', []).append(intCromatic)
+                dicio[partID].setdefault('intDiatonic', []).append(intDiatonic)
+                dicio[partID].setdefault('intQuality', []).append(intQuality)
 
+            dicio[partID].setdefault('step', []).append(step)
+            dicio[partID].setdefault('alter', []).append(alter)
+            dicio[partID].setdefault('octave', []).append(octave)
             dicio[partID].setdefault('degree', []).append(degree)
             dicio[partID].setdefault('midiN',[]).append(midiN)
             dicio[partID].setdefault('key', []).append(key)
