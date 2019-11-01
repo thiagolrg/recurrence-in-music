@@ -13,7 +13,7 @@ def xml2dict(xml):
     while p < len(xml):
         if '<part id=' in xml[p]:
             partID = str(xml[p].replace('<part id=', '').replace('>',''))
-            dicio.setdefault(partID,{})
+            dicio.setdefault(partID,[])
             counter = 0
             duration = 0
             tie = False
@@ -21,8 +21,12 @@ def xml2dict(xml):
         
         elif '<divisions>' in xml[p]:
             divisions = int(xml[p].replace('<divisions>','').replace('</divisions>',''))
-            dicio[partID].setdefault('divisions', divisions)
             p += 1
+            try:
+                if divisions not in dicio['division']:
+                    dicio.setdefault('divisions', divisions)
+            except KeyError:
+                dicio.setdefault('divisions', divisions)
         
         elif '<measure number=' in xml[p]:
             measureNumber = int(xml[p].replace('<measure number=','').split(' ')[0])
@@ -40,8 +44,12 @@ def xml2dict(xml):
                     mode = str(l.replace('<mode>','').replace('</mode>',''))
             countermeasure = tuple([counter,measureNumber])
             key = f_c.key(fifths,mode)
-            key = tuple([countermeasure, key]) 
-            dicio[partID].setdefault('keys', []).append(key)
+            key = tuple([countermeasure, key])
+            try:
+                if key not in dicio['keys']:
+                    dicio.setdefault('keys', []).append(key)
+            except KeyError:
+                dicio.setdefault('keys', []).append(key)
     
         elif '<time ' in xml[p]:
             timeList = []
@@ -56,7 +64,11 @@ def xml2dict(xml):
             countermeasure = [counter,measureNumber]
             time = tuple([beats, beatType])
             time = [countermeasure,time]
-            dicio[partID].setdefault('times', []).append(time)
+            try:
+                if time not in dicio['times']:
+                    dicio.setdefault('times', []).append(time)
+            except:
+                dicio.setdefault('times', []).append(time)
 
         elif '<metronome ' in xml[p]:
             metronomeList = []
@@ -71,7 +83,11 @@ def xml2dict(xml):
             countermeasure = tuple([counter,measureNumber])
             metronome = tuple([beatUnit, perMinute])
             metronome = tuple([countermeasure,metronome])
-            dicio[partID].setdefault('metronomes', []).append(metronome)
+            try:
+                if metronome not in dicio['metronomes']:
+                    dicio.setdefault('metronomes', []).append(metronome)
+            except KeyError:
+                dicio.setdefault('metronomes', []).append(metronome)
 
         elif '<note ' in xml[p]:
             noteList = []
@@ -98,15 +114,14 @@ def xml2dict(xml):
             countermeasure = tuple([counter,measureNumber])
             note = tuple([step,octave,alter,tie])
             note = tuple([countermeasure, note])
-            dicio[partID].setdefault('notes', []).append(note)
+            dicio[partID].append(note)
             counter = counter + duration
         else:
             p += 1
+    dicio['times'] = f_c.times_com_tempos(dicio['times'])
     return dicio
 
-def dict_to_pronto(dicio):
-    for parte, elem in dicio.items():
-        elem['times'] = f_c.times_com_tempos(elem['times'])   
+def dict_to_pronto(dicio):   
     for parte, elem in dicio.items():
         for p in range(len(elem['notes'])):
             divisions = elem['divisions']
@@ -127,6 +142,7 @@ def dict_to_pronto(dicio):
                 intCro = f_c.int_cromatico(nota1,nota2)
                 intQua = f_c.int_qualidade(intDia,intCro)
     return dicio
+
 dicio = xml2dict(xml)
 dicio = dict_to_pronto(dicio)
 debug = 0
