@@ -102,27 +102,31 @@ def xml2dict(xml):
             counter = counter + duration
         else:
             p += 1
+    return dicio
 
+def dict_to_pronto(dicio):
     for parte, elem in dicio.items():
         elem['times'] = f_c.times_com_tempos(elem['times'])   
     for parte, elem in dicio.items():
         for p in range(len(elem['notes'])):
-
             divisions = elem['divisions']
             nota1 = elem['notes'][p]
-            nota2 = elem['notes'][p+1]
-
-            timeRef = f_c.referencia(nota1,elem['times'])
+            timeRefn1 = f_c.referencia(nota1,elem['times'])
             keyRef = f_c.referencia(nota1,elem['keys'])
-            metroRef = f_c.referencia(nota1,elem['metronomes'])
-
-            posicaotempo = f_c.posicao_tempodecompasso(divisions,timeRef,nota1)
-            posicaofracao = f_c.posicao_fracaodetempo(divisions,timeRef,nota1)
-            duracaodesdeinicio = f_c.duracao_desdeinicio(divisions,timeRef,nota1)
+            fracaoTempo = f_c.fracao_tempo(divisions,timeRefn1,nota1)
+            tempoCompasso = f_c.tempo_compasso(divisions,timeRefn1,nota1)
+            grau = f_c.grau_escala(keyRef,nota1)
             
-
+            if p+1 < len(elem['notes']):
+                
+                nota2 = elem['notes'][p+1]
+                timeRefn2 = f_c.referencia(nota2,elem['times'])
+                metroRef = f_c.referencia(nota1,elem['metronomes'])      
+                duracao = duracaoInicio_n2 = f_c.duracao_inicio(divisions,timeRefn2,nota2) - f_c.duracao_inicio(divisions,timeRefn1,nota1)
+                intDia = f_c.int_diatonico(nota1,nota2)
+                intCro = f_c.int_cromatico(nota1,nota2)
+                intQua = f_c.int_qualidade(intDia,intCro)
     return dicio
-
 dicio = xml2dict(xml)
-
+dicio = dict_to_pronto(dicio)
 debug = 0

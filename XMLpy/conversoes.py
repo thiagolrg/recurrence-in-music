@@ -4,51 +4,50 @@ def referencia(nota,listaref):
     for p in range(len(listaref)):
         if p+1 == len(listaref):
             return listaref[p]
-        if listaref[p+1][0][0] > nota[0][0]:
+        if counter(listaref[p+1]) > counter(nota):
             return listaref[p]
 
 #posicao de inicio dentro do compasso
 #counter da nota
-def posicao_fracaodetempo(divisions,time,nota):
+def fracao_tempo(divisions,time,nota):
     return duracao_R(divisions,time,nota[0][0])%1
 
-def posicao_tempodecompasso(divisions,time,nota):
-    uc = uc_(divisions,time)
-    duracaoR = duracao_R(divisions,time,nota[0][0])
-    while duracaoR//uc > 0:
-        duracaoR = duracaoR - uc
+def tempo_compasso(divisions,time,nota):
+    duracaoR = duracao_R(divisions,time,counter(nota))
+    while duracaoR//den(time) > 0:
+        duracaoR = duracaoR - den(time)
     return int(duracaoR)
 
 #duracao em temos desde o inicio
 #counter da nota
-def duracao_desdeinicio(divisions,time,nota):
+def duracao_inicio(divisions,time,nota):
     return duracao_R(divisions,time,nota[0][0])+time[0][2]
 
 #graus de escala a partir do tom, modo e nota
 def grau_escala(key,note):
-    step = note[0]
-    if step == None:
+    s = step(note)
+    if s == None:
         return None
-    stepBase = step_base(key[0])
-    degrees = ['I','II','III','IV','V','VI','VII']
+    stepBase = step_base(key[1][0])
+    graus = ['I','II','III','IV','V','VI','VII']
     for p in range(len(stepBase)):
-        if stepBase[p] == step:
-            return degrees[p]
+        if stepBase[p] == s:
+            return graus[p]
 
 #intervalo diatonico a partir do nome e oitava de duas notas
-def int_diatonico(noteOld,note):
-    nOldstep = noteOld[0]
-    nOldocta = noteOld[1]
-    nstep = note[0]
-    nocta = note[1]
-    if nOldstep == None or nstep == None:
+def int_diatonico(nota1,nota2):
+    n1step = step(nota1)
+    n1octa = octave(nota1)
+    n2step = step(nota2)
+    n2octa = octave(nota2)
+    if n1step == None or n2step == None:
         return None
-    octa = nocta - nOldocta
-    stepBase = step_base(nOldstep)
-    octaBase = octa_base(nOldstep)
+    octa = n2octa - n1octa
+    stepBase = step_base(n1step)
+    octaBase = octa_base(n1step)
     int_base = [1,2,3,4,5,6,7]
     for p in range(len(stepBase)):
-        if stepBase[p] == nstep:
+        if stepBase[p] == n2step:
             intDiatonic = int_base[p]
             if octa >= octaBase[p]:
                 return intDiatonic+((octa - octaBase[p])*7)
@@ -57,7 +56,7 @@ def int_diatonico(noteOld,note):
 
 #intevalos cromaticos a partir de duas notas(converte para midi antes)
 def int_cromatico(note1,note2):
-    if note1[0] == None or note2[0] == None:
+    if step(note1) == None or step(note2) == None:
         return None
     return note_to_midi(note2) - note_to_midi(note1) 
 
@@ -86,15 +85,15 @@ def int_qualidade(intDiatonic,intCromatic):
         return intMm(intDiatonic,intCromatic, 11)
 
 def times_com_tempos(times):
-    if times[0][0][0] == 0:
-        times[0][0].append(0)
-        times[0][0] = tuple(times[0][0])
+    if counter(times[0]) == 0:
+        loc(times[0]).append(0)
+        times[0][0] = tuple(loc(times[0]))
         times[0] = tuple(times[0])
         for p in range(len(times)):
             if p+1 < len(times):
-                tempos = ((times[p+1][0][1]-times[p][0][1])*times[p][1][0])+times[p][0][2]
-                times[p+1][0].append(tempos)
-                times[p+1][0] = tuple(times[p+1][0])
+                tempos = ((numero_compasso(times[p+1])-numero_compasso(times[p]))*num(times[p]))+duracao_tempo(times[p])
+                loc(times[p+1]).append(tempos)
+                times[p+1][0] = tuple(loc(times[p+1]))
                 times[p+1] = tuple(times[p+1])
     return times
 
@@ -164,6 +163,28 @@ def key(fifths,mode):
             return tuple(['Ab',mode])
 
 #usadas pelas outras funcoes
+def val(mensagem):
+    return mensagem[1]
+def loc(mensagem):
+    return mensagem[0]
+def step(nota):
+    return val(nota)[0]
+def octave(nota):
+    return val(nota)[1]
+def alter(nota):
+    return val(nota)[2]
+def tie(nota):
+    return val(nota)[3]
+def counter(mensagem):
+    return loc(mensagem)[0]
+def numero_compasso(mensagem):
+    return loc(mensagem)[1]
+def duracao_tempo(mensagem):
+    return loc(mensagem)[2]
+def num(time):
+    return val(time)[0]
+def den(time):
+    return val(time)[1]
 def intMm(intDiatonic, intCromatic, M):
         m = M-1
         if intCromatic < m:
@@ -202,9 +223,9 @@ def base(step):
         if stepBase[p] == step:
             return p
 def note_to_midi(note):
-    step = note[0]
-    octave = note[1]
-    alter = note[2]
+    step = note[1][0]
+    octave = note[1][1]
+    alter = note[1][2]
     if step == 'C':
         midiN = 60
     elif step == 'D':
