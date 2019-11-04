@@ -85,7 +85,7 @@ def times_com_duracoes(times):
     return times
 
 #tom e modo a partir de fifths e mode
-def key(fifths,mode):
+def key_(fifths,mode):
     if mode == 'major':
         if fifths == 0:
             return tuple(['C',mode])
@@ -154,20 +154,20 @@ def duracao_inicio(divisions,time,nota):
     return duracao_Fcompasso(divisions,time,nota)+duracao(time)
 
 #posicao dentro do compasso (tempo.fracaodetempo)
-def Pcompasso(divisions,time,nota):
+def P_compasso(divisions,time,nota):
     d = duracao_Fcompasso(divisions,time,nota)
     n = num(time)
     while d//n > 0:
         d = d - n
-    return d
+    return d+1
 
 #posicao dentro tempo (resto de Pcompasso)
-def Ptempo(divisions,time,nota):
-    return Pcompasso(divisions,time,nota)%1
+def P_tempo(divisions,time,nota):
+    return P_compasso(divisions,time,nota)%1
 
 #numero do tempo (inteiro de Pcompasso)
-def Ntempo(divisions,time,nota):
-    return int(Pcompasso(divisions,time,nota))+1
+def N_tempo(divisions,time,nota):
+    return int(P_compasso(divisions,time,nota))
 
 #usadas pelas outras funcoes
 def val(mensagem):
