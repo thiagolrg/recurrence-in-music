@@ -1,6 +1,6 @@
 import conversoes as f_c
 
-with open(r'arquivos teste\MusicXML\k341k363\k363.xml') as f:
+with open(r'arquivos teste\MusicXML\k341k363\k341.xml') as f:
     xml = []
     for l in f.readlines():
         if '<!' in l:
@@ -10,7 +10,7 @@ with open(r'arquivos teste\MusicXML\k341k363\k363.xml') as f:
 nome = 'nome'
 def xml_dict(xml):
     p = 0
-    xmlDict = {}
+    xmlDict = {'nome': nome}
     while p < len(xml):
         if '<part id=' in xml[p]:
             partID = str(xml[p].replace('<part id=', '').replace('>',''))
@@ -119,7 +119,7 @@ def xml_dict(xml):
     return xmlDict
 
 def musica_dict(xmlDict, tie=False, rest=None):
-    musicaDict = {}
+    musicaDict = {'nome': xmlDict.pop('nome')}
     divisions = xmlDict['divisions']
     for part, notes in xmlDict['notes'].items():
         p = 0
@@ -133,8 +133,8 @@ def musica_dict(xmlDict, tie=False, rest=None):
             metronome = f_c.referencia(note1,xmlDict['metronomes'])
             Pcompasso = f_c.P_compasso(divisions,timeRefn1,note1)
             grau = f_c.grau_escala(keyRef,note1)
-            #Ptempo = f_c.P_tempo(divisions,timeRefn1,note1)
-            #Ntempo = f_c.N_tempo(divisions,timeRefn1,note1)
+            Ptempo = f_c.P_tempo(divisions,timeRefn1,note1)
+            Ntempo = f_c.N_tempo(divisions,timeRefn1,note1)
             musicaDict.setdefault(part, {})
             musicaDict[part].setdefault('Ncompasso', []).append(f_c.Ncompasso(note1))
             musicaDict[part].setdefault('tonalidade', []).append(f_c.val(keyRef))
@@ -142,8 +142,8 @@ def musica_dict(xmlDict, tie=False, rest=None):
             musicaDict[part].setdefault('andamento', []).append(f_c.val(metronome))
             musicaDict[part].setdefault('grau',[]).append(grau)
             musicaDict[part].setdefault('Pcompasso',[]).append(Pcompasso)
-            #musicaDict[part].setdefault('Ptempo', []).append(Ptempo)
-            #musicaDict[part].setdefault('Ntempo', []).append(Ntempo)
+            musicaDict[part].setdefault('Ptempo', []).append(Ptempo)
+            musicaDict[part].setdefault('Ntempo', []).append(Ntempo)
             p += 1
             if p < len(notes):
                 while f_c.tie(notes[p]) == tie or f_c.step(notes[p]) == rest:
@@ -166,8 +166,10 @@ def musica_dict(xmlDict, tie=False, rest=None):
     return musicaDict
 
 def analise(musicaDict, keys, keystype, atribs, atribstype, tudo=False):
+    musica = musicaDict.copy()
+    nome = musica.pop('nome')
     analiseDict = {}
-    for part, atrib1 in musicaDict.items():
+    for part, atrib1 in musica.items():
         if tudo == True:
             atribs = [key for key in atrib1.keys()]
             for key in keys:
@@ -180,11 +182,15 @@ def analise(musicaDict, keys, keystype, atribs, atribstype, tudo=False):
                 valueAnalise.append(loc)
                 for key, ktype in zip(keys, keystype):
                     if ktype == 0:
-                        keyAnalise.append(tuple(atrib1[key][p1:p2]))
-                    elif ktype == 1:
-                        keyAnalise.append(tuple(atrib1[key][p1:p2-1]))
-                    elif ktype == 2:
                         keyAnalise.append(atrib1[key][p1])
+                    elif ktype == 1:
+                        keyAnalise.append(tuple(atrib1[key][p1:p2]))
+                    elif ktype == 2:
+                        keyAnalise.append(tuple(atrib1[key][p1:p2-1]))
+                    elif atype == 3:
+                        valueAnalise.append(set(atrib1[atrib2][p1:p2]))
+                    elif atype == 4:
+                        valueAnalise.append(set(atrib1[atrib2][p1:p2-1]))
                 keyAnalise = tuple(keyAnalise)
                 for atrib2, atype in zip(atribs,atribstype):
                     if atype == 0:
@@ -195,25 +201,19 @@ def analise(musicaDict, keys, keystype, atribs, atribstype, tudo=False):
                         valueAnalise.append(atrib1[atrib2][p1])
                     elif atype == 3:
                         valueAnalise.append(set(atrib1[atrib2][p1:p2]))
+                    elif atype == 4:
+                        valueAnalise.append(set(atrib1[atrib2][p1:p2-1]))
                 analiseDict.setdefault(keyAnalise,[]).append(valueAnalise)
     return analiseDict
 
 xmlDict = xml_dict(xml)
 musicaDict = musica_dict(xmlDict)
 
-intDia = analise(musicaDict,['intDia'],[0],['Ncompasso','Pcompasso'],[2,2])
-grau = analise(musicaDict,['grau', 'intDia'],[0,1],['Ncompasso','Pcompasso','tonalidade'],[2,2,3])
+intDia = analise(musicaDict,['intDia','duracao'],[1,1],['Ncompasso','Pcompasso'],[0,0])
+grau = analise(musicaDict,['grau', 'intDia','duracao'],[1,2,2],['Ncompasso','Pcompasso','tonalidade'],[0,0,3])
+duracao_intDia = analise(musicaDict,['duracao'],[1],['intDia'],[1])
+intDia_duracao = analise(musicaDict,['intDia'],[1],['duracao'],[1])
 debug = 0
 
-'''
-formas de pesquisa:
 
-0= p1:p2 = trecho completo
-1= p1:(p2-1) = trecho completo menos o último valor, como para intervalos e graus
-2= p1 = só o primeiro valor do trecho
-3= sp1 = set, somente valores unicos do trecho
-4= sp2-1 = set, somente valores unicos do trecho menos o último
-
-tudo - True, todos os valores que não estão na chave aparecem no resultado
-'''
 
