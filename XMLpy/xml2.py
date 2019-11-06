@@ -17,7 +17,6 @@ import xmltodict
 salva resultados em .dict e .txt 
 
 '''
-
 with open(r'arquivos teste\MusicXML\k341k363\k363.xml') as f:
     arquivo = []
     for l in f.readlines():
@@ -133,7 +132,7 @@ def xml_dict(xml):
     return xmlDict
 
 def mus_dict(xmlDict, tie='stop', rest=None):
-    musDict = {}
+    mDict = {}
     divisions = xmlDict['divisions']
     for part, notes in xmlDict['notes'].items():
         p = 0
@@ -149,15 +148,16 @@ def mus_dict(xmlDict, tie='stop', rest=None):
             grau = f_c.grau_escala(keyRef,note1)
             Ptempo = f_c.P_tempo(divisions,timeRefn1,note1)
             Ntempo = f_c.N_tempo(divisions,timeRefn1,note1)
-            musDict.setdefault(part, {})
-            musDict[part].setdefault('Ncompasso', []).append(f_c.Ncompasso(note1))
-            musDict[part].setdefault('tonalidade', []).append(f_c.val(keyRef))
-            musDict[part].setdefault('Fcompasso', []).append(f_c.val(timeRefn1))
-            musDict[part].setdefault('andamento', []).append(f_c.val(metronome))
-            musDict[part].setdefault('grau',[]).append(grau)
-            musDict[part].setdefault('Pcompasso',[]).append(Pcompasso)
-            musDict[part].setdefault('Ptempo', []).append(Ptempo)
-            musDict[part].setdefault('Ntempo', []).append(Ntempo)
+            mDict.setdefault(part, {})
+            mDict[part].setdefault('nota', []).append(note1[0:3][0])
+            mDict[part].setdefault('Ncompasso', []).append(f_c.Ncompasso(note1))
+            mDict[part].setdefault('tonalidade', []).append(f_c.val(keyRef))
+            mDict[part].setdefault('Fcompasso', []).append(f_c.val(timeRefn1))
+            mDict[part].setdefault('andamento', []).append(f_c.val(metronome))
+            mDict[part].setdefault('grau',[]).append(grau)
+            mDict[part].setdefault('Pcompasso',[]).append(Pcompasso)
+            mDict[part].setdefault('Ptempo', []).append(Ptempo)
+            mDict[part].setdefault('Ntempo', []).append(Ntempo)
             p += 1
             if p < len(notes):
                 while f_c.tie(notes[p]) == tie or f_c.step(notes[p]) == rest:
@@ -173,73 +173,150 @@ def mus_dict(xmlDict, tie='stop', rest=None):
                 intDia = f_c.int_diatonico(note1,note2)
                 intCro = f_c.int_cromatico(note1,note2)
                 intQua = f_c.int_qualidade(intDia,intCro)
-                musDict[part].setdefault('duracao', []).append(duracao)
-                musDict[part].setdefault('intDia', []).append(intDia)
-                musDict[part].setdefault('intCro', []).append(intCro)
-                musDict[part].setdefault('intQua', []).append(intQua)    
-    return musDict
+                mDict[part].setdefault('duracao', []).append(duracao)
+                mDict[part].setdefault('intDia', []).append(intDia)
+                mDict[part].setdefault('intCro', []).append(intCro)
+                mDict[part].setdefault('intQua', []).append(intQua)    
+    return mDict
 
-def analise(musicaDict, keys, keystype, atribs, atribstype, tudo=False):
-    musica = musicaDict.copy()
+def analise(keys, atribs, mDict, aDict, tudo=False):
+    musica = mDict.copy()
     nome = musica.pop('nome')
-    analiseDict = {}
-    for part, atrib1 in musica.items():
+    for part, atribsP in musica.items():
         if tudo == True:
-            atribs = [key for key in atrib1.keys()]
+            atribs = [key for key in atribsP.keys()]
             for key in keys:
                 atribs.pop(atribs.index(key))
-        for p1 in range(len(atrib1['intDia'])):
-            for p2 in range(p1+1,len(atrib1['intDia'])):
-                valueAnalise = []
+            abribs = [(x, 'p1p2') for x in abribs]
+        for p1 in range(len(atribsP['grau'])):
+            for p2 in range(p1+1,len(atribsP['grau'])):
                 keyAnalise = []
-                loc = (nome, part, (p1,p2))
-                valueAnalise.append(loc)
-                for key, ktype in zip(keys, keystype):
-                    if ktype == 0:
-                        keyAnalise.append(atrib1[key][p1])
-                    elif ktype == 1:
-                        keyAnalise.append(tuple(atrib1[key][p1:p2]))
-                    elif ktype == 2:
-                        keyAnalise.append(tuple(atrib1[key][p1:p2-1]))
-                    elif atype == 3:
-                        valueAnalise.append(set(atrib1[atrib2][p1:p2]))
-                    elif atype == 4:
-                        valueAnalise.append(set(atrib1[atrib2][p1:p2-1]))
-                keyAnalise = tuple(keyAnalise)
-                for atrib2, atype in zip(atribs,atribstype):
-                    if atype == 0:
-                        valueAnalise.append(tuple(atrib1[atrib2][p1:p2]))
-                    elif atype == 1:
-                        valueAnalise.append(tuple(atrib1[atrib2][p1:p2-1]))
-                    elif atype == 2:
-                        valueAnalise.append(atrib1[atrib2][p1])
-                    elif atype == 3:
-                        valueAnalise.append(set(atrib1[atrib2][p1:p2]))
-                    elif atype == 4:
-                        valueAnalise.append(set(atrib1[atrib2][p1:p2-1]))
-                analiseDict.setdefault(keyAnalise,[]).append(valueAnalise)
-    return analiseDict
+                valueAnalise = [(nome, part, (p1,p2))]
+                for key in keys:
+                    keyp1 = atribsP[key[0]][p1]
+                    keyp1p2 = tuple(atribsP[key[0]][p1:p2])
+                    keyp1p2m1 = tuple(atribsP[key[0]][p1:p2-1])
+                    if key[1] == 'p1':
+                        keyAnalise.append(keyp1)
+                    elif key[1] =='p1p2':
+                        keyAnalise.append(keyp1p2)
+                    elif key[1] == 'p2m1':
+                        keyAnalise.append(keyp1p2m1)
+                    elif key[1] == 'p1set':
+                        keyAnalise.append(set(keyp1))
+                    elif key[1] == 'p1p2set':
+                        keyAnalise.append(set(keyp1p2))
+                    elif key[1] == 'p2m1set':
+                        keyAnalise.append(set(keyp1p2m1))
+                if isinstance(keyAnalise, tuple) == False:
+                    keyAnalise = tuple(keyAnalise)
+                aDict.setdefault(keyAnalise, [{'nome': set()}])[0]['nome'].add(nome)
+                for atrib in atribs:
+                    atribp1 = atribsP[atrib[0]][p1]
+                    atribp1p2 = tuple(atribsP[atrib[0]][p1:p2])
+                    atribp2m1 = tuple(atribsP[atrib[0]][p1:p2-1])
+                    if atrib[1] == 'p1':
+                        valueAnalise.append(atribp1)
+                    elif atrib[1] == 'p1p2':
+                        valueAnalise.append(atribp1p2)
+                    elif atrib[1] == 'p1p2m1':
+                        valueAnalise.append(atribp2m1)
+                    elif atrib[1] == 'p1set':
+                        valueAnalise.append(set(atribp1))
+                    elif atrib[1] == 'p1p2set':
+                        valueAnalise.append(set(atribp1p2))
+                    elif atrib[1] == 'p2m1set':
+                        valueAnalise.append(set(atribp2m1))
+                    elif atrib[1] == 'p1setg':
+                        aDict[keyAnalise][0].setdefault(atrib[0], set()).add(atribp1)
+                    elif atrib[1] == 'p1p2setg':
+                        aDict[keyAnalise][0].setdefault(atrib[0], set()).add(atribp1p2)
+                    elif atrib[1] == 'p2m1setg':
+                        aDict[keyAnalise][0].setdefault(atrib[0], set()).add(atribp2m1)
+                aDict.setdefault(keyAnalise,[]).append(valueAnalise)
+    return aDict
+
+def filtro_quantidade(aDict, atribslen):
+    filtrado = {}
+    for chave, valor in aDict.items():
+        for atriblen in atribslen:
+            if len(valor[0][atriblen[0]]) > atriblen[1]:
+                filtrado.setdefault(chave,valor[1:])
+    return filtrado
+
+def filtro_tipo(aDict, atribs):
+    filtrado = {}
+    for chave, valor in aDict.items():
+        for atrib in atribs:
+            if all(valor[0][atrib[0]]) == atrib[1]:
+                filtrado.setdefault(chave,valor[1:])
+    return filtrado
+
+def sort_tamKquanV(entrada):
+    pronto = {}
+    for chave, valor in sorted(entrada.items(), key=lambda item: (len(item[0][0]), len(item[1])), reverse=True):
+        pronto.setdefault(chave, valor)
+    return pronto
 
 xml = counter_arq_xml(arquivo)
 xmlDict = xml_dict(xml)
-musDict = mus_dict(xmlDict)
-musDict.setdefault('nome',nome)
+mDict = mus_dict(xmlDict)
+mDict.setdefault('nome',nome)
 
-intDia = analise(musDict,['intDia','duracao'],[1,1],['Ncompasso','Pcompasso'],[0,0])
-grau = analise(musDict,['grau', 'intDia','duracao'],[1,2,2],['Ncompasso','Pcompasso','tonalidade'],[0,0,3])
-duracao_intDia = analise(musDict,['duracao'],[1],['intDia'],[1])
-intDia_duracao = analise(musDict,['intDia'],[1],['duracao'],[1])
+aDict = {}
+intDia_dur__Ncomp_Pcomp = analise([('intDia','p1p2'),('duracao','p1p2')],[('Ncompasso','p1'),('Pcompasso','p1')], mDict, aDict)
+grau_intDia_dur__Ncompasso_Pcompasso = analise([('grau', 'p1p2'), ('intDia', 'p2m1'), ('duracao', 'p2m1')],[('Ncompasso', 'p1'),('Pcompasso', 'p1'),('tonalidade', 'p1p2set')], mDict, aDict)
 
+'''
+duracao_intDia = analise(mDict,['duracao'],[1],['intDia'],[1])
+intDia_duracao = analise(mDict,['intDia'],[1],['duracao'],[1])
+'''
 '''
 formas de pesquisa:
 
 0= p1 = só o primeiro valor do trecho
 1= p1:p2 = trecho completo
 2= p1:(p2-1) = trecho completo menos o último valor, como para intervalos e graus
-3= set p1 = somente valores unicos do trecho
+3= set p1:p2 = somente valores unicos do trecho
 4= set p2-1 = somente valores unicos do trecho menos o último
+5= setdict somente valores únicos de TODOS os trechos
 
 tudo - True, todos os valores que não estão na chave aparecem no resultado
 '''
 
+'''
+def diretório de input:
+    se contiver xml
+        cria pastas 'dict', 'análise'
+    se não:
+        print ('diretorio não contem xml')
+        return (diretório de input)
+
+Caixa de diálogo
+    certifique-se de que os arquivos xml só contém uma melodia por parte,
+    (sem layers, chord, backup, foward, ou voices diferentes)
+
+    botão ok
+
+Caixa diálogo:
+carácteristicas para recorrência        outros atribs para mostrar no momento   
+tipo                                    tipo
+
+log de progresso
+Total de xml :
+verificando convertidos: nome do arquivo, posicao na lista de nomes, de, tamanho da lista de nomes
+convertendo novos: nome do arquivo, . dict, salvo, posicao na lista de nomes, de, tamanho da lista de nomes
+análise 1:
+analisando: nome do arquivo, posicao na lista de nomes, de, tamanho da lista de nomes
+filtrando por quantidade de músicas
+organizando por tamanho e quantidade de vezes que aparece
+análise 1 salvo
+análise 2:
+analisando: nome do arquivo, posicao na lista de nomes, de, tamanho da lista de nomes
+filtrando por quantidade de músicas
+organizando por tamanho e quantidade de vezes que aparece
+análise 2 salvo
+análise ...:
+Pronto
+'''
 debug = 0
