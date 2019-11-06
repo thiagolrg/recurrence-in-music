@@ -299,8 +299,11 @@ Caixa de diálogo
     botão ok
 
 Caixa diálogo:
-carácteristicas para recorrência        outros atribs para mostrar no momento   
+características para recorrência        outros atribs para mostrar no momento   
 tipo                                    tipo
+
+Filtros:
+característica      quantidade      tipo
 
 log de progresso
 Total de xml :
@@ -309,12 +312,16 @@ convertendo novos: nome do arquivo, . dict, salvo, posicao na lista de nomes, de
 análise 1:
 analisando: nome do arquivo, posicao na lista de nomes, de, tamanho da lista de nomes
 filtrando por quantidade de músicas
-organizando por tamanho e quantidade de vezes que aparece
+filtrando por tipo ou quantidade de:
+filtrando por tipo ou quantidade de:
+Orgalizando por tamanho da chave quantidade de valores por chave
 análise 1 salvo
 análise 2:
 analisando: nome do arquivo, posicao na lista de nomes, de, tamanho da lista de nomes
 filtrando por quantidade de músicas
-organizando por tamanho e quantidade de vezes que aparece
+filtrando por tipo ou quantidade de:
+filtrando por tipo ou quantidade de:
+Orgalizando por tamanho da chave quantidade de valores por chave
 análise 2 salvo
 análise ...:
 Pronto
