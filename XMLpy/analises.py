@@ -21,8 +21,6 @@ def analise(keys, atribs, mDict, aDict, tudo=False):
                         keyAnalise.append(keyp1p2)
                     elif key[1] == 'p2m1':
                         keyAnalise.append(keyp1p2m1)
-                    elif key[1] == 'p1set':
-                        keyAnalise.append(set(keyp1))
                     elif key[1] == 'p1p2set':
                         keyAnalise.append(set(keyp1p2))
                     elif key[1] == 'p2m1set':
@@ -40,17 +38,15 @@ def analise(keys, atribs, mDict, aDict, tudo=False):
                         valueAnalise.append(atribp1p2)
                     elif atrib[1] == 'p1p2m1':
                         valueAnalise.append(atribp2m1)
-                    elif atrib[1] == 'p1set':
-                        valueAnalise.append(set(atribp1))
                     elif atrib[1] == 'p1p2set':
                         valueAnalise.append(set(atribp1p2))
                     elif atrib[1] == 'p2m1set':
                         valueAnalise.append(set(atribp2m1))
-                    elif atrib[1] == 'p1setg':
+                    elif atrib[1] == 'p1f':
                         aDict[keyAnalise][0].setdefault(atrib[0], set()).add(atribp1)
-                    elif atrib[1] == 'p1p2setg':
+                    elif atrib[1] == 'p1p2f':
                         aDict[keyAnalise][0].setdefault(atrib[0], set()).add(atribp1p2)
-                    elif atrib[1] == 'p2m1setg':
+                    elif atrib[1] == 'p2m1f':
                         aDict[keyAnalise][0].setdefault(atrib[0], set()).add(atribp2m1)
     return aDict
 

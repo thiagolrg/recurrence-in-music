@@ -68,10 +68,6 @@ def le_pickle(caminho):
       arquivo = pickle.loads(f.read())
    return arquivo
 
-def input_analise(musD):
-    print('opções :' musD.keys())
-
-
 
 
         
