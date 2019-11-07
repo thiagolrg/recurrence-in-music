@@ -18,6 +18,11 @@ def diretorio_ler(extensao):
             return diretorio_ler(extensao)         
     return di
 
+def cria_pasta(diretorio):
+    import os
+    os.makedirs(diretorio, exist_ok=True)
+    return None
+
 #retorna uma lista com o caminho de todos os arquivos do diretorio com a extensao
 def caminhos_extensao(diretorio, extensao):
     import os
@@ -28,3 +33,45 @@ def caminhos_extensao(diretorio, extensao):
             if extensao in file:
                 caminhos.append(os.path.join(r, file))
     return caminhos
+
+def caminho_nome(caminho, extensao):
+    for linha in caminho.split('\\'):
+        if extensao in linha:
+            return linha.replace(extensao,'')
+
+def xml_sem_dict(caminhosxml,caminhosdict):
+    nomesdict = []
+    caminhosxmlsemdict = []
+    for caminho in caminhosdict:
+        nomesdict.append(caminho_nome(caminho, '.p'))
+    for caminho in caminhosxml:
+        if caminho_nome(caminho, '.xml') not in nomesdict:
+            caminhosxmlsemdict.append(caminho)
+    return caminhosxmlsemdict
+
+def entrada_xml(caminho):
+    with open(caminho) as f:
+        arquivo = []
+        for l in f.readlines():
+            arquivo.append(l.strip().replace('\n', ''))
+    return arquivo
+
+def escreve_pickle(diretorio, arquivo ,nome):
+   import pickle
+   with open(diretorio+'\\'+nome+'.p', 'xb') as f:
+      pickle.dump(arquivo, f)
+   return None
+
+def le_pickle(caminho):
+   import pickle
+   with open(caminho, 'rb') as f:
+      arquivo = pickle.loads(f.read())
+   return arquivo
+
+def input_analise(musD):
+    print('opções :' musD.keys())
+
+
+
+
+        
