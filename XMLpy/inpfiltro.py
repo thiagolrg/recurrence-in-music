@@ -4,11 +4,10 @@ listaFT = ['a','b','c','d']
 
 listachave = []
 listavalor = []
-for valor in listaC:
-    cv = input(valor,'chave ou valor?', ['chave','valor','proximo'])
-    t = input(valor,['como extrair?',listaT])
+
 
     
+
 
 def inp(texto, opcoes):
     print(f'{texto}\n')
@@ -34,6 +33,13 @@ def denovo(lista, listaC, listaT):
     else:
         return lista
 
-
-
-
+listachave = []
+listavalor = []
+for valor in listaC:
+    print(c)
+    cv = inp(valor,'chave ou valor?', ['chave','valor','proximo'])
+    t = inp(valor,['como extrair?',listaT])
+    if cv == 'chave':
+        listachave.append(c,t)
+    if cv == 'valor':
+        listavalor.append(c,t)

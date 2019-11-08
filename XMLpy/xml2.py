@@ -19,24 +19,35 @@ for xml in caminhosxml:
     musD.setdefault('nome',nome)
     f_d.escreve_pickle(diD, musD, nome)
 
-
-
-caminhosdict = f_d.caminhos_extensao(diD, '.p')
-for caminho in caminhosdict:
-    musD = f_d.le_pickle(caminho)
-    listaC = [x for x in musD['P1'].keys()]
-    listaTA = ['p1', 'p1p2', 'p1p2m1','p1set', 'p1p2set', 'p2m1set']
-    listaTF = ['p1f', 'p1p2f', 'p2m1f']
-    teste = apachave([], listaC, listaTA)
-
-'''
 aDict = {}
 caminhosdict = f_d.caminhos_extensao(diD, '.p')
 for caminho in caminhosdict:
     musD = f_d.le_pickle(caminho)
-    intDia_dur__Ncomp_Pcomp = analise([('intDia','p1p2'),('duracao','p1p2')],[('Ncompasso','p1'),('Pcompasso','p1')], mDict, aDict)
+    intDia_dur__Ncomp_Pcomp = f_a.analise([('intDia','p1p2'),('duracao','p1p2')],[('Ncompasso','p1'),('Pcompasso','p1')], musD, aDict)
+intDia_dur__Ncomp_Pcomp = f_a.filtro_quantidade(intDia_dur__Ncomp_Pcomp, ['nome'],[1])
+intDia_dur__Ncomp_Pcomp = f_a.sort_tamKquanV(intDia_dur__Ncomp_Pcomp)
+f_d.escreve_txt(diA,intDia_dur__Ncomp_Pcomp, 'teste1')
+debug = 0
 
-grau_intDia_dur__Ncompasso_Pcompasso = analise([('grau', 'p1p2'), ('intDia', 'p2m1'), ('duracao', 'p2m1')],[('Ncompasso', 'p1'),('Pcompasso', 'p1'),('tonalidade', 'p1p2set')], mDict, aDict)
+'''
+[[][][]],[[][][]]
+[0] = primeira analise
+[1] = segunda analise...
+[0][0] = parametros da analise
+[0][1] = parametros filtro 1
+[0][2] = parametros filtro 2...
+para cada análise salvar o arquivo log e acrescentar o txt da análise
+
+log:
+quantas musicas
+quais musicas
+parametros da análise
+filtros
+
+fazer filtros mais sofisticados levando em conta a homogeneidade dos valores:
+porcentagem em cada música,
+
+trazer fitro nested para o .xml
 '''
 '''
 formas de pesquisa:

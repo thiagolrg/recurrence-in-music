@@ -36,7 +36,7 @@ def nome_arquivo(caminho, extensao):
             return linha.replace(extensao,'')
 
 def escreve_txt(diretorio, nome, parasalvar):
-    with open(diretorio+'\\'+nome, 'w') as f:
+    with open(diretorio+'\\'+nome+'.txt', 'w') as f:
         linha = 0
         for items in parasalvar.items():
             linha = linha + 1

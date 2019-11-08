@@ -56,18 +56,22 @@ def entrada_xml(caminho):
             arquivo.append(l.strip().replace('\n', ''))
     return arquivo
 
-def escreve_pickle(diretorio, arquivo ,nome):
-   import pickle
-   with open(diretorio+'\\'+nome+'.p', 'xb') as f:
-      pickle.dump(arquivo, f)
-   return None
-
 def le_pickle(caminho):
    import pickle
    with open(caminho, 'rb') as f:
       arquivo = pickle.loads(f.read())
    return arquivo
 
+def escreve_pickle(diretorio, arquivo ,nome):
+   import pickle
+   with open(diretorio+'\\'+nome+'.p', 'xb') as f:
+      pickle.dump(arquivo, f)
+   return None
 
-
-        
+def escreve_txt(diretorio, arquivo, nome):
+    with open(diretorio+'\\'+nome, 'w') as f:
+        linha = 0
+        for items in arquivo.items():
+            linha = linha + 1
+            print(linha,'.   ',items,'\n',file=f)
+    return None      

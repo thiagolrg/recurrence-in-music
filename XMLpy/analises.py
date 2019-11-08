@@ -48,16 +48,18 @@ def analise(keys, atribs, mDict, aDict, tudo=False):
                         aDict[keyAnalise][0].setdefault(atrib[0], set()).add(atribp1p2)
                     elif atrib[1] == 'p2m1f':
                         aDict[keyAnalise][0].setdefault(atrib[0], set()).add(atribp2m1)
+                aDict[keyAnalise].append(valueAnalise)
     return aDict
 
-def filtro_quantidade(aDict, atribslen):
+def filtro_quantidade(aDict, nome, quantidade):
     filtrado = {}
     for chave, valor in aDict.items():
-        for atriblen in atribslen:
+        for atriblen in zip(nome,quantidade):
             if len(valor[0][atriblen[0]]) > atriblen[1]:
                 filtrado.setdefault(chave,valor[1:])
     return filtrado
 
+#acontecem exclusivamente
 def filtro_tipo(aDict, atribs):
     filtrado = {}
     for chave, valor in aDict.items():
