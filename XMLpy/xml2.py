@@ -19,32 +19,15 @@ for xml in caminhosxml:
     musD.setdefault('nome',nome)
     f_d.escreve_pickle(diD, musD, nome)
 
-listaC = [x for x in musD.keys()]
-listaTA = ['p1', 'p1p2', 'p1p2m1','p1set', 'p1p2set', 'p2m1set']
-listaTF = ['p1f', 'p1p2f', 'p2m1f']
 
-def inp(opcoes, prompt):
-    for o in opcoes:
-        print(o)
-    ip = input(f'{prompt}: ')
-    if ip in opcoes:
-        return ip
-    else:
-        return inp(opcoes, prompt)
 
-def inpchave(lista, listaC,listaTA):
-    print('opcoes para recorrencia: ')
-    chaveV = inp(listaC, 'escolha uma opcao')
-    tipoT = inp(listaTA, 'escolha um tipo')
-    lista.append((chaveV,tipoT))
-    print('outra chave?')
-    outra = inp(('s','n'), 'escolha s ou n')
-    if outra == 's':
-        lista.apppend(inpchave(lista, listaC, listaTA))
-    if outra == 'n':
-        return lista
-
-teste = inpchave([], listaC, listaTA)
+caminhosdict = f_d.caminhos_extensao(diD, '.p')
+for caminho in caminhosdict:
+    musD = f_d.le_pickle(caminho)
+    listaC = [x for x in musD['P1'].keys()]
+    listaTA = ['p1', 'p1p2', 'p1p2m1','p1set', 'p1p2set', 'p2m1set']
+    listaTF = ['p1f', 'p1p2f', 'p2m1f']
+    teste = apachave([], listaC, listaTA)
 
 '''
 aDict = {}
