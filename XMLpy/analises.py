@@ -1,4 +1,4 @@
-def analise(keys, atribs, mDict, aDict, tudo=False):
+def analise_(keys, atribs, mDict, aDict, tudo=False):
     musica = mDict.copy()
     nome = musica.pop('nome')
     for part, atribsP in musica.items():
@@ -51,25 +51,55 @@ def analise(keys, atribs, mDict, aDict, tudo=False):
                 aDict[keyAnalise].append(valueAnalise)
     return aDict
 
-def filtro_quantidade(aDict, nome, quantidade):
+#acontecem >= que tantas vezes
+#filtro ex:{'nome',1}
+def filtro_quantidade(aDict, filtro):
+    if filtro == {None}:
+        return aDict
     filtrado = {}
     for chave, valor in aDict.items():
-        for atriblen in zip(nome,quantidade):
-            if len(valor[0][atriblen[0]]) > atriblen[1]:
-                filtrado.setdefault(chave,valor[1:])
+        f = True
+        for cf, vf in filtro.items():
+            if len(valor[0][cf]) >= vf:
+                continue
+            else:
+                f = False
+                break
+        if f == True:
+            filtrado.setdefault(chave,valor)
     return filtrado
 
-#acontecem exclusivamente
-def filtro_tipo(aDict, atribs):
+#acontecem também nessas (explusivamente ou não)
+#filtro ex:[{'nome': ['k341','k363']}, False]
+def filtro_contém(aDict, filtro):
+    if filtro == {None}:
+        return aDict
     filtrado = {}
-    for chave, valor in aDict.items():
-        for atrib in atribs:
-            if all(valor[0][atrib[0]]) == atrib[1]:
-                filtrado.setdefault(chave,valor[1:])
-    return filtrado
+    if filtro[1] == False:
+        for chave, valor in aDict.items():
+            for cset, vset in valor[0].items():
+                for vf in filtro[0][cset]:
+                    if vf in vset:
+                        continue
+                    else:
+                        break
+                    break
+            filtrado.setdefault(chave,valor)
+        return filtrado
+    elif filtro[1] == True:
+        for chave, valor in aDict.items():
+            for cf, vf in filtro[0].items():
+                for vset in valor[0][cf]:
+                    if vset in vf:
+                        continue
+                    else:
+                        break
+                    break
+            filtrado.setdefault(chave,valor)
+        return filtrado
 
 def sort_tamKquanV(entrada):
     pronto = {}
     for chave, valor in sorted(entrada.items(), key=lambda item: (len(item[0][0]), len(item[1])), reverse=True):
-        pronto.setdefault(chave, valor)
+        pronto.setdefault(chave, valor[1:])
     return pronto

@@ -19,23 +19,38 @@ for xml in caminhosxml:
     musD.setdefault('nome',nome)
     f_d.escreve_pickle(diD, musD, nome)
 
-aDict = {}
 caminhosdict = f_d.caminhos_extensao(diD, '.p')
-for caminho in caminhosdict:
-    musD = f_d.le_pickle(caminho)
-    intDia_dur__Ncomp_Pcomp = f_a.analise([('intDia','p1p2'),('duracao','p1p2')],[('Ncompasso','p1'),('Pcompasso','p1')], musD, aDict)
-intDia_dur__Ncomp_Pcomp = f_a.filtro_quantidade(intDia_dur__Ncomp_Pcomp, ['nome'],[1])
-intDia_dur__Ncomp_Pcomp = f_a.sort_tamKquanV(intDia_dur__Ncomp_Pcomp)
-f_d.escreve_txt(diA,intDia_dur__Ncomp_Pcomp, 'teste1')
-debug = 0
+nomes = [f_d.caminho_nome(caminho, '.p') for caminho in caminhosdict]
+quantidade = len(nomes)
+parametrosanalises = [{'keys': [('intDia','p1p2'),('duracao','p1p2')], 'atribs': [('Ncompasso','p1'),('Pcompasso','p1')],
+             'filtroQT': {'nome':2},
+             'filtroTP': {None}},
+            {'keys': [('intDia','p1p2'),('duracao','p1p2')], 'atribs': [('Ncompasso','p1'),('Pcompasso','p1')],
+             'filtroQT': {'nome':2},
+             'filtroTP': {None}}]
 
+n = len(f_d.caminhos_extensao(diA, '.txt'))+1
+for parametros in parametrosanalises:
+    nomeanalise = f'analise {n}'
+    log = {'nomes': nomes, 'quantidade': len(nomes), 'parametros': parametros}
+    f_d.escreve_txt(diA,log, nomeanalise)
+    aDict = {}
+    for caminho in caminhosdict:
+        musD = f_d.le_pickle(caminho)
+        analise = f_a.analise_(parametros['keys'], parametros['atribs'], musD, aDict)
+    analise = f_a.filtro_quantidade(analise, parametros['filtroQT'])
+    analise = f_a.filtro_contém(analise, parametros['filtroTP'])
+    analise = f_a.sort_tamKquanV(analise)
+    f_d.escreve_txt(diA,analise, nomeanalise)
+    n += 1
+debug = 0
 '''
-[[][][]],[[][][]]
+[[[],[]], [[],[]], [[],[]]],[[][][]]
 [0] = primeira analise
 [1] = segunda analise...
 [0][0] = parametros da analise
 [0][1] = parametros filtro 1
-[0][2] = parametros filtro 2...
+[0][2] = parametros filtro 2
 para cada análise salvar o arquivo log e acrescentar o txt da análise
 
 log:
@@ -48,6 +63,8 @@ fazer filtros mais sofisticados levando em conta a homogeneidade dos valores:
 porcentagem em cada música,
 
 trazer fitro nested para o .xml
+filtro de segmentos
+filtro de quantidade de vezes independente da música em que aparece
 '''
 '''
 formas de pesquisa:

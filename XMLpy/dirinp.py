@@ -69,9 +69,9 @@ def escreve_pickle(diretorio, arquivo ,nome):
    return None
 
 def escreve_txt(diretorio, arquivo, nome):
-    with open(diretorio+'\\'+nome, 'w') as f:
+    with open(diretorio+'\\'+nome+'.txt', 'a') as f:
         linha = 0
         for items in arquivo.items():
             linha = linha + 1
             print(linha,'.   ',items,'\n',file=f)
-    return None      
+    return None
