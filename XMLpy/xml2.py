@@ -22,28 +22,37 @@ for xml in caminhosxml:
 caminhosdict = f_d.caminhos_extensao(diD, '.p')
 nomes = [f_d.caminho_nome(caminho, '.p') for caminho in caminhosdict]
 quantidade = len(nomes)
+
+parametrosanalises = [{'keys': [('intDia','p1p2'),('duracao','p1p2')], 'atribs': [('Ncompasso','p1'),('Pcompasso','p1')],
+             'filtroQT': {'posicao': 2},
+             'filtroTP': [{'nome': ['k363']},True]}]
+n = len(f_d.caminhos_extensao(diA, '.txt'))+1
+for parametros in parametrosanalises:
+    print('Analise:\n', parametrosanalises.index(parametros)+1, 'de', len(parametrosanalises))
+    nomeanalise = f'analise {n}'
+    log = {'nomes': nomes, 'quantidade': len(nomes), 'parametros': parametros}
+    aDict = {}
+    print('segmentacao:')
+    for caminho in caminhosdict:
+        print(caminhosdict.index(caminho)+1, 'de', len(caminhosdict),'      ')
+        musD = f_d.le_pickle(caminho)
+        analise = f_a.segmentacao_(parametros['keys'], parametros['atribs'], musD, aDict)
+    print('filtros:     ')
+    analise = f_a.filtro_quantidade(analise, parametros['filtroQT'])
+    analise = f_a.filtro_contém(analise, parametros['filtroTP'])
+    analise = f_a.sort_tamKquanV(analise)
+    analise = f_a.filtro_nested(analise)
+    f_d.escreve_txt(diA,log, nomeanalise)
+    f_d.escreve_txt(diA,analise, nomeanalise)
+    n += 1
+'''
 parametrosanalises = [{'keys': [('intDia','p1p2'),('duracao','p1p2')], 'atribs': [('Ncompasso','p1'),('Pcompasso','p1')],
              'filtroQT': {'nome':2},
              'filtroTP': {None}},
             {'keys': [('intDia','p1p2'),('duracao','p1p2')], 'atribs': [('Ncompasso','p1'),('Pcompasso','p1')],
              'filtroQT': {'nome':2},
              'filtroTP': {None}}]
-
-n = len(f_d.caminhos_extensao(diA, '.txt'))+1
-for parametros in parametrosanalises:
-    nomeanalise = f'analise {n}'
-    log = {'nomes': nomes, 'quantidade': len(nomes), 'parametros': parametros}
-    f_d.escreve_txt(diA,log, nomeanalise)
-    aDict = {}
-    for caminho in caminhosdict:
-        musD = f_d.le_pickle(caminho)
-        analise = f_a.analise_(parametros['keys'], parametros['atribs'], musD, aDict)
-    analise = f_a.filtro_quantidade(analise, parametros['filtroQT'])
-    analise = f_a.filtro_contém(analise, parametros['filtroTP'])
-    analise = f_a.sort_tamKquanV(analise)
-    f_d.escreve_txt(diA,analise, nomeanalise)
-    n += 1
-debug = 0
+'''
 '''
 [[[],[]], [[],[]], [[],[]]],[[][][]]
 [0] = primeira analise

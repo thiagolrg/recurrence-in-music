@@ -173,14 +173,7 @@ def nested_identificados(entrada):
                     continue
     print('nested_identificados ok')
     return entrada
-
-def filtro_nested_identificados(entrada):
-    for chave, valores in entrada.items():
-        if 'caso 1' or 'caso 2' in valores[0]:
-            continue
-        else:
             
-
 def filtro_nested(entrada):
     for chave1, valores1 in (entrada.copy()).items():
         if valores1 == []:
@@ -202,13 +195,6 @@ def filtro_nested(entrada):
     print('filtro_nested ok')
     return entrada
 
-def limpa_posicoes(entrada):
-    for chave, valores in entrada.items():
-        valoreslimpos = [valor[:-1] for valor in valores]
-        entrada.setdefault(chave, valoreslimpos)
-    print('limpa_posicoes ok')
-    return entrada
-
 def lista_in(menor, maior):
     for posicao in range(len(maior[0])):
         t1 = maior[0][posicao:(posicao+len(menor[0]))]
@@ -216,6 +202,15 @@ def lista_in(menor, maior):
         if t1 == menor[0] and t2 == menor[1]:
             return True
     return False
+
+def limpa_posicoes(entrada):
+    for chave, valores in entrada.items():
+        valoreslimpos = [valor[:-1] for valor in valores]
+        entrada.setdefault(chave, valoreslimpos)
+    print('limpa_posicoes ok')
+    return entrada
+
+
 
 '''
 def sort_tamanhoSI(item):
