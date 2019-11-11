@@ -66,16 +66,17 @@ if prontas != []:
                     parametros = Cfiltro_quantidade(parametros)
                 return parametros
             analise.append(parametros_(caracteristicas, tipos))
-            sn = inp(f'Analises:\n{analise}', ('outra', 'apagar', 'confirmar'))
-            if sn == 'outra':
+            sn = inp(f'Analises:\n{analise}', ('outra nova', 'apagar e começar novamente', 'confirmar e seguir para analise'))
+            if sn == 'outra nova':
                 return analise_(caracteristicas, tipos, analise)
-            elif sn == 'apagar':
+            elif sn == 'apagar e começar novamente':
                 analise = []
                 return analise_(caracteristicas, tipos, analise)
-            elif sn == 'confirmar':
+            elif sn == 'confirmar e seguir para analise':
                 return analise
         analise = analise_(caracteristicas, tipos, [])
 
+#fazer input de opções por número e não por texto...
 '''
     elif 'prontas'
         inp('escolha os parâmetros:', (prontas))
