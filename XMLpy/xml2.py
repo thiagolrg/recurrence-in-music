@@ -45,6 +45,16 @@ for parametros in parametrosanalises:
     f_d.escreve_txt(diA,log, nomeanalise)
     f_d.escreve_txt(diA,analise, nomeanalise)
     n += 1
+
+'''
+levantar erros ao ler xml quando:
+    não for <score-part-wise>
+    quando encontrar as mensagens <backward> <forward>
+
+pensar num jeito de automatizar a atualização das listas de input,
+talvez algo que me mostra todas as def no modulo e permita executar todas
+assim posso criar uma chave para def no dicionário pedindo os valores das def
+'''
 '''
 parametrosanalises = [{'keys': [('intDia','p1p2'),('duracao','p1p2')], 'atribs': [('Ncompasso','p1'),('Pcompasso','p1')],
              'filtroQT': {'nome':2},
