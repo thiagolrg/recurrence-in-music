@@ -51,9 +51,10 @@ levantar erros ao ler xml quando:
     a primeira tag não for <score-part-wise>
     quando encontrar as mensagens <backward> <forward> <chord>
 
-Fazer inputs com numeração para as opções
+Fazer inputs com numeração para as opções OK
 Ligar inputs a análise e salvar arquivos de parâmetros
-pensar num jeito de automatizar a atualização das listas de input,
+pensar num jeito de automatizar a atualização das listas de input
+definir entradas para segmentação e filtros
 talvez algo que me mostra todas as def no modulo e permita executar todas
 assim posso criar uma chave para def no dicionário pedindo os valores das def
 

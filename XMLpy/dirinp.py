@@ -75,3 +75,15 @@ def escreve_txt(diretorio, arquivo, nome):
             linha = linha + 1
             print(linha,'.   ',items,'\n',file=f)
     return None
+
+def inp(texto, opcoes):
+    print(f'{texto}')
+    for o in range(len(opcoes)):
+        print(f'{o+1}. {opcoes[o]}')
+    ip = input('escolha uma opcao: ')
+    if ip.isdigit() and int(ip) <= len(opcoes):
+        print( )
+        return opcoes[int(ip)-1]
+    else:
+        print(f'{ip} não é uma ooção\n')
+        return inp(texto, opcoes)

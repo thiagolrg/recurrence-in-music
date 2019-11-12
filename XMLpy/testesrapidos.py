@@ -1,54 +1,67 @@
+import analises
+import inspect
+import dirinp as f_d
 prontas = ['a','b','c','d']
 caracteristicas = ['a','b','c','d']
 tipos = ['p1', 'p1p2', 'p2m1']
+inspectAnalise = inspect.getmembers(analises, inspect.isfunction)
+funcoesAnalise = {}
+for k,v in inspectAnalise:
+    funcoesAnalise.setdefault(k,v)
 
-def inp(texto, opcoes):
-    print(f'{texto}')
-    for o in range(len(opcoes)):
-        print(f'{o+1}. {opcoes[o]}')
-    ip = input('escolha uma opcao: ')
-    if ip.isdigit() and int(ip) <= len(opcoes):
-        print( )
-        return opcoes[int(ip)-1]
-    else:
-        print(f'{ip} não é uma ooção\n')
-        return inp(texto, opcoes)
+parametrosanalises = {}
+if prontas != []:
+    op = f_d.inp('criar ou usar prontas?', ('criar','prontas'))
+    if op == 'criar':
+        parametrosanalises.setdefault('segmentacao', funcoesAnalise['segmentacao'](caracteristicas, tipos))
+        op = f_d.inp('adicionar filtros:', ('s','n'))
+        if op == 's':
+            op = f_d.inp('qual filtro?', [x for x in funcoesAnalise.keys()])
+            parametrosanalises.setdefault(op, funcoesAnalise[op](parametrosanalises))
+            t = 0
+        #if op == 'n':
+    '''
+    if op == 'prontas':
+        para cada chave da prontas buscar a função de mesma chave na funcoesAnalise
+        e passar os parametros da prontas para a função
+        '''
+'''
 
 teste = inp('titulo:', ('s','n','t'))
 debug = 0
 def Csegmentos_(caracteristicas, tipos, parametros):
-    sc = inp('caracteristicas para segmentos:', (caracteristicas))
-    st = inp('tipos para segmentos:', (tipos))
-    parametros['segmentos'].append((sc,st))
-    sn = inp(f'{parametros}', ('confirmar', 'repetir'))
-    if sn == 'confirmar':
-        sn = inp('adicionar outra caracteristica para segmentos?', ('s','n'))
-        if sn == 's':
+    sc = f_d.inp('caracteristicas para segmentos:', (caracteristicas))
+    st = f_d.inp('tipos para segmentos:', (tipos))
+    parametros[0]['segmentos'].append((sc,st))
+    op = f_d.inp(f'{parametros}', ('confirmar', 'repetir'))
+    if op == 'confirmar':
+        op = f_d.inp('adicionar outra caracteristica para segmentos?', ('s','n'))
+        if op == 's':
             return Csegmentos_(caracteristicas, tipos, parametros)
-        if sn == 'n':
+        if op == 'n':
             return parametros
-    if sn == 'repetir':
-        parametros['segmentos'].pop()
+    if op == 'repetir':
+        parametros[0]['segmentos'].pop()
         return Csegmentos_(caracteristicas, tipos, parametros)
 
 def Cposicoes_(caracteristicas, tipos, parametros):
-    sc = inp('caracteristicas para posicoes:', (caracteristicas))
-    st = inp('tipos para segmentos:', (tipos))
-    sn = inp('usar para filtros?', ('s', 'n'))
-    if sn == 's':
+    sc = f_d.inp('caracteristicas para posicoes:', (caracteristicas))
+    st = f_d.inp('tipos para segmentos:', (tipos))
+    op = f_d.inp('usar para filtros?', ('s', 'n'))
+    if op == 's':
         filtro = True
-    elif sn == 'n':
+    elif op == 'n':
         filtro = False
-    parametros['posicoes'].append((sc, st, filtro))
-    sn = inp(f'{parametros}', ('confirmar', 'repetir'))
-    if sn == 'confirmar':
-        sn = inp('adicionar outra caracteristica para posicoes?', ('s','n'))
-        if sn == 's':
+    parametros[0]['posicoes'].append((sc, st, filtro))
+    op = f_d.inp(f'{parametros}', ('confirmar', 'repetir'))
+    if op == 'confirmar':
+        op = f_d.inp('adicionar outra caracteristica para posicoes?', ('s','n'))
+        if op == 's':
             return Cposicoes_(caracteristicas, tipos, parametros)
-        if sn == 'n':
+        if op == 'n':
             return parametros
-    if sn == 'repetir':
-        parametros['posicoes'].pop()
+    if op == 'repetir':
+        parametros[0]['posicoes'].pop()
         return Cposicoes_(caracteristicas, tipos, parametros)
 
 def Cfiltro_quantidade(parametros):
@@ -70,45 +83,46 @@ def Cfiltro_quantidade(parametros):
         parametros['filtroQT'].pop()
         return Cfiltro_quantidade(parametros)
 
-def parametros_(caracteristicas, tipos, prontas, analises):
-                parametros = {'segmentos': [], 'posicoes': []}
+def parametros_(caracteristicas, tipos, prontas, analises, filtros):
+                parametros = [{'segmentos': [], 'posicoes': []},[]]
                 parametros = Csegmentos_(caracteristicas, tipos, parametros)
-                sn = inp('adicionar caracteristicas para posicoes?', ('s','n'))
-                if sn == 's':
+                op = f_d.inp('adicionar caracteristicas para posicoes?', ('s','n'))
+                if op == 's':
                     parametros = Cposicoes_(caracteristicas, tipos, parametros)
-                sn = inp('filtro quantidade?', ('s','n'))
-                if sn == 's':
-                    parametros = Cfiltro_quantidade(parametros)
+                op = f_d.inp('adicionar filtros?', ('s','n'))
+                if op == 's':
+                    parametros = Cfiltros(parametros, filtros)
                 analises.append(parametros)
-                return analises_(caracteristicas, tipos, prontas, analises)
+                return outMaster_(caracteristicas, tipos, prontas, analises)
                 
-def analises_(caracteristicas, tipos, prontas, analises):
-            sn = inp(f'Analises:\n{analises}', ('confirmar e seguir para analises', 'adiciona nova analise', 'repetir', 'apagar e começar novamente'))
-            if sn == 'adiciona nova analise':
-                return inpMaster(caracteristicas, tipos, prontas, analises)
-            if sn == 'repetir':
+def outMaster_(caracteristicas, tipos, prontas, analises):
+            op = f_d.inp(f'Analises:\n{analises}', ('confirmar e seguir para analises', 'adiciona nova analise', 'repetir', 'apagar e começar novamente'))
+            if op == 'adiciona nova analise':
+                return inMaster_(caracteristicas, tipos, prontas, analises)
+            if op == 'repetir':
                 analises.pop()
-                return inpMaster(caracteristicas, tipos, prontas, analises)
-            if sn == 'apagar e começar novamente':
+                return inMaster_(caracteristicas, tipos, prontas, analises)
+            if op == 'apagar e começar novamente':
                 analises = []
-                return inpMaster(caracteristicas, tipos, prontas, analises)
-            if sn == 'confirmar e seguir para analises':
+                return inMaster_(caracteristicas, tipos, prontas, analises)
+            if op == 'confirmar e seguir para analises':
                 return analises
 
-def inpMaster(caracteristicas, tipos, prontas, analises):
+def inMaster_(caracteristicas, tipos, prontas, analises):
     if prontas != []:
-        sn = inp('criar ou usar prontas?', ('criar','prontas'))
-        if sn == 'criar':
-            return parametros_(caracteristicas, tipos,prontas, analises)
-        if sn == 'prontas':
-            analise = inp('escolha a análise:', (prontas))
+        op = f_d.inp('criar ou usar prontas?', ('criar','prontas'))
+        if op == 'criar':
+            return parametros_(caracteristicas, tipos,prontas, analises, filtros)
+        if op == 'prontas':
+            analise = f_d.inp('escolha a análise:', (prontas))
             analises.append(analise)
-            return analises_(caracteristicas, tipos, prontas, analises)
+            return outMaster_(caracteristicas, tipos, prontas, analises)
     elif prontas == []:
-        return parametros_(caracteristicas, tipos,prontas, analises)
+        return parametros_(caracteristicas, tipos,prontas, analises, filtros)
 
-analises = inpMaster(caracteristicas, tipos, prontas, [])
+analises = inMaster_(caracteristicas, tipos, prontas, [])
 debug = 0
+'''
 '''
 def Criar análise ou usar prontas?
     criar
