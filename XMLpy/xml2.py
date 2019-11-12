@@ -48,12 +48,31 @@ for parametros in parametrosanalises:
 
 '''
 levantar erros ao ler xml quando:
-    não for <score-part-wise>
-    quando encontrar as mensagens <backward> <forward>
+    a primeira tag não for <score-part-wise>
+    quando encontrar as mensagens <backward> <forward> <chord>
 
+Fazer inputs com numeração para as opções
+Ligar inputs a análise e salvar arquivos de parâmetros
 pensar num jeito de automatizar a atualização das listas de input,
 talvez algo que me mostra todas as def no modulo e permita executar todas
 assim posso criar uma chave para def no dicionário pedindo os valores das def
+
+somente segmentos que ocorrem pelomenos em n músicas (quantidade de nomes)
+Tipos de carácteristica inclusivo e exclusivo
+ou que ocorrem pelo menos n vezes (quantidade de posições)
+tamanho do segmento (p2-p1)
+duração do segmento
+
+Fazer uma análise com os exclusivos de cada música, marcando os contidos e encavalados
+Fazer uma análise com os exclusivos de cada música, retirando os contidos e encavalados
+
+Posições em tuples contidas em listas pode ser útil para dar append nas informações de truncado e contido
+o truncado de acontece antes é o que tem p1<, ver whatzapp do Flávio
+
+homogeneidade dos valores:
+    ver distribuição dos valores agredgados as posições
+    quantas categorias e quantas vezes em cada categoria, quantos% em cada categoria
+    música, posição tempo e posicao compasso
 '''
 '''
 parametrosanalises = [{'keys': [('intDia','p1p2'),('duracao','p1p2')], 'atribs': [('Ncompasso','p1'),('Pcompasso','p1')],
@@ -77,9 +96,6 @@ quantas musicas
 quais musicas
 parametros da análise
 filtros
-
-fazer filtros mais sofisticados levando em conta a homogeneidade dos valores:
-porcentagem em cada música,
 
 trazer fitro nested para o .xml
 filtro de segmentos
