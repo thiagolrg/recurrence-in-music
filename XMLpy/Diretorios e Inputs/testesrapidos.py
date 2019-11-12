@@ -9,15 +9,15 @@ funcoesAnalise = {}
 for k,v in inspectAnalise:
     funcoesAnalise.setdefault(k,v)
 
-parametrosanalises = {}
+parametrosanalise = {}
 if prontas != []:
     op = f_d.inp('criar ou usar prontas?', ('criar','prontas'))
     if op == 'criar':
-        parametrosanalises.setdefault('segmentacao', funcoesAnalise['segmentacao'](caracteristicas, tipos))
+        parametrosanalise.setdefault('segmentacao', funcoesAnalise['segmentacao'](caracteristicas, tipos))
         op = f_d.inp('adicionar filtros:', ('s','n'))
         if op == 's':
             op = f_d.inp('qual filtro?', [x for x in funcoesAnalise.keys()])
-            parametrosanalises.setdefault(op, funcoesAnalise[op](parametrosanalises))
+            parametrosanalise.setdefault(op, funcoesAnalise[op](parametrosanalises))
             t = 0
         #if op == 'n':
     '''
