@@ -1,4 +1,5 @@
-import dirEinp.dirEinp as f_d
+from dirEinp import dirEinp as f_d
+
 def filtro_quantidade(parametrosanalises):
     def filtroPar(parametrosanalises, parametros):
         opcoes = [x[0] for x in parametrosanalises['segmentacao'][1]['posicoesPar'] if x[2] == True]

@@ -1,4 +1,4 @@
-from ..dirEinp.dirEinp import inp as f_d.inp
+from dirEinp import dirEinp as f_d
 
 def segmentacao(caracteristicas):
 

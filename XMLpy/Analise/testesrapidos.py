@@ -1,7 +1,7 @@
-from . import segmentacao as m_segmentacao
-import filtros
-import ordenacoes
-from ... import dirEinp as f_d
+from analise import segmentacao as m_segmentacao
+from analise import filtros as m_filtros
+from analise import ordenacoes as m_ordenacoes
+from dirEinp import dirEinp as f_d
 
 prontas = ['a','b','c','d']
 caracteristicas = ['a','b','c','d']
@@ -14,9 +14,9 @@ def dicio_funcoes(modulo):
         dicio.setdefault(k,v)
     return dicio
 
-segmentacao = dicio_funcoes(analise.segmentacao)
-filtros = dicio_funcoes(analise.filtros)
-ordenacoes = dicio_funcoes(analise.ordenacoes)
+segmentacao = dicio_funcoes(m_segmentacao)
+filtros = dicio_funcoes(m_filtros)
+ordenacoes = dicio_funcoes(m_ordenacoes)
 
 parametrosanalise = {}
 if prontas != []:
@@ -26,7 +26,7 @@ if prontas != []:
         op = f_d.inp('adicionar filtros:', ('s','n'))
         if op == 's':
             filtro = f_d.inp('qual filtro?', [x for x in filtros.keys()])
-            parametrosanalise.setdefault(filtro, filtros[filtro](parametrosanalise))
+            parametrosanalise.setdefault(filtro, filtros[filtro]())
             t = 0
         #if op == 'n':
     '''
