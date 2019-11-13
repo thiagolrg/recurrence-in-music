@@ -1,23 +1,32 @@
-import analises
-import inspect
-import dirinp as f_d
+from . import segmentacao as m_segmentacao
+import filtros
+import ordenacoes
+from ... import dirEinp as f_d
+
 prontas = ['a','b','c','d']
 caracteristicas = ['a','b','c','d']
-tipos = ['p1', 'p1p2', 'p2m1']
-inspectAnalise = inspect.getmembers(analises, inspect.isfunction)
-funcoesAnalise = {}
-for k,v in inspectAnalise:
-    funcoesAnalise.setdefault(k,v)
+
+def dicio_funcoes(modulo):
+    dicio = {}
+    import inspect
+    inspectmodulo = inspect.getmembers(modulo, inspect.isfunction)
+    for k,v in inspectmodulo:
+        dicio.setdefault(k,v)
+    return dicio
+
+segmentacao = dicio_funcoes(analise.segmentacao)
+filtros = dicio_funcoes(analise.filtros)
+ordenacoes = dicio_funcoes(analise.ordenacoes)
 
 parametrosanalise = {}
 if prontas != []:
     op = f_d.inp('criar ou usar prontas?', ('criar','prontas'))
     if op == 'criar':
-        parametrosanalise.setdefault('segmentacao', funcoesAnalise['segmentacao'](caracteristicas, tipos))
+        parametrosanalise.setdefault('segmentacao', segmentacao['segmentacao'](caracteristicas))
         op = f_d.inp('adicionar filtros:', ('s','n'))
         if op == 's':
-            op = f_d.inp('qual filtro?', [x for x in funcoesAnalise.keys()])
-            parametrosanalise.setdefault(op, funcoesAnalise[op](parametrosanalises))
+            filtro = f_d.inp('qual filtro?', [x for x in filtros.keys()])
+            parametrosanalise.setdefault(filtro, filtros[filtro](parametrosanalise))
             t = 0
         #if op == 'n':
     '''

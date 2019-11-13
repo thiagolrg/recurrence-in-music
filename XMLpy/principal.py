@@ -1,6 +1,6 @@
-import dirinp as f_d
-import xmldict as f_xd
-import analises as f_a
+import dirEinp as f_d
+from conversaoXML import xmldict as f_xd
+from analise import testesrapidos as f_tr
 
 di = f_d.diretorio_ler('.xml')
 diD = di+'\\Dicts'

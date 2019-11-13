@@ -1,48 +1,47 @@
-import dirinp as f_d
+from ..dirEinp.dirEinp import inp as f_d.inp
 
-def segmentacao(caracteristicas,tipos):
+def segmentacao(caracteristicas):
 
     #funcoes de input de parametros para a segmentação
-    def segmentosPar_(caracteristicas, tipos, parametros):
+    def segmentosPar_(caracteristicas, parametros):
         sc = f_d.inp('caracteristicas para segmentos:', (caracteristicas))
-        st = f_d.inp('modos de segmentar:', (tipos))
+        st = f_d.inp('modos de segmentar:', ('p1','p1p2','p2m1','p1p2set','p2m1set'))
         parametros['segmentosPar'].append((sc,st))
         op = f_d.inp(f'{parametros}', ('confirmar', 'repetir'))
         if op == 'confirmar':
             op = f_d.inp('adicionar outra caracteristica para segmentos?', ('s','n'))
             if op == 's':
-                return segmentosPar_(caracteristicas, tipos, parametros)
+                return segmentosPar_(caracteristicas, parametros)
             if op == 'n':
                 return parametros
         if op == 'repetir':
             parametros['segmentosPar'].pop()
-            return segmentosPar_(caracteristicas, tipos, parametros)
-    def posicoesPar_(caracteristicas, tipos, parametros):
+            return segmentosPar_(caracteristicas, parametros)
+    def posicoesPar_(caracteristicas, parametros):
         sc = f_d.inp('caracteristicas para posicoes:', (caracteristicas))
-        st = f_d.inp('modos de segmentar:', (tipos))
+        st = f_d.inp('modos de segmentar:', ('p1','p1p2','p2m1','p1p2set','p2m1set'))
+        parametros['posicoesPar'].append((sc, st))
         op = f_d.inp('usar para filtros?', ('s', 'n'))
         if op == 's':
-            filtro = True
-        elif op == 'n':
-            filtro = False
-        parametros['posicoesPar'].append((sc, st, filtro))
+            ft = f_d.inp('modos de segmentar para filtrar:', ('p1f,','p1p2f','p2m1f'))
+            parametros['posicoesPar'].append((sc, ft))
         op = f_d.inp(f'{parametros}', ('confirmar', 'repetir'))
         if op == 'confirmar':
             op = f_d.inp('adicionar outra caracteristica para posicoes?', ('s','n'))
             if op == 's':
-                return posicoesPar_(caracteristicas, tipos, parametros)
+                return posicoesPar_(caracteristicas, parametros)
             if op == 'n':
                 return parametros
         if op == 'repetir':
             parametros['posicoesPar'].pop()
-            return posicoesPar_(caracteristicas, tipos, parametros)
+            return posicoesPar_(caracteristicas, parametros)
 
     #montando parametros
     parametros = {'segmentosPar': [], 'posicoesPar': []}
-    parametros = segmentosPar_(caracteristicas, tipos, parametros)
+    parametros = segmentosPar_(caracteristicas, parametros)
     op = f_d.inp('adicionar caracteristicas para posicoes?', ('s','n'))
     if op == 's':
-        parametros = posicoesPar_(caracteristicas, tipos, parametros)
+        parametros = posicoesPar_(caracteristicas, parametros)
 
     def funcao_(mDict, aDict):
         musica = mDict.copy()

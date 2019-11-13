@@ -1,14 +1,13 @@
-#acontecem >= que tantas vezes
-#filtro ex:{'nome',1}
+import dirEinp.dirEinp as f_d
 def filtro_quantidade(parametrosanalises):
     def filtroPar(parametrosanalises, parametros):
         opcoes = [x[0] for x in parametrosanalises['segmentacao'][1]['posicoesPar'] if x[2] == True]
         opcoes.append('nome')
         opcoes.append('posicoes')
-        c = f_d.inp('por qual caracteristica filtrar', opcoes)
-        q = input('que ocorrem pelo menos _ vezes: ')
+        caracteristica = f_d.inp('por qual caracteristica filtrar?', opcoes)
+        quantidade = input('que ocorrem pelo menos _ vezes: ')
         print( )
-        parametros.setdefault(c,q)
+        parametros.setdefault(caracteristica, quantidade)
         op = f_d.inp(f'{parametros}', ('confirmar', 'repetir'))
         if op == 'confirmar':
             op = f_d.inp('adicionar outra caracteristica ao filtro_quantidade?', ('s','n'))
@@ -21,7 +20,6 @@ def filtro_quantidade(parametrosanalises):
             return filtroPar(parametrosanalises, parametros)
     
     parametros = filtroPar(parametrosanalises, {})
-
     def funcao_(aDict):
         filtrado = {}
         for segmento, posicoes in aDict.items():
@@ -37,67 +35,118 @@ def filtro_quantidade(parametrosanalises):
         return filtrado
     return (funcao_, parametros)
 
-#acontecem também nessas (explusivamente ou não)
-#filtro ex:[{'nome': ['k341','k363']}, False]
-def filtro_tipo(parametrosanalises):
-    def filtro_tipo(aDict, filtro):
-        if filtro == {None}:
-            return aDict
-        filtrado = {}
-        if filtro[1] == False:
-            for chave, valor in aDict.items():
-                f = True
-                for cf, vf in filtro[0].items():
-                    for vf in filtro[0][cf]:
-                        if vf in valor[0][cf]:
-                            continue
-                        else:
-                            f = False
-                            break
-                if f == True:
-                    filtrado.setdefault(chave,valor)
-            print('filtro TP ok')
-            return filtrado
-        elif filtro[1] == True:
-            for chave, valor in aDict.items():
-                f = True
-                for cf, vf in filtro[0].items():
-                    for vset in valor[0][cf]:
-                        if vset in vf:
-                            continue
-                        else:
-                            f = False
-                            break
-                if f == True:
-                    filtrado.setdefault(chave,valor)
-            print('filtro TP ok')
-            return filtrado
+    
+    #({caracteristica: valores}, op)
+    # onde op == inclusivo ou exclusivo
+    '''
+    inclusivo qualquer:
+    passa se qualquer um dos valores existir nas caracteristicas do total de localizacoes do segmento
+    as caracteristicas do segmento podem ter outros valores diferentes do filtro
 
-def lista_in(menor, maior):
-    for posicao in range(len(maior[0])):
-        t1 = maior[0][posicao:(posicao+len(menor[0]))]
-        t2 = maior[1][posicao:(posicao+len(menor[1]))]
-        if t1 == menor[0] and t2 == menor[1]:
-            return True
-    return False
-def filtro_nested(entrada):
-    for chave1, valores1 in (entrada.copy()).items():
-        if valores1 == []:
-            continue 
-        for chave2, valores2 in (entrada.copy()).items():
-            if len(chave2[0]) < len(chave1[0]) and lista_in(chave2, chave1) == True:
-                a=0
-                for valor1 in valores1:
-                    p=0
-                    while p < len(valores2):
-                        if valores2[p][0][2][0] >= valor1[0][2][0] and valores2[p][0][2][1] <= valor1[0][2][1] and valores2[p][0][0:2] == valor1[0][0:2]:
-                            entrada[chave2].pop(entrada[chave2].index(valores2[p]))
-                            a = 1
-                        p += 1
-                if a == 1  and valores2 == []:
-                    entrada.pop(chave2)
-                elif a == 1 and len(set([x[0] for x in valores2])) == 1:
-                    entrada.pop(chave2)
-    print('filtro_nested ok')
-    return entrada
-'''
+    inclusivo todos:
+    passa se todos os valores existires nas caracteristicas do total de localizacoes do segmento
+    as caracteristicas do segmento podem ter outros valores diferentes do filtro
+
+    exclusivo qualquer:
+    passa se qualquer valor existir nas caracteristicas do total de localizacoes do segmento
+    as caracteristicas do segmento só podem conter valores do filtro
+
+    exclusica qualquer:
+    passa se todos os valores existires nas caracteristicas do total de localizacoes do segmento
+    as caracteristicas do segmento só podem conter valores do filtro
+    '''
+def filtro_tipo(parametrosanalises):
+    def filtroPar(parametrosanalises, parametros):
+        opcoes = [x[0] for x in parametrosanalises['segmentacao'][1]['posicoesPar'] if x[2] == True]
+        opcoes.append('nome')
+        opcoes.append('posicoes')
+        caracteristica = f_d.inp('por qual caracteristica filtrar?', opcoes)
+        valores = input('que contenha quais valores? ')
+        tipo = f_d.inp('como filtrar?', ['inclusivo qualquer','inclusivo todos','exclusivo qualquer','exclusivo todos'])
+        print( )
+        parametros.append(({caracteristica: valores}, tipo))
+        op = f_d.inp(f'{parametros}', ('confirmar', 'repetir'))
+        if op == 'confirmar':
+            op = f_d.inp('adicionar outra caracteristica ao filtro_quantidade?', ('s','n'))
+            if op == 's':
+                return filtroPar(parametrosanalises, parametros)
+            if op == 'n':
+                return parametros
+        if op == 'repetir':
+            parametros.pop()
+            return filtroPar(parametrosanalises, parametros)
+    parametros = filtroPar(parametrosanalises, [])
+
+    def funcao_(aDicio):
+        filtrado = {}
+        for segmento, localizacoes in aDicio.items():
+            for valorf in valoresf:
+                for caracteristica, valoresf in parametros[0].items():
+                    if parametros[1] == 'inclusivo qualquer': 
+                        if any((True for valorf in valoresf if valorf in localizacoes[0][caracteristica])):
+                            continue
+                        else:
+                            break
+                    elif parametros[1] == 'inclusivo todos': 
+                        if all((True for valorf in valoresf if valorf in localizacoes[0][caracteristica])):
+                            continue
+                        else:
+                            break
+                    elif parametros[1] == 'exclusivo qualquer':
+                        if all((True for valorseg in localizacoes[0][caracteristica] if valorseg in valoresf)):
+                            continue
+                        else:
+                            break
+                    elif parametros[1] == 'exclusivo todos':
+                        if all((True for valorf in valoresf if valorf in localizacoes[0][caracteristica])) and all((True for valorseg in localizacoes[0][caracteristica] if valorseg in valoresf)):
+                            continue
+                        else:
+                            break
+                    else:
+                        break
+            filtrado.setdefault(segmento, localizacoes)
+        return filtrado
+    return (funcao_, parametros)
+
+
+def filtro_contidos():
+    op = f_d.inp('o que fazer com os contidos?', ('marcar','retirar vazios'))
+    def funcao_(aDicio):
+        for segmento1, localizacoes1 in (aDicio.copy()).items():
+            contido = False
+            for segmento2, localizacoes2 in (aDicio.copy()).items():
+                for localizacao1 in localizacoes1:
+                    for localizacao2 in localizacoes2:
+                        if localizacao2[0:2] != localizacao1[0:2]:
+                            continue
+                        if localizacao2[2][0] >= localizacao1[2][0] and localizacao2[2][1] <= localizacao2[2][1]:
+                            aDicio[segmento2].pop(aDicio[segmento2].index(localizacao2)) 
+                            contido = True
+            if contido == True:
+                if op == 'marcar':
+                    aDicio[segmento2].insert(0, segmento1)
+                elif op == 'retirar vazios' and aDicio[segmento2] == []:
+                    aDicio.pop(segmento2)
+        return aDicio
+    return (funcao_, op)
+
+def filtro_amontoados():
+    op = f_d.inp('o que fazer com os amontados?', ('marcar segundo','retirar vazios'))
+    def funcao_(aDicio):
+        for segmento1, localizacoes1 in (aDicio.copy()).items():
+            amontado = False
+            for segmento2, localizacoes2 in (aDicio.copy()).items():
+                for localizacao1 in localizacoes1:
+                    for localizacao2 in localizacoes2:
+                        if localizacao2[0:2] != localizacao1[0:2]:
+                            continue
+                        if localizacao2[2][0] <= localizacao1[2][1] and localizacao2[2][1] > localizacao1[2][1]:
+                            aDicio[segmento2].pop(aDicio[segmento2].index(localizacao2)) 
+                            amontado = True
+            if amontado == True:
+                if op == 'marcar segundo':
+                    aDicio[segmento2].insert(0, segmento1)
+                elif op == 'retirar vazios' and aDicio[segmento2] == []:
+                    aDicio.pop(segmento2)
+        return aDicio
+    return (funcao_, op)

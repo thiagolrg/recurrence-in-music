@@ -1,4 +1,4 @@
-import conversoes as f_c
+from . import conversoes as f_c
 import xmltodict
 
 def ad_counter(arquivo):
