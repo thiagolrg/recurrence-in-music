@@ -89,7 +89,9 @@ def segmentacao(caracteristicas):
                             keyAnalise.append(set(segmentop1p2))
                         elif segmentoPar[1] == 'p2m1set':
                             keyAnalise.append(set(segmentop2m1))
-                    if isinstance(keyAnalise, tuple) == False:
+                    if len(keyAnalise) == 1:
+                        keyAnalise = keyAnalise[0]
+                    elif isinstance(keyAnalise, tuple) == False:
                         keyAnalise = tuple(keyAnalise)
                     aDicio.setdefault(keyAnalise, [{'nome': set()}])[0]['nome'].add(nome)
                     aDicio[keyAnalise][0].setdefault('posicao', set()).add(posicao)

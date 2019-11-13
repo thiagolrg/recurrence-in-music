@@ -197,4 +197,6 @@ def ord_tamSegQantLoc(parametrosanalise):
         for chave, valor in sorted(aDicio.items(), key=lambda item: (len(item[0][0]), len(item[1])), reverse=True):
             pronto.setdefault(chave, valor[1:])
         return pronto
-    return funcao_
+    op = f_d.inp('confirmar ord_tamSegQantLoc?', ('s','n'))
+        if op == 's':
+            return (funcao_,op)
