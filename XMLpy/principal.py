@@ -1,5 +1,6 @@
-from dirEinp import dirEinp as f_d
-from conversaoXML import xmldict as f_xd
+import dirEinp as f_d
+import xmldict as f_xd
+import insp as f_i
 
 di = f_d.diretorio_ler('.xml')
 diD = di+'\\Dicts'
@@ -13,38 +14,32 @@ for xml in caminhosxml:
     nome = f_d.caminho_nome(xml, '.xml')
     xml = f_d.entrada_xml(xml)
     xml = f_xd.ad_counter(xml)
-    xmlD = f_xd.xml_dict(xml)
-    musD = f_xd.mus_dict(xmlD)
-    musD.setdefault('nome',nome)
-    f_d.escreve_pickle(diD, musD, nome)
+    xmlDicio = f_xd.xml_dict(xml)
+    mDicio = f_xd.mus_dict(xmlDicio)
+    mDicio.setdefault('nome',nome)
+    f_d.escreve_pickle(diD, mDicio, nome)
 
 caminhosdict = f_d.caminhos_extensao(diD, '.p')
-nomes = [f_d.caminho_nome(caminho, '.p') for caminho in caminhosdict]
-quantidade = len(nomes)
+mDicio = f_d.le_pickle(caminhosdict[0])
+nomesmusicas = [f_d.caminho_nome(caminho, '.p') for caminho in caminhosdict]
+caracteristicas = [k for k in mDicio['P1'].keys()]
+prontas = ['asdf']
+analisesPar = f_i.analisesPar_(caracteristicas, prontas, [])
 
-parametrosanalises = [{'keys': [('intDia','p1p2'),('duracao','p1p2')], 'atribs': [('Ncompasso','p1'),('Pcompasso','p1')],
-             'filtroQT': {'posicao': 2},
-             'filtroTP': [{'nome': ['k363']},True]}]
-n = len(f_d.caminhos_extensao(diA, '.txt'))+1
-for parametros in parametrosanalises:
-    print('Analise:\n', parametrosanalises.index(parametros)+1, 'de', len(parametrosanalises))
-    nomeanalise = f'analise {n}'
-    log = {'nomes': nomes, 'quantidade': len(nomes), 'parametros': parametros}
-    aDict = {}
-    print('segmentacao:')
+for analisePar in analisesPar:
+    aDicio = {}
     for caminho in caminhosdict:
-        print(caminhosdict.index(caminho)+1, 'de', len(caminhosdict),'      ')
-        musD = f_d.le_pickle(caminho)
-        analise = f_a.segmentacao_(parametros['keys'], parametros['atribs'], musD, aDict)
-    print('filtros:     ')
-    analise = f_a.filtro_quantidade(analise, parametros['filtroQT'])
-    analise = f_a.filtro_contém(analise, parametros['filtroTP'])
-    analise = f_a.sort_tamKquanV(analise)
-    analise = f_a.filtro_nested(analise)
-    f_d.escreve_txt(diA,log, nomeanalise)
-    f_d.escreve_txt(diA,analise, nomeanalise)
-    n += 1
+        mDicio = f_d.le_pickle(caminho)
+        analise = analisePar['segmentacao'][0](mDicio, aDicio)
+    for nome, funcao in analisePar.items():
+        if nome != 'segmentacao':
+            analise = funcao[0](aDicio)
 
+    numeroanalise = len(f_d.caminhos_extensao(diA, '.txt'))+1
+    nomeanalise = f'analise {numeroanalise}'
+    loganalise = {'nomes': nomesmusicas, 'quantidade': len(nomesmusicas), 'parametros': analisePar}
+    f_d.escreve_txt(diA,loganalise, numeroanalise)
+    f_d.escreve_txt(diA,analise, numeroanalise)
 '''
 levantar erros ao ler xml quando:
     a primeira tag não for <score-part-wise>

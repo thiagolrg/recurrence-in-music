@@ -1,4 +1,4 @@
-from dirEinp import dirEinp as f_d
+import dirEinp as f_d
 
 def segmentacao(caracteristicas):
 
@@ -7,44 +7,66 @@ def segmentacao(caracteristicas):
         sc = f_d.inp('caracteristicas para segmentos:', (caracteristicas))
         st = f_d.inp('modos de segmentar:', ('p1','p1p2','p2m1','p1p2set','p2m1set'))
         parametros['segmentosPar'].append((sc,st))
-        op = f_d.inp(f'{parametros}', ('confirmar', 'repetir'))
-        if op == 'confirmar':
+        op = f_d.inp(f'{parametros}', ('confirmar entrada', 'refazer entrada'))
+        if op == 'confirmar entrada':
             op = f_d.inp('adicionar outra caracteristica para segmentos?', ('s','n'))
             if op == 's':
                 return segmentosPar_(caracteristicas, parametros)
             if op == 'n':
                 return parametros
-        if op == 'repetir':
+        if op == 'refazer entrada':
             parametros['segmentosPar'].pop()
             return segmentosPar_(caracteristicas, parametros)
     def posicoesPar_(caracteristicas, parametros):
         sc = f_d.inp('caracteristicas para posicoes:', (caracteristicas))
         st = f_d.inp('modos de segmentar:', ('p1','p1p2','p2m1','p1p2set','p2m1set'))
         parametros['posicoesPar'].append((sc, st))
-        op = f_d.inp('usar para filtros?', ('s', 'n'))
-        if op == 's':
-            ft = f_d.inp('modos de segmentar para filtrar:', ('p1f,','p1p2f','p2m1f'))
-            parametros['posicoesPar'].append((sc, ft))
-        op = f_d.inp(f'{parametros}', ('confirmar', 'repetir'))
-        if op == 'confirmar':
+        op = f_d.inp(f'{parametros}', ('confirmar entrada', 'refazer entrada'))
+        if op == 'confirmar entrada':
             op = f_d.inp('adicionar outra caracteristica para posicoes?', ('s','n'))
             if op == 's':
                 return posicoesPar_(caracteristicas, parametros)
             if op == 'n':
                 return parametros
-        if op == 'repetir':
+        if op == 'refazer entrada':
             parametros['posicoesPar'].pop()
             return posicoesPar_(caracteristicas, parametros)
+    def filtrosPar_(caracteristicas, parametros):
+        sc = f_d.inp('caracteristicas para filtros:', (caracteristicas))
+        st = f_d.inp('modos de segmentar:', ('p1f','p1p2f','p2m1f'))
+        parametros['posicoesPar'].append((sc, st))
+        op = f_d.inp(f'{parametros}', ('confirmar entrada', 'refazer entrada'))
+        if op == 'confirmar entrada':
+            op = f_d.inp('adicionar outra caracteristica para filtros?', ('s','n'))
+            if op == 's':
+                return filtrosPar_(caracteristicas, parametros)
+            if op == 'n':
+                return parametros
+        if op == 'refazer entrada':
+            parametros['posicoesPar'].pop()
+            return filtrosPar_(caracteristicas, parametros)
+
 
     #montando parametros
-    parametros = {'segmentosPar': [], 'posicoesPar': []}
-    parametros = segmentosPar_(caracteristicas, parametros)
-    op = f_d.inp('adicionar caracteristicas para posicoes?', ('s','n'))
-    if op == 's':
-        parametros = posicoesPar_(caracteristicas, parametros)
+    def Par(caracteristicas):
+        parametros = {'segmentosPar': [], 'posicoesPar': []}
+        parametros = segmentosPar_(caracteristicas, parametros)
+        op = f_d.inp('adicionar caracteristicas para posicoes?', ('s','n'))
+        if op == 's':
+            parametros = posicoesPar_(caracteristicas, parametros)
+        op = f_d.inp('adicionar caracteristicas para filtros?', ('s','n'))
+        if op == 's':
+            parametros = filtrosPar_(caracteristicas, parametros)
+        op = f_d.inp(f'{parametros}', ('confirmar segmentacao', 'comecar novamente'))
+        if op == 'confirmar segmentacao':
+            return parametros
+        if op == 'comecar novamente':
+            return Par(caracteristicas)
 
-    def funcao_(mDict, aDict):
-        musica = mDict.copy()
+    parametros = Par(caracteristicas)
+
+    def funcao_(mDicio, aDicio):
+        musica = mDicio.copy()
         nome = musica.pop('nome')
         for parte, caracteristicas in musica.items():
             for p1 in range(len(caracteristicas['grau'])):
@@ -69,8 +91,8 @@ def segmentacao(caracteristicas):
                             keyAnalise.append(set(segmentop2m1))
                     if isinstance(keyAnalise, tuple) == False:
                         keyAnalise = tuple(keyAnalise)
-                    aDict.setdefault(keyAnalise, [{'nome': set()}])[0]['nome'].add(nome)
-                    aDict[keyAnalise][0].setdefault('posicao', set()).add(posicao)
+                    aDicio.setdefault(keyAnalise, [{'nome': set()}])[0]['nome'].add(nome)
+                    aDicio[keyAnalise][0].setdefault('posicao', set()).add(posicao)
                     for posicaoPar in parametros['posicoesPar']:
                         if posicaoPar != []:
                             posicaop1 = caracteristicas[posicaoPar[0]][p1]
@@ -87,13 +109,13 @@ def segmentacao(caracteristicas):
                             elif posicaoPar[1] == 'p2m1set':
                                 valueAnalise.append(set(posicaop2m1))
                             elif posicaoPar[1] == 'p1f':
-                                aDict[keyAnalise][0].setdefault(posicaoPar[0], set()).add(posicaop1)
+                                aDicio[keyAnalise][0].setdefault(posicaoPar[0], set()).add(posicaop1)
                             elif posicaoPar[1] == 'p1p2f':
                                 for a in posicaop1p2:
-                                    aDict[keyAnalise][0].setdefault(posicaoPar[0], set()).add(a)
+                                    aDicio[keyAnalise][0].setdefault(posicaoPar[0], set()).add(a)
                             elif posicaoPar[1] == 'p2m1f':
                                 for a in posicaop2m1:
-                                    aDict[keyAnalise][0].setdefault(posicaoPar[0], set()).add(a)
-                        aDict[keyAnalise].append(valueAnalise)
-        return aDict
+                                    aDicio[keyAnalise][0].setdefault(posicaoPar[0], set()).add(a)
+                    aDicio[keyAnalise].append(valueAnalise)
+        return aDicio
     return (funcao_, parametros)
