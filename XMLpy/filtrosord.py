@@ -122,11 +122,12 @@ def filtro_tipo(parametroanalise):
                             filtro = False
                             break
                     elif parametro[1] == 'exclusivo todos':
-                        if all((True for valorf in valoresf if valorf in localizacoes[0][caracteristica])) and all((True for valorseg in localizacoes[0][caracteristica] if valorseg in valoresf)):
-                            continue
-                        else:
-                            filtro = False
-                            break
+                        if all((True for valorf in valoresf if valorf in localizacoes[0][caracteristica])):
+                            if all((True for valorseg in localizacoes[0][caracteristica] if valorseg in valoresf)):
+                                continue
+                            else:
+                                filtro = False
+                                break
             if filtro == True:
                 filtrado.setdefault(segmento, localizacoes)
         return filtrado
@@ -198,5 +199,5 @@ def ord_tamSegQantLoc(parametrosanalise):
             pronto.setdefault(chave, valor[1:])
         return pronto
     op = f_d.inp('confirmar ord_tamSegQantLoc?', ('s','n'))
-        if op == 's':
-            return (funcao_,op)
+    if op == 's':
+        return (funcao_,op)
