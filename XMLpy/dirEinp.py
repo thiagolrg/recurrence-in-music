@@ -1,6 +1,8 @@
+import os
+import pickle
+
 def diretorio_ler(extensao):
     di=input('diretorio para ler '+extensao+': ')
-    import os
     if os.path.exists(di) == False:
         print('diretorio nao existe')
         return diretorio_ler(extensao)
@@ -19,13 +21,11 @@ def diretorio_ler(extensao):
     return di
 
 def cria_pasta(diretorio):
-    import os
     os.makedirs(diretorio, exist_ok=True)
     return None
 
 #retorna uma lista com o caminho de todos os arquivos do diretorio com a extensao
 def caminhos_extensao(diretorio, extensao):
-    import os
     caminhos = []
     # r=root, d=directories, f=folder
     for r, d, f in os.walk(diretorio):
@@ -57,16 +57,18 @@ def entrada_xml(caminho):
     return arquivo
 
 def le_pickle(caminho):
-   import pickle
    with open(caminho, 'rb') as f:
       arquivo = pickle.loads(f.read())
    return arquivo
 
-def escreve_pickle(diretorio, arquivo ,nome):
-   import pickle
-   with open(diretorio+'\\'+nome+'.p', 'xb') as f:
-      pickle.dump(arquivo, f)
-   return None
+def escreve_pickle(diretorio, arquivo ,nome, trunca=False):
+    if trunca == False:
+        modo = 'xb'
+    elif trunca == True:
+        modo = 'wb'
+    with open(diretorio+'\\'+nome+'.p', modo) as f:
+        pickle.dump(arquivo, f)
+    return None
 
 def escreve_txt(diretorio, arquivo, nome):
     with open(diretorio+'\\'+nome+'.txt', 'a') as f:
@@ -77,7 +79,17 @@ def escreve_txt(diretorio, arquivo, nome):
     return None
 
 def inp(texto, opcoes):
-    print(f'{texto}')
+    def printtexto(texto):
+        if isinstance(texto, str):
+            print(texto)
+        elif isinstance(texto, dict):
+            for item in texto.items():
+                print(item)
+        elif isinstance(texto, list) or isinstance(texto, tuple):
+            for i in texto:
+                printtexto(i)
+                print()
+    printtexto(texto)
     for o in range(len(opcoes)):
         print(f'{o+1}. {opcoes[o]}')
     ip = input('escolha uma opcao: ')

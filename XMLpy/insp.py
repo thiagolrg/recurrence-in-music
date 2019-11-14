@@ -22,28 +22,60 @@ def filtrordenacao(parametrosanalise):
     if op == 'n':
         return parametrosanalise
 
-def analisesPar_(caracteristicas, prontas, parametrosgerais):
-    if prontas != []:
-        op = f_d.inp('criar analise ou usar prontas?', ('criar', 'prontas',))
-        if op == 'criar':
-            parametrosanalise = {}
-            parametrosanalise.setdefault('segmentacao', segmentacao['segmentacao'](caracteristicas))
-            parametrosanalise = filtrordenacao(parametrosanalise)
+def criaranalise(caracteristicas, salvosPar, parametrosgerais):
+    parametrosanalise = {}
+    parametrosanalise.setdefault('segmentacao', segmentacao['segmentacao'](caracteristicas))
+    parametrosanalise = filtrordenacao(parametrosanalise)
+    op = f_d.inp(dict([(x,y[1]) for x,y in parametrosanalise.items()]), ('confirmar analise', 'refazer analise'))
+    if op == 'confirmar analise':
+        if dict([(x,y[1]) for x,y in parametrosanalise.items()]) not in [dict([(x,y[1]) for x,y in a.items()]) for a in parametrosgerais]:
             parametrosgerais.append(parametrosanalise)
-            op = f_d.inp(f'{parametrosanalise}', ('confirmar parametros', 'refazer parametros'))
-            if op == 'confirmar parametros':
-                op = f_d.inp('acrescentar outra analise?', ('s','n'))
+            return parametrosgerais
+        else:
+            print('outra analise com os mesmos parametros ja existe')
+    return analisesPar_(caracteristicas, salvosPar, parametrosgerais)
+
+def usarsalvas(parametrosgerais, caracteristicas, salvosPar):
+    parametrosanalise = {}
+    op = f_d.inp('escolha uma analise:',(salvosPar))
+    parametrosanalise.setdefault('segmentacao', segmentacao['segmentacao'](caracteristicas, parametros=op['segmentacao']))
+    op.pop('segmentacao')
+    for func, par in op.items():
+            parametrosanalise.setdefault(func, filtrosord[func](parametrosanalise, parametros=par))
+    op = f_d.inp(dict([(x,y[1]) for x,y in parametrosanalise.items()]), ('confirmar analise', 'refazer analise'))
+    if op == 'confirmar analise':
+        if dict([(x,y[1]) for x,y in parametrosanalise.items()]) not in [dict([(x,y[1]) for x,y in a.items()]) for a in parametrosgerais]:
+            parametrosgerais.append(parametrosanalise)
+            return parametrosgerais
+        else:
+            print('outra analise com os mesmos parametros ja existe')
+    return analisesPar_(caracteristicas, salvosPar, parametrosgerais)
+
+def analisesPar_(caracteristicas, salvosPar, parametrosgerais):
+    op = f_d.inp('opcoes de analise:', ('criar nova', 'usar salva'))
+    if op == 'criar nova':
+        parametrosgerais = criaranalise(caracteristicas, salvosPar, parametrosgerais)
+        op = f_d.inp([dict([(x,y[1]) for x,y in a.items()]) for a in parametrosgerais], ('confirmar analises', 'refazer analises'))
+        if op == 'confirmar analises':    
+            op = f_d.inp('outra analise?', ('s', 'n'))
+            if op == 's':
+                return analisesPar_(caracteristicas,salvosPar,parametrosgerais)
+            if op == 'n':
+                return parametrosgerais
+        if op == 'refazer analises':
+            return analisesPar_(caracteristicas, salvosPar, [])
+    if op == 'usar salva':
+        if salvosPar == []:
+            print('não existem analises salvas')
+            return analisesPar_(caracteristicas, salvosPar, parametrosgerais)
+        else:
+            parametrosgerais = usarsalvas(parametrosgerais,caracteristicas , salvosPar)
+            op = f_d.inp([dict([(x,y[1]) for x,y in a.items()]) for a in parametrosgerais], ('confirmar analises', 'refazer analises'))
+            if op == 'confirmar analises':    
+                op = f_d.inp('outra analise?', ('s', 'n'))
                 if op == 's':
-                    return analisesPar_(caracteristicas, prontas, parametrosgerais)
+                    return analisesPar_(caracteristicas,salvosPar,parametrosgerais)
                 if op == 'n':
-                    op = f_d.inp(f'{parametrosgerais}', ('confirmar analises', 'refazer analises'))
-                    if op == 'confirmar analises':
-                        return parametrosgerais
-                    if op ==  'refazer analises':
-                        return analisesPar_(caracteristicas, prontas, [])
-            if op == 'refazer parametros':
-                parametrosgerais.pop()
-                return analisesPar_(caracteristicas, prontas, parametrosgerais)
-        elif op == 'prontas':
-            print('nao implementado')
-            return analisesPar_(caracteristicas, prontas, parametrosgerais)
+                    return parametrosgerais
+            if op == 'refazer analises':
+                return analisesPar_(caracteristicas, salvosPar, [])
