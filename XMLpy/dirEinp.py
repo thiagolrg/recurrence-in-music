@@ -79,6 +79,7 @@ def escreve_txt(diretorio, arquivo, nome):
 #inputs gerais do usuario
 def inp(texto, opcoes):
 <<<<<<< HEAD
+<<<<<<< HEAD
     def printtexto(texto):
         if isinstance(texto, list):
             for i in texto:
@@ -90,6 +91,9 @@ def inp(texto, opcoes):
             print(texto)
     printtexto(texto)
     print()
+=======
+    print(f'{texto}')
+>>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
 =======
     print(f'{texto}')
 >>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados

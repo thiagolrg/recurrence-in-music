@@ -21,6 +21,7 @@ def filtrordenacao(analisePar):
         return analisePar
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 def criaranalise(caracteristicas, salvosPar, analisesPar):
     analisePar = []
     analisePar.append((segmentacao[0][0], segmentacao[0][1](caracteristicas)))
@@ -93,6 +94,22 @@ def analisesPar_(caracteristicas, prontas, parametrosgerais):
                 if op == 's':
                     return analisesPar_(caracteristicas, prontas, parametrosgerais)
                 if op == 'n':
+=======
+def analisesPar_(caracteristicas, prontas, parametrosgerais):
+    if prontas != []:
+        op = f_d.inp('criar analise ou usar prontas?', ('criar', 'prontas',))
+        if op == 'criar':
+            parametrosanalise = {}
+            parametrosanalise.setdefault('segmentacao', segmentacao['segmentacao'](caracteristicas))
+            parametrosanalise = filtrordenacao(parametrosanalise)
+            parametrosgerais.append(parametrosanalise)
+            op = f_d.inp(f'{parametrosanalise}', ('confirmar parametros', 'refazer parametros'))
+            if op == 'confirmar parametros':
+                op = f_d.inp('acrescentar outra analise?', ('s','n'))
+                if op == 's':
+                    return analisesPar_(caracteristicas, prontas, parametrosgerais)
+                if op == 'n':
+>>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
                     op = f_d.inp(f'{parametrosgerais}', ('confirmar analises', 'refazer analises'))
                     if op == 'confirmar analises':
                         return parametrosgerais
@@ -103,5 +120,9 @@ def analisesPar_(caracteristicas, prontas, parametrosgerais):
                 return analisesPar_(caracteristicas, prontas, parametrosgerais)
         elif op == 'prontas':
             print('nao implementado')
+<<<<<<< HEAD
+            return analisesPar_(caracteristicas, prontas, parametrosgerais)
+>>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
+=======
             return analisesPar_(caracteristicas, prontas, parametrosgerais)
 >>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados

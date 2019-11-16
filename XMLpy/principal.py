@@ -3,7 +3,10 @@ import xmldict as f_xd
 import insp as f_i
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #pede diretorio do usuário e cria pastas e caminhos que vão ser usados
+=======
+>>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
 =======
 >>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
 di = f_d.diretorio_ler('.xml')
@@ -30,6 +33,7 @@ caracteristicas = [k for k in mDicio['P1'].keys()]
 prontas = ['asdf']
 analisesPar = f_i.analisesPar_(caracteristicas, prontas, [])
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 #abre o arquivo de parametros salvos, caso exista
 #pede inputs de parametros do usuário (precisa das caracteristicas e parametros salvos)
@@ -75,6 +79,12 @@ for analisePar in analisesPar:
     f_d.escreve_txt(diA,loganalise, nomeanalise)
     f_d.escreve_txt(diA,analise, nomeanalise)
 =======
+=======
+for analisePar in analisesPar:
+    aDicio = {}
+    for caminho in caminhosdict:
+        mDicio = f_d.le_pickle(caminho)
+>>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
         analise = analisePar['segmentacao'][0](mDicio, aDicio)
     for nome, funcao in analisePar.items():
         if nome != 'segmentacao':

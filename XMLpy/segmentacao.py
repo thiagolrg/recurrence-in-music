@@ -71,6 +71,10 @@ def segmentacao(caracteristicas):
         for parte, caracteristicas in musica.items():
             for p1 in range(len(caracteristicas['grau'])):
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+                print(nome, parte, round((p1*100)/len(caracteristicas['grau'])+0.5),'%   ', end='\r')
+>>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
 =======
                 print(nome, parte, round((p1*100)/len(caracteristicas['grau'])+0.5),'%   ', end='\r')
 >>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
@@ -113,6 +117,9 @@ def segmentacao(caracteristicas):
                         keyAnalise = tuple(keyAnalise)
                     aDicio.setdefault(keyAnalise, [{'nome': set()}])[0]['nome'].add(nome)
                     aDicio[keyAnalise][0].setdefault('posicao', set()).add(posicao)
+<<<<<<< HEAD
+>>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
+=======
 >>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
                     for posicaoPar in parametros['posicoesPar']:
                         if posicaoPar != []:
@@ -148,6 +155,9 @@ def segmentacao(caracteristicas):
                                 for a in posicaop2m1:
                                     aDicio[keyAnalise][0].setdefault(posicaoPar[0], set()).add(a)
                     aDicio[keyAnalise].append(valueAnalise)
+<<<<<<< HEAD
+>>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
+=======
 >>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
         return aDicio
     return (funcao_, parametros)
