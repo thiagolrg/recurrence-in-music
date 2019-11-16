@@ -70,55 +70,66 @@ def segmentacao(caracteristicas, parametros=dict()):
         nome = musica.pop('nome')
         for parte, caracteristicas in musica.items():
             for p1 in range(len(caracteristicas['grau'])):
-                #print(nome, parte, round((p1*100)/len(caracteristicas['grau'])+0.5),'%   ', end='\r')
                 for p2 in range(p1+1,len(caracteristicas['grau'])):
+
+                    #caracteristicas nos segmentos
                     keyAnalise = []
-                    posicao = (nome, parte, (p1,p2))
-                    valueAnalise = [posicao]
                     for segmentoPar in parametros['segmentosPar']:
-                        segmentop1 = caracteristicas[segmentoPar[0]][p1]
-                        segmentop1p2 = tuple(caracteristicas[segmentoPar[0]][p1:p2])
-                        segmentop2m1 = tuple(caracteristicas[segmentoPar[0]][p1:p2-1])
                         if segmentoPar[1] == 'p1':
-                            keyAnalise.append(segmentop1)
+                            keyAnalise.append(caracteristicas[segmentoPar[0]][p1])
                         elif segmentoPar[1] =='p1p2':
-                            keyAnalise.append(segmentop1p2)
+                            keyAnalise.append(tuple(caracteristicas[segmentoPar[0]][p1:p2]))
                         elif segmentoPar[1] == 'p2m1':
-                            keyAnalise.append(segmentop2m1)
+                            if (p2-1)-p1 == 0:
+                                continue
+                            keyAnalise.append(tuple(caracteristicas[segmentoPar[0]][p1:p2-1]))
                         elif segmentoPar[1] == 'p1p2set':
-                            keyAnalise.append(set(segmentop1p2))
+                            keyAnalise.append(tuple(set(caracteristicas[segmentoPar[0]][p1:p2])))
                         elif segmentoPar[1] == 'p2m1set':
-                            keyAnalise.append(set(segmentop2m1))
-                    if len(keyAnalise) == 1:
-                        keyAnalise = keyAnalise[0]
-                    elif isinstance(keyAnalise, tuple) == False:
-                        keyAnalise = tuple(keyAnalise)
-                    #aDicio.setdefault(keyAnalise, [{'nome': set()}])[0]['nome'].add(nome)
-                    #aDicio[keyAnalise][0].setdefault('posicao', set()).add(posicao)
+                            if (p2-1)-p1 == 0:
+                                continue
+                            keyAnalise.append(tuple(set(caracteristicas[segmentoPar[0]][p1:p2-1])))
+                    if keyAnalise == []:
+                        continue
+                    keyAnalise = tuple(keyAnalise)
+
+                    #esse set criado no index 0 do valor permite ver valores unicos para
+                    #todas as caracteristicas do segmentos em qualquer posicao
+                    aDicio.setdefault(keyAnalise, [{'nome': set()},[]])[0]['nome'].add(nome)
+
+                    #caracteristicas nas posicoes
+                    carposicao = []
+                    locposicao = (nome, parte, (p1,p2))
                     for posicaoPar in parametros['posicoesPar']:
                         if posicaoPar != []:
-                            posicaop1 = caracteristicas[posicaoPar[0]][p1]
-                            posicaop1p2 = tuple(caracteristicas[posicaoPar[0]][p1:p2])
-                            posicaop2m1 = tuple(caracteristicas[posicaoPar[0]][p1:p2-1])
                             if posicaoPar[1] == 'p1':
-                                valueAnalise.append(posicaop1)
+                                carposicao.append(caracteristicas[posicaoPar[0]][p1])
                             elif posicaoPar[1] == 'p1p2':
-                                valueAnalise.append(posicaop1p2)
+                                carposicao.append(tuple(caracteristicas[posicaoPar[0]][p1:p2]))
                             elif posicaoPar[1] == 'p2m1':
-                                valueAnalise.append(posicaop2m1)
+                                if (p2-1)-p1 == 0:
+                                    continue
+                                carposicao.append(tuple(caracteristicas[posicaoPar[0]][p1:p2-1]))
                             elif posicaoPar[1] == 'p1p2set':
-                                valueAnalise.append(set(posicaop1p2))
+                                carposicao.append(set(caracteristicas[posicaoPar[0]][p1:p2]))
                             elif posicaoPar[1] == 'p2m1set':
-                                valueAnalise.append(set(posicaop2m1))
+                                if (p2-1)-p1 == 0:
+                                    continue
+                                carposicao.append(set(caracteristicas[posicaoPar[0]][p1:p2-1]))
+
+                            #acrescenta ao set no index 0 do valor
                             elif posicaoPar[1] == 'p1f':
-                                aDicio[keyAnalise][0].setdefault(posicaoPar[0], set()).add(posicaop1)
+                                aDicio[keyAnalise][0].setdefault(posicaoPar[0], set()).add(caracteristicas[posicaoPar[0]][p1])
                             elif posicaoPar[1] == 'p1p2f':
-                                for a in posicaop1p2:
-                                    aDicio[keyAnalise][0].setdefault(posicaoPar[0], set()).add(a)
+                                aDicio[keyAnalise][0].setdefault(posicaoPar[0], set()).update(caracteristicas[posicaoPar[0]][p1:p2])
                             elif posicaoPar[1] == 'p2m1f':
-                                for a in posicaop2m1:
-                                    aDicio[keyAnalise][0].setdefault(posicaoPar[0], set()).add(a)
-                    #aDicio[keyAnalise].append(valueAnalise)
-                    aDicio.setdefault(keyAnalise,valueAnalise)
+                                if (p2-1)-p1 == 0:
+                                    continue
+                                aDicio[keyAnalise][0].setdefault(posicaoPar[0], set()).update(caracteristicas[posicaoPar[0]][p1:p2-1])
+                    
+                    #localizao sempre é index 0 e as outras caracteristicas vem no index 1 
+                    aDicio[keyAnalise][1].append((locposicao,tuple(carposicao)))
         return aDicio
     return (funcao_, parametros)
+
+#print(nome, parte, round((p1*100)/len(caracteristicas['grau'])+0.5),'%   ', end='\r')

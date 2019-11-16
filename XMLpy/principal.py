@@ -2,7 +2,7 @@ import dirEinp as f_d
 import xmldict as f_xd
 import insp as f_i
 
-#pede diretorio do usuário e cria pastas e caminhos que vã oser usados
+#pede diretorio do usuário e cria pastas e caminhos que vão ser usados
 di = f_d.diretorio_ler('.xml')
 diD = di+'\\Dicts'
 diA = di+'\\Analises'
@@ -34,49 +34,45 @@ for caminho in caminhosdict:
     mDicio = f_d.le_pickle(caminho)
     assert(caracteristicas == [k for k in mDicio['P1'].keys()])
 
-#abre o arquivo de parametros criados, caso exista
-#pede inputs de parametros do usuário (precisa das caracteristicas e parametros criados)
+#abre o arquivo de parametros salvos, caso exista
+#pede inputs de parametros do usuário (precisa das caracteristicas e parametros salvos)
 try:
-    prontosPar = f_d.le_pickle(cPar)
+    salvosPar = f_d.le_pickle(cPar)
 except FileNotFoundError:
-    prontosPar = []
-analisesPar = f_i.analisesPar_(caracteristicas, prontosPar, [])
-analisesLog = [dict([(x,y[1]) for x,y in a.items()]) for a in analisesPar]
+    salvosPar = []
+analisesPar = f_i.analisesPar_(caracteristicas, salvosPar, [])
+analisesLog = f_i.analisesLog_(analisesPar)
 
 #atualiza o arquivo de parametros com novos criados, caso existam
 try:
     f_d.escreve_pickle(diP, analisesLog, 'parametros')
 except FileExistsError:
-    prontosPar = f_d.le_pickle(cPar)
-    for analise in analisesLog:
-        if analise not in prontosPar:
-            prontosPar.append(analise)
-    f_d.escreve_pickle(diP, prontosPar, 'parametros', trunca=True)
+    salvosPar = f_d.le_pickle(cPar)
+    for analiseLog in analisesLog:
+        if analiseLog not in salvosPar:
+            salvosPar.append(analiseLog)
+    f_d.escreve_pickle(diP, salvosPar, 'parametros', trunca=True)
 
 #executa as analises criadas
-for analisePar in analisesPar:
-    analiseLog = dict([(x,y[1]) for x,y in analisePar.items()])
-    aDicio = {}
+for analisePar, analiseLog in zip(analisesPar, analisesLog):
+    analise = {}
     #segmentacao
     for caminho in caminhosdict:
         print('segmentando ',caminhosdict.index(caminho)+1,' de ', len(caminhosdict))
         mDicio = f_d.le_pickle(caminho)
-        analise = analisePar['segmentacao'][0](mDicio, aDicio)
-    analisePar.pop('segmentacao')
+        analise = analisePar[0][1][0](mDicio, analise)
+        debug = 0
     #filtros e ordenacoes
-    for nome, funcao in analisePar.items():
-        print(nome, [x for x in analisePar.keys()].index(nome)+1,' de ', len(analisePar.keys()))
-        if nome != 'segmentacao':
-            analise = funcao[0](aDicio)
+    for filtroord in analisePar[1:]:
+        print(filtroord[0], analisePar[1:].index(filtroord)+1,' de ', len(analisePar[1:]))
+        analise = filtroord[1][0](analise)
     #salva o log e a analise
     #nomes de todos os arquivos, que é o nome da música
-    numeroanalise = len(f_d.caminhos_extensao(diA, '.txt'))+1
-    nomeanalise = f'analise {numeroanalise}'
+    nomeanalise = 'analise'+str(len(f_d.caminhos_extensao(diA, '.txt'))+1)
     nomesmusicas = [f_d.caminho_nome(caminho, '.p') for caminho in caminhosdict]
     loganalise = {'nomes': nomesmusicas, 'quantidade': len(nomesmusicas), 'parametros': analiseLog}
     f_d.escreve_txt(diA,loganalise, nomeanalise)
     f_d.escreve_txt(diA,analise, nomeanalise)
-
 '''
 verificar lógica das funcoes uma a uma
 descobrir porque o dicionario na posicoes[0] nao esta sendo retirado

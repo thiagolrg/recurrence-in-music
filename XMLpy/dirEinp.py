@@ -78,24 +78,34 @@ def escreve_txt(diretorio, arquivo, nome):
             print(linha,'.   ',items,'\n',file=f)
     return None
 
+#inputs gerais do usuario
 def inp(texto, opcoes):
     def printtexto(texto):
-        if isinstance(texto, str):
-            print(texto)
+        if isinstance(texto, list):
+            for i in texto:
+                printtexto(i)
         elif isinstance(texto, dict):
             for item in texto.items():
                 print(item)
-        elif isinstance(texto, list) or isinstance(texto, tuple):
-            for i in texto:
-                printtexto(i)
-                print()
+        else:
+            print(texto)
     printtexto(texto)
+    print()
     for o in range(len(opcoes)):
         print(f'{o+1}. {opcoes[o]}')
     ip = input('escolha uma opcao: ')
     if ip.isdigit() and int(ip) <= len(opcoes):
-        print( )
+        print()
         return opcoes[int(ip)-1]
     else:
         print(f'{ip} não é uma ooção\n')
         return inp(texto, opcoes)
+
+#usado nos inputs de quantidade
+def quantidade_():
+    q = input('que ocorrem pelo menos _ vezes: ')
+    try:
+        return int(q)
+    except ValueError:
+        print('deve ser inteiro')
+        return quantidade_()
