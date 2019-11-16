@@ -232,18 +232,27 @@ def note_to_midi(note):
     o = octave(note)
     a = alter(note)
     if s == 'C':
+        
+def note_to_miniN(step,alter,octave):
+    if step == 'C':
         midiN = 60
     elif s == 'D':
+    elif step == 'D':
         midiN = 62
     elif s == 'E':
+    elif step == 'E':
         midiN = 64
     elif s == 'F':
+    elif step == 'F':
         midiN = 65
     elif s == 'G':
+    elif step == 'G':
         midiN = 67
     elif s == 'A':
+    elif step == 'A':
         midiN = 69
     elif s == 'B':
+    elif step == 'B':
         midiN = 71
     if a == None:
         a = 0
@@ -256,3 +265,14 @@ def ut_duration(divisions,time):
 
 def duracao_Fcompasso(divisions,time,note):
     return (counter(note) - counter(time))/ut_duration(divisions,time)
+    if alter == None:
+        alter = 0
+    return (midiN+((octave - 4)*12))+alter
+
+def duration_time(divisions,time,counter):
+    ut = (divisions*4)/time[1][1]
+    uc = ut*time[1][0]
+    durationTime = counter - time[0]
+    while durationTime//uc > 0:
+        durationTime = durationTime - uc
+    return durationTime/ut

@@ -1,13 +1,13 @@
 import dirEinp as f_d
 
-def segmentacao(caracteristicas, parametros=dict()):
+def segmentacao(caracteristicas):
 
     #funcoes de input de parametros para a segmentação
     def segmentosPar_(caracteristicas, parametros):
         sc = f_d.inp('caracteristicas para segmentos:', (caracteristicas))
         st = f_d.inp('modos de segmentar:', ('p1','p1p2','p2m1','p1p2set','p2m1set'))
         parametros['segmentosPar'].append((sc,st))
-        op = f_d.inp(parametros, ('confirmar entrada', 'refazer entrada'))
+        op = f_d.inp(f'{parametros}', ('confirmar entrada', 'refazer entrada'))
         if op == 'confirmar entrada':
             op = f_d.inp('adicionar outra caracteristica para segmentos?', ('s','n'))
             if op == 's':
@@ -21,7 +21,7 @@ def segmentacao(caracteristicas, parametros=dict()):
         sc = f_d.inp('caracteristicas para posicoes:', (caracteristicas))
         st = f_d.inp('modos de segmentar:', ('p1','p1p2','p2m1','p1p2set','p2m1set'))
         parametros['posicoesPar'].append((sc, st))
-        op = f_d.inp(parametros, ('confirmar entrada', 'refazer entrada'))
+        op = f_d.inp(f'{parametros}', ('confirmar entrada', 'refazer entrada'))
         if op == 'confirmar entrada':
             op = f_d.inp('adicionar outra caracteristica para posicoes?', ('s','n'))
             if op == 's':
@@ -35,7 +35,7 @@ def segmentacao(caracteristicas, parametros=dict()):
         sc = f_d.inp('caracteristicas para filtros:', (caracteristicas))
         st = f_d.inp('modos de segmentar:', ('p1f','p1p2f','p2m1f'))
         parametros['posicoesPar'].append((sc, st))
-        op = f_d.inp(parametros, ('confirmar entrada', 'refazer entrada'))
+        op = f_d.inp(f'{parametros}', ('confirmar entrada', 'refazer entrada'))
         if op == 'confirmar entrada':
             op = f_d.inp('adicionar outra caracteristica para filtros?', ('s','n'))
             if op == 's':
@@ -45,6 +45,7 @@ def segmentacao(caracteristicas, parametros=dict()):
         if op == 'refazer entrada':
             parametros['posicoesPar'].pop()
             return filtrosPar_(caracteristicas, parametros)
+
 
     #montando parametros
     def Par(caracteristicas):
@@ -56,20 +57,23 @@ def segmentacao(caracteristicas, parametros=dict()):
         op = f_d.inp('adicionar caracteristicas para filtros?', ('s','n'))
         if op == 's':
             parametros = filtrosPar_(caracteristicas, parametros)
-        op = f_d.inp(parametros, ('confirmar segmentacao', 'comecar novamente'))
+        op = f_d.inp(f'{parametros}', ('confirmar segmentacao', 'comecar novamente'))
         if op == 'confirmar segmentacao':
             return parametros
         if op == 'comecar novamente':
             return Par(caracteristicas)
-    
-    if parametros == dict():
-        parametros = Par(caracteristicas)
+
+    parametros = Par(caracteristicas)
 
     def funcao_(mDicio, aDicio):
         musica = mDicio.copy()
         nome = musica.pop('nome')
         for parte, caracteristicas in musica.items():
             for p1 in range(len(caracteristicas['grau'])):
+<<<<<<< HEAD
+=======
+                print(nome, parte, round((p1*100)/len(caracteristicas['grau'])+0.5),'%   ', end='\r')
+>>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
                 for p2 in range(p1+1,len(caracteristicas['grau'])):
 
                     #caracteristicas nos segmentos
@@ -86,6 +90,7 @@ def segmentacao(caracteristicas, parametros=dict()):
                         elif segmentoPar[1] == 'p1p2set':
                             keyAnalise.append(tuple(set(caracteristicas[segmentoPar[0]][p1:p2])))
                         elif segmentoPar[1] == 'p2m1set':
+<<<<<<< HEAD
                             if (p2-1)-p1 == 0:
                                 continue
                             keyAnalise.append(tuple(set(caracteristicas[segmentoPar[0]][p1:p2-1])))
@@ -100,6 +105,15 @@ def segmentacao(caracteristicas, parametros=dict()):
                     #caracteristicas nas posicoes
                     carposicao = []
                     locposicao = (nome, parte, (p1,p2))
+=======
+                            keyAnalise.append(set(segmentop2m1))
+                    if len(keyAnalise) == 1:
+                        keyAnalise = keyAnalise[0]
+                    elif isinstance(keyAnalise, tuple) == False:
+                        keyAnalise = tuple(keyAnalise)
+                    aDicio.setdefault(keyAnalise, [{'nome': set()}])[0]['nome'].add(nome)
+                    aDicio[keyAnalise][0].setdefault('posicao', set()).add(posicao)
+>>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
                     for posicaoPar in parametros['posicoesPar']:
                         if posicaoPar != []:
                             if posicaoPar[1] == 'p1':
@@ -123,12 +137,18 @@ def segmentacao(caracteristicas, parametros=dict()):
                             elif posicaoPar[1] == 'p1p2f':
                                 aDicio[keyAnalise][0].setdefault(posicaoPar[0], set()).update(caracteristicas[posicaoPar[0]][p1:p2])
                             elif posicaoPar[1] == 'p2m1f':
+<<<<<<< HEAD
                                 if (p2-1)-p1 == 0:
                                     continue
                                 aDicio[keyAnalise][0].setdefault(posicaoPar[0], set()).update(caracteristicas[posicaoPar[0]][p1:p2-1])
                     
                     #localizao sempre é index 0 e as outras caracteristicas vem no index 1 
                     aDicio[keyAnalise][1].append((locposicao,tuple(carposicao)))
+=======
+                                for a in posicaop2m1:
+                                    aDicio[keyAnalise][0].setdefault(posicaoPar[0], set()).add(a)
+                    aDicio[keyAnalise].append(valueAnalise)
+>>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
         return aDicio
     return (funcao_, parametros)
 

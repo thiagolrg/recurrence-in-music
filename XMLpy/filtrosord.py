@@ -1,5 +1,6 @@
 import dirEinp as f_d
 
+<<<<<<< HEAD
 def filtroposicoes_quantidade(parametrosanalise, parametros=int()):
     def funcao_(aDicio):
         filtrado = {}
@@ -82,8 +83,18 @@ def filtroset_quantidade(parametroanalise, parametros=dict()):
         caracteristica = f_d.inp('por qual caracteristica filtrar?', opcoes)
         quantidade = f_d.quantidade_()
         print()
+=======
+def filtro_quantidade(parametroanalise):
+    def filtroPar(parametroanalise, parametros):
+        opcoes = [x[0] for x in parametroanalise['segmentacao'][1]['posicoesPar'] if 'f' in x[1]]
+        opcoes.append('nome')
+        opcoes.append('posicao')
+        caracteristica = f_d.inp('por qual caracteristica filtrar?', opcoes)
+        quantidade = input('que ocorrem pelo menos _ vezes: ')
+        print( )
+>>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
         parametros.setdefault(caracteristica, int(quantidade))
-        op = f_d.inp(parametros, ('confirmar entrada', 'refazer entrada'))
+        op = f_d.inp(f'{parametros}', ('confirmar entrada', 'refazer entrada'))
         if op == 'confirmar entrada':
             op = f_d.inp('adicionar outra caracteristica ao filtro_quantidade?', ('s','n'))
             if op == 's':
@@ -96,14 +107,12 @@ def filtroset_quantidade(parametroanalise, parametros=dict()):
     
     def Par(parametroanalise, parametros):
         parametros = filtroPar(parametroanalise, parametros)
-        op = f_d.inp(parametros, ('confirmar filtro_quantidade', 'comecar novamente'))
+        op = f_d.inp(f'{parametros}', ('confirmar filtro_quantidade', 'comecar novamente'))
         if op == 'confirmar filtro_quantidade':
             return parametros
         if op == 'comecar novamente':
             return Par(parametroanalise, {})
-    
-    if parametros == dict():
-        parametros = Par(parametroanalise, {})
+    parametros = Par(parametroanalise, {})
 
     def funcao_(aDicio):
         filtrado = {}
@@ -119,12 +128,41 @@ def filtroset_quantidade(parametroanalise, parametros=dict()):
                 filtrado.setdefault(segmento,posicoes)
         return filtrado
     return (funcao_, parametros)
+<<<<<<< HEAD
 
 def filtroset_tipo(parametroanalise, parametros=list()):
+=======
+
+    
+    
+'''
+#({caracteristica: valores}, op)
+# onde op == inclusivo ou exclusivo
+inclusivo qualquer:
+passa se qualquer um dos valores existir nas caracteristicas do total de localizacoes do segmento
+as caracteristicas do segmento podem ter outros valores diferentes do filtro
+
+inclusivo todos:
+passa se todos os valores existires nas caracteristicas do total de localizacoes do segmento
+as caracteristicas do segmento podem ter outros valores diferentes do filtro
+
+exclusivo qualquer:
+passa se qualquer valor existir nas caracteristicas do total de localizacoes do segmento
+as caracteristicas do segmento só podem conter valores do filtro
+
+exclusica qualquer:
+passa se todos os valores existires nas caracteristicas do total de localizacoes do segmento
+as caracteristicas do segmento só podem conter valores do filtro
+'''
+
+def filtro_tipo(parametroanalise):
+>>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
     def filtroPar(parametroanalise, parametros):
         opcoes = [x[0] for x in parametroanalise[0][1][1]['posicoesPar'] if 'f' in x[1]]
         opcoes.append('nome')
+        opcoes.append('posicao')
         caracteristica = f_d.inp('por qual caracteristica filtrar?', opcoes)
+<<<<<<< HEAD
         def valores_():
             valores = input('que contenha quais valores? ')
             try:
@@ -139,9 +177,14 @@ def filtroset_tipo(parametroanalise, parametros=list()):
                 return valores_()
         valores = valores_()
         tipo = f_d.inp('como filtrar?', ('inclusivo qualquer','inclusivo todos','exclusivo qualquer','exclusivo todos'))
+=======
+        valores = input('que contenha quais valores? ')
+        valores = [float(v) for v in valores.split(',')]
+        tipo = f_d.inp('como filtrar?', ['inclusivo qualquer','inclusivo todos','exclusivo qualquer','exclusivo todos'])
+>>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
         print( )
         parametros.append(({caracteristica: valores}, tipo))
-        op = f_d.inp(parametros, ('confirmar entrada', 'refazer entrada'))
+        op = f_d.inp(f'{parametros}', ('confirmar entrada', 'refazer entrada'))
         if op == 'confirmar entrada':
             op = f_d.inp('adicionar outra caracteristica ao filtro_tipo?', ('s','n'))
             if op == 's':
@@ -154,14 +197,12 @@ def filtroset_tipo(parametroanalise, parametros=list()):
 
     def Par(parametroanalise, parametros):
         parametros = filtroPar(parametroanalise, parametros)
-        op = f_d.inp(parametros, ('confirmar filtro_tipo', 'comecar novamente'))
+        op = f_d.inp(f'{parametros}', ('confirmar filtro_tipo', 'comecar novamente'))
         if op == 'confirmar filtro_tipo':
             return parametros
         if op == 'comecar novamente':
             return Par(parametroanalise, [])
-    
-    if parametros == list():
-        parametros = Par(parametroanalise, [])
+    parametros = Par(parametroanalise, [])
 
     def funcao_(aDicio):
         filtrado = {}
@@ -199,12 +240,79 @@ def filtroset_tipo(parametroanalise, parametros=list()):
         return filtrado
     return (funcao_, parametros)
 
+<<<<<<< HEAD
 def ord_tamSegQantLoc(parametrosanalise, parametros=str()):
     def funcao_(aDicio):
         pronto = {}
         for chave, valor in sorted(aDicio.items(), key=lambda item: (len(item[0][0]), len(item[1][1])), reverse=True):
             pronto.setdefault(chave, valor)
+=======
+
+def filtro_contidos(parametroanalise):
+    def Par():
+        parametros = f_d.inp('o que fazer com os contidos?', ('marcar','retirar vazios'))
+        op = f_d.inp(f'{parametros}', ('confirmar filtro_contidos', 'comecar novamente'))
+        if op == 'confirmar filtro_contidos':
+            return parametros
+        if op == 'comecar novamente':
+            return Par()
+    parametros = Par()
+
+    def funcao_(aDicio):
+        for segmento1, localizacoes1 in (aDicio.copy()).items():
+            contido = False
+            for segmento2, localizacoes2 in (aDicio.copy()).items():
+                for localizacao1 in localizacoes1:
+                    for localizacao2 in localizacoes2:
+                        if localizacao2[0:2] != localizacao1[0:2]:
+                            continue
+                        if localizacao2[2][0] >= localizacao1[2][0] and localizacao2[2][1] <= localizacao2[2][1]:
+                            aDicio[segmento2].pop(aDicio[segmento2].index(localizacao2)) 
+                            contido = True
+            if contido == True:
+                if parametros == 'marcar':
+                    aDicio[segmento2].insert(0, segmento1)
+                elif parametros == 'retirar vazios' and aDicio[segmento2] == []:
+                    aDicio.pop(segmento2)
+        return aDicio
+    return (funcao_, parametros)
+
+def filtro_amontoados(parametroanalise):
+    def Par():
+        parametros = f_d.inp('o que fazer com os amontados?', ('marcar segundo','retirar vazios'))
+        op = f_d.inp(f'{parametros}', ('confirmar filtro_amontoados', 'comecar novamente'))
+        if op == 'confirmar filtro_amontoados':
+            return parametros
+        if op == 'comecar novamente':
+            return Par()
+    parametros = Par()
+
+    def funcao_(aDicio):
+        for segmento1, localizacoes1 in (aDicio.copy()).items():
+            amontado = False
+            for segmento2, localizacoes2 in (aDicio.copy()).items():
+                for localizacao1 in localizacoes1:
+                    for localizacao2 in localizacoes2:
+                        if localizacao2[0:2] != localizacao1[0:2]:
+                            continue
+                        if localizacao2[2][0] <= localizacao1[2][1] and localizacao2[2][1] > localizacao1[2][1]:
+                            aDicio[segmento2].pop(aDicio[segmento2].index(localizacao2)) 
+                            amontado = True
+            if amontado == True:
+                if parametros == 'marcar segundo':
+                    aDicio[segmento2].insert(0, segmento1)
+                elif parametros == 'retirar vazios' and aDicio[segmento2] == []:
+                    aDicio.pop(segmento2)
+        return aDicio
+    return (funcao_, parametros)
+
+def ord_tamSegQantLoc(parametrosanalise):
+    def funcao_(aDicio):
+        pronto = {}
+        for chave, valor in sorted(aDicio.items(), key=lambda item: (len(item[0][0]), len(item[1])), reverse=True):
+            pronto.setdefault(chave, valor[1:])
+>>>>>>> parent of a10ca0a... salvando parametros criados e criando a partir de criados
         return pronto
-    if parametros == str():    
-        parametros = 's'
-    return (funcao_,parametros)
+    op = f_d.inp('confirmar ord_tamSegQantLoc?', ('s','n'))
+    if op == 's':
+        return (funcao_,op)
