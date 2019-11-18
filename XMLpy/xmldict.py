@@ -4,18 +4,26 @@ import xmltodict
 def ad_counter(arquivo):
     counter = 0
     xml = []
+    chord = False
     for p in range(len(arquivo)):
-        assert 'score-timewise' not in arquivo[p], 'XML é score-timewise, não implementado'
-        assert 'chord' not in arquivo[p], 'tag "chord" no XML. Não podem existir notas simultâneas na mesma parte'
-        assert '<backup>' not in arquivo[p], 'tag "backup" no XML. Não podem existir notas simultâneas na mesma parte'
-        assert '<forward>' not in arquivo[p], 'tag "forward" no XML. Não podem existir notas simultâneas na mesma parte'
+        #assert 'score-timewise' not in arquivo[p], 'XML é score-timewise, não implementado'
+        #assert 'chord' not in arquivo[p], 'tag "chord" no XML. Não podem existir notas simultâneas na mesma parte'
+        #assert '<backup>' not in arquivo[p], 'tag "backup" no XML. Não podem existir notas simultâneas na mesma parte'
+        #assert '<forward>' not in arquivo[p], 'tag "forward" no XML. Não podem existir notas simultâneas na mesma parte'
         xml.append(arquivo[p])
         if p > 2 and p < len(arquivo):
             if '</' not in xml[p] and '/>' not in xml[p] and '<!' not in xml[p]:
-                xml[p] = xml[p].rstrip('>')+' counter ='+'"'+str(counter)+'"'+'>'
+                xml[p] = xml[p].rstrip('>')+' counter ='+'"'+str(counter)+'"'+'>'       
+        if 'chord' in arquivo[p]:
+            chord = True
         if '<duration>' in arquivo[p]:
             duration = int(arquivo[p].replace('<duration>','').replace('</duration>',''))
-            counter = counter + duration
+            if '<backup>' in arquivo[p-1]:
+                counter = counter - duration
+            elif chord == True:
+                chord = False
+            else:
+                counter = counter + duration
         if '</part>' in arquivo[p]:
             counter = 0
     return xmltodict.parse(''.join(xml))
@@ -35,80 +43,85 @@ def xml_dict(xml):
             measureN = int(measure['@number'])
 
             #atributos do compasso
-            if 'attributes' in measure.keys():
+            if measure['attributes'] != None:
                 for attributes in to_list(measure['attributes']):
 
                     #divisions
-                    if 'divisions' in attributes.keys():
+                    if 'divisions' in attributes:
                         divisions = int(attributes['divisions'])
                         try:
-                            if divisions != xmlD['divisions']:
-                                raise ValueError ('divisions diferente')
+                            assert(divisions != xmlD['divisions'])
                         except KeyError:
                             xmlD.setdefault('divisions', divisions)
 
                     #keys
-                    if 'key' in attributes.keys():
+                    if 'key' in attributes:
                         for k in to_list(attributes['key']):
                             key = ((int(k['@counter']), measureN) , f_c.key_(int(k['fifths']), k['mode']))
                             try:
                                 if key not in xmlD['keys']:
                                     keylocs = [f_c.loc(x) for x in xmlD['keys']]
-                                    if f_c.loc(key) in keylocs:
-                                        raise ValueError ('keys diferentes')
+                                    assert(f_c.loc(key) not in keylocs)
                                     xmlD.setdefault('keys', []).append(key)
                             except KeyError:
                                 xmlD.setdefault('keys', []).append(key)
                     
                     #times
-                    if 'time' in attributes.keys():
+                    if 'time' in attributes:
                         for t in to_list(attributes['time']):
                             time = [[int(t['@counter']), measureN], (int(t['beats']), int(t['beat-type']))]
                             try:
                                 if time not in xmlD['times']:
                                     timelocs = [f_c.loc(x) for x in xmlD['times']]
-                                    if f_c.loc(time) in timelocs:
-                                        raise ValueError ('times diferentes')
+                                    assert(f_c.loc(time) not in timelocs)
                                     xmlD.setdefault('times', []).append(time)
                             except:
                                 xmlD.setdefault('times', []).append(time)
             
             #metronomes
-            if 'direction' in measure.keys():
+            if 'direction' in measure:
                 for direction in to_list(measure['direction']):
-                    if 'direction-type' in direction.keys():
+                    if 'direction-type' in direction:
                         for directionType in to_list(direction['direction-type']):
-                            if 'metronome' in directionType.keys():
+                            if 'metronome' in directionType:
                                 for m in to_list(directionType['metronome']):
                                     metronome = ((int(m['@counter']), measureN), (m['beat-unit'], int(m['per-minute'])))
                                     try:
                                         if metronome not in xmlD['metronomes']:
                                             metronomelocs = [f_c.loc(x) for x in xmlD['metronomes']]
-                                            if f_c.loc(metronome) in metronomelocs:
-                                                raise ValueError ('metronomes diferentes')
+                                            assert(f_c.loc(metronome) not in metronomelocs)
                                             xmlD.setdefault('metronomes', []).append(metronome)
                                     except KeyError:
                                         xmlD.setdefault('metronomes', []).append(metronome)
             
             #notas
             for note in to_list(measure['note']):
-                counter = int(note['@counter'])
                 step = None
                 octave = None
                 alter = None 
                 tie = None
-                if 'rest' in note.keys():
+                counter = int(note['@counter'])
+                if 'rest' in note:
+                    voice = int(note['voice'])
                     note = ((counter, measureN), (step,octave,alter,tie))
+                    xmlD.setdefault('notes',{}).setdefault(partID, {}).setdefault(voice, []).append(note)
                     continue
-                if 'tie' in note.keys():
-                    tie = note['tie']['@type']
+                if 'tie' in note:
+                    for tipo in to_list(note['tie']):
+                        tie = tipo['@type']
                 for pitch in to_list(note['pitch']): 
                     step = pitch['step']
                     octave = int(pitch['octave'])
-                    if 'alter' in pitch.keys():
+                    if 'alter' in pitch:
                         alter = int(pitch['alter'])
-                note = ((counter, measureN), (step,octave,alter,tie))
-                xmlD.setdefault('notes',{}).setdefault(partID, []).append(note)
+                if 'chord' not in note:
+                    voice = int(note['voice'])
+                    note = ((counter, measureN), (step,octave,alter,tie))
+                    xmlD.setdefault('notes',{}).setdefault(partID, {}).setdefault(voice, []).append(note)
+                else:
+                    counter = xmlD['notes'][partID][voice][-1][0][0]
+                    note = ((counter, measureN), (step,octave,alter,tie))
+                    xmlD.setdefault('notes',{}).setdefault(partID, {}).setdefault(voice, []).append(note)
     xmlD['times'] = f_c.times_com_duracoes(xmlD['times'])
     return xmlD
 
