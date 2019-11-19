@@ -86,6 +86,8 @@ def times_com_duracoes(times):
 
 #tom e modo a partir de fifths e mode
 def key_(fifths,mode):
+    if mode == None:
+        return fifths
     if mode == 'major':
         if fifths == 0:
             return tuple(['C',mode])

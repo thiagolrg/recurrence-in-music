@@ -74,6 +74,14 @@ for analisePar, analiseLog in zip(analisesPar, analisesLog):
     loganalise = {'nomes': nomesmusicas, 'quantidade': len(nomesmusicas), 'parametros': analiseLog}
     f_d.escreve_txt(diA,loganalise, nomeanalise)
     f_d.escreve_txt(diA,analise, nomeanalise)
+
+'''
+refazer condicao de ti e rest na funcao xml_dict...
+Se tie(nota1) == 'start', busca nota2 até que tie de nota2 seja None e Nota2 não seja pausa 
+
+'''
+
+
 '''
 verificar lógica das funcoes uma a uma
 descobrir porque o dicionario na posicoes[0] nao esta sendo retirado
