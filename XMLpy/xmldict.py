@@ -107,21 +107,23 @@ def xml_dict(xml):
                     xmlD.setdefault('notes',{}).setdefault(partID, {}).setdefault(voice, []).append(note)
                     continue
                 if 'tie' in note:
-                    for tipo in to_list(note['tie']):
-                        tie = tipo['@type']
+                    tie = to_list(note['tie'])[-1]['@type']
                 for pitch in to_list(note['pitch']): 
                     step = pitch['step']
                     octave = int(pitch['octave'])
                     if 'alter' in pitch:
                         alter = int(pitch['alter'])
-                if 'chord' not in note:
+                if 'chord' in note:
+                    if isinstance(xmlD['notes'][partID][voice][-1], list) == False:
+                        xmlD['notes'][partID][voice][-1] = [xmlD['notes'][partID][voice][-1]]
+                    counter = xmlD['notes'][partID][voice][-1][0][0][0]
+                    note = ((counter, measureN), (step,octave,alter,tie))
+                    counter = xmlD['notes'][partID][voice][-1].append(note)
+                else:
                     voice = int(note['voice'])
                     note = ((counter, measureN), (step,octave,alter,tie))
                     xmlD.setdefault('notes',{}).setdefault(partID, {}).setdefault(voice, []).append(note)
-                else:
-                    counter = xmlD['notes'][partID][voice][-1][0][0]
-                    note = ((counter, measureN), (step,octave,alter,tie))
-                    xmlD.setdefault('notes',{}).setdefault(partID, {}).setdefault(voice, []).append(note)
+    
     xmlD['times'] = f_c.times_com_duracoes(xmlD['times'])
     return xmlD
 
@@ -130,10 +132,7 @@ def mus_dict(xmlD, tie='stop', rest=None):
     divisions = xmlD['divisions']
     for part, notes in xmlD['notes'].items():
         p = 0
-        fim = False
         while p < len(notes):
-            while f_c.tie(notes[p]) == tie or f_c.step(notes[p]) == rest:
-                p += 1
             note1 = notes[p]
             timeRefn1 = f_c.referencia(note1,xmlD['times'])
             keyRef = f_c.referencia(note1,xmlD['keys'])
@@ -154,18 +153,24 @@ def mus_dict(xmlD, tie='stop', rest=None):
             musD[part].setdefault('Pcompasso',[]).append(Pcompasso)
             musD[part].setdefault('Ptempo', []).append(Ptempo)
             musD[part].setdefault('Ntempo', []).append(Ntempo)
-            p += 1
-            if p < len(notes):
-                while f_c.tie(notes[p]) == tie or f_c.step(notes[p]) == rest:
+            if f_c.tie(notes[p]) == 'start':
+                p += 2
+                tie = f_c.tie(notes[p])
+                while tie != None or f_c.step(notes[p]) == rest:
+                    tie = f_c.tie(notes[p])
                     p += 1
-                    if p == len(notes):
-                        fim = True
-                        break      
-                if fim == True:
-                    break
+            else:
+                p += 1
+            if p < len(notes):
                 note2 = notes[p]
+                if f_c.counter(note2) == f_c.counter(note1) and chord == False:
+                    chord = True
+                    chordbase = note1
                 timeRefn2 = f_c.referencia(note2,xmlD['times'])      
                 duracao = f_c.duracao_inicio(divisions,timeRefn2,note2) - f_c.duracao_inicio(divisions,timeRefn1,note1)
+                if f_c.counter(note2) != f_c.counter(note1) and chord == True:
+                    note1 = chordbase
+                    chord = False
                 intDia = f_c.int_diatonico(note1,note2)
                 intCro = f_c.int_cromatico(note1,note2)
                 intQua = f_c.int_qualidade(intDia,intCro)
