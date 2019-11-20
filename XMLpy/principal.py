@@ -80,23 +80,8 @@ for analisePar, analiseLog in zip(analisesPar, analisesLog):
     f_d.escreve_txt(diA,analise, nomeanalise)
 
 '''
-refazer condicao de ti e rest na funcao xml_dict...
-Se tie(nota1) == 'start', busca nota2 até que tie de nota2 seja None e Nota2 não seja pausa 
-
-'''
-
-
-'''
-verificar lógica das funcoes uma a uma
-descobrir porque o dicionario na posicoes[0] nao esta sendo retirado
-descobrir porque novas analises não estão sendo salvas no arquivo parametros
-talvez porque o dicionario mesmo em outra ordem deja considerado o mesmo?
-
-'''
-'''
-levantar erros ao ler xml quando:
-    a primeira tag não for <score-part-wise>
-    quando encontrar as mensagens <backward> <forward> <chord>
+testar e refinar funcoes de analise
+limpar inputs, não é prioridade mas é o que falta
 
 homogeneidade dos valores:
     ver distribuição dos valores agredgados as posições

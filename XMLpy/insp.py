@@ -7,7 +7,7 @@ import dirEinp as f_d
 segmentacao = inspect.getmembers(m_segmentacao, inspect.isfunction)
 assert(len(segmentacao)==1)
 filtrosord = dict([(x,y) for x,y in inspect.getmembers(m_filtrosord, inspect.isfunction)])
-paramanaM = dict([(x,y) for x,y in inspect.getmembers(m_filtrosord, inspect.isfunction)]
+paramanaM = dict([(x,y) for x,y in inspect.getmembers(m_paramana, inspect.isfunction)])
 def analiseLog_(analisePar):
     return [(x[0],x[1][1]) for x in analisePar]
 def analisesLog_(analisesPar):
@@ -66,7 +66,7 @@ def analisesPar_(caracteristicas, salvosPar, analisesPar):
             return analisesPar_(caracteristicas, salvosPar, [])
     if op == 'usar salva':
         op = f_d.inp('do modulo ou do arquivo:', ('modulo','arquivo'))
-        if op = 'arquivo':
+        if op == 'arquivo':
             if salvosPar == []:
                 print('não existem analises salvas')
                 return analisesPar_(caracteristicas, salvosPar, analisesPar)
@@ -82,4 +82,5 @@ def analisesPar_(caracteristicas, salvosPar, analisesPar):
                 if op == 'refazer analises':
                     return analisesPar_(caracteristicas, salvosPar, [])
         else:
-            #usar paramanaM
+            pa = f_d.inp('qual?', [x for x in paramanaM.keys()])
+            return [paramanaM[pa](caracteristicas)]
