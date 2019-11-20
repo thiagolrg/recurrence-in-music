@@ -9,4 +9,10 @@ def analise1(caracteristicas):
     parametrosanalise.append(
     ('posicoes_quantidade', f_f.filtroposicoes_quantidade(parametrosanalise,2))
     )
+    parametrosanalise.append(
+    ('posicoes_contidas', f_f.filtroposicoes_contidas(parametrosanalise,'retirar vazios'))  
+    )
+    parametrosanalise.append(
+    ('posicoes_amontoadas', f_f.filtroposicoes_amontoadas(parametrosanalise, 'marcar segundo'))
+    )
     return parametrosanalise

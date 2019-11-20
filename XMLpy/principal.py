@@ -80,8 +80,17 @@ for analisePar, analiseLog in zip(analisesPar, analisesLog):
 
 '''
 fazer inputs de parametros do modulo
-testar e refinar funcoes de analise
+testar e refinar funcoes de analise:
+    melhorar eficiencia dos contidos e amontoados ordenando antes de fazer o loop
+
+
 limpar inputs, não é prioridade mas é o que falta
+
+talvez seja melhor fazer várias condições já na função de segmentação em vez de funções filtros depois da segmentação.
+tamanho do segmento <= que, (ou a mesma condicao vista pera diferença de p1p2)
+por alguma outra caracteristica da posição (inicio do compasso, duração == tamanho do compasso)
+para os que acontecem também na música ou também no compasso ou também no andamento é possível filtrar direto
+para os que acontecem exclusivamente nessas carácteristicas é necessário ver todos e filtrar depois
 
 homogeneidade dos valores:
     ver distribuição dos valores agredgados as posições
