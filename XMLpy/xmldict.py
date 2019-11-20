@@ -179,21 +179,21 @@ def mus_dict(xmlD, tie=None, rest=None, chord=True):
                                     intDiaL.append(intDia)
                                     intQuaL.append(intQua)
 
-                            musD[part][voice].setdefault('Fcompasso', []).append([Fcompasso1])
-                            musD[part][voice].setdefault('tonalidade', []).append([tonalidade])
-                            musD[part][voice].setdefault('andamento', []).append([andamento])
-                            musD[part][voice].setdefault('Ncompasso', []).append([Ncompasso])
-                            musD[part][voice].setdefault('Pcompasso', []).append([Pcompasso])
-                            musD[part][voice].setdefault('Ntempo', []).append([Ntempo])
-                            musD[part][voice].setdefault('Ptempo', []).append([Ptempo])
-                            musD[part][voice].setdefault('notaStep', []).append(notaStepL)
-                            musD[part][voice].setdefault('notaOitava', []).append(notaOitavaL)
-                            musD[part][voice].setdefault('notaAlter', []).append(notaAlterL)
-                            musD[part][voice].setdefault('grau', []).append(grauL)
-                            musD[part][voice].setdefault('duracao', []).append(duracaoL)
-                            musD[part][voice].setdefault('intCro', []).append(intCroL)
-                            musD[part][voice].setdefault('intDia', []).append(intDiaL)
-                            musD[part][voice].setdefault('intQua', []).append(intQuaL)
+                            musD[part][voice].setdefault('Fcompasso', []).append(Fcompasso1)
+                            musD[part][voice].setdefault('tonalidade', []).append(tonalidade)
+                            musD[part][voice].setdefault('andamento', []).append(andamento)
+                            musD[part][voice].setdefault('Ncompasso', []).append(Ncompasso)
+                            musD[part][voice].setdefault('Pcompasso', []).append(Pcompasso)
+                            musD[part][voice].setdefault('Ntempo', []).append(Ntempo)
+                            musD[part][voice].setdefault('Ptempo', []).append(Ptempo)
+                            musD[part][voice].setdefault('notaStep', []).append(tuple(notaStepL))
+                            musD[part][voice].setdefault('notaOitava', []).append(tuple(notaOitavaL))
+                            musD[part][voice].setdefault('notaAlter', []).append(tuple(notaAlterL))
+                            musD[part][voice].setdefault('grau', []).append(tuple(grauL))
+                            musD[part][voice].setdefault('duracao', []).append(tuple(duracaoL))
+                            musD[part][voice].setdefault('intCro', []).append(tuple(intCroL))
+                            musD[part][voice].setdefault('intDia', []).append(tuple(intDiaL))
+                            musD[part][voice].setdefault('intQua', []).append(tuple(intQuaL))
                             note1 = note1[0]
 
                             g += 1
@@ -219,10 +219,15 @@ def mus_dict(xmlD, tie=None, rest=None, chord=True):
                             intDia = f_c.int_diatonico(note1,note2)
                             intQua = f_c.int_qualidade(intDia,intCro)
 
-                            musD[part][voice]['duracao'][-1].append(duracao)
-                            musD[part][voice]['intCro'][-1].append(intCro)
-                            musD[part][voice]['intDia'][-1].append(intDia)
-                            musD[part][voice]['intQua'][-1].append(intQua)
+                            duracaoL.append(duracao)
+                            intCroL.append(intCro)
+                            intDiaL.append(intDia)
+                            intQuaL.append(intQua)
+
+                            musD[part][voice]['duracao'][-1] = tuple(duracaoL)
+                            musD[part][voice]['intCro'][-1] = tuple(intCroL)
+                            musD[part][voice]['intDia'][-1] = tuple(intDiaL)
+                            musD[part][voice]['intQua'][-1] = tuple(intQuaL)
                             continue
                         else:
                             note1 = note1[0]    
@@ -277,55 +282,9 @@ def mus_dict(xmlD, tie=None, rest=None, chord=True):
                     musD[part][voice].setdefault('intCro', []).append(intCro)
                     musD[part][voice].setdefault('intDia', []).append(intDia)
                     musD[part][voice].setdefault ('intQua', []).append(intQua)
+    for parte in musD:
+        for voz in musD[parte]:
+            assert len(musD[parte][voz]['Fcompasso']) == len(musD[parte][voz]['tonalidade']) == len(musD[parte][voz]['andamento']) == len(musD[parte][voz]['Ncompasso']) == len(musD[parte][voz]['Pcompasso']) == len(musD[parte][voz]['Ntempo']) == len(musD[parte][voz]['Ptempo']) == len(musD[parte][voz]['notaStep']) == len(musD[parte][voz]['notaOitava']) == len(musD[parte][voz]['notaAlter']) == len(musD[parte][voz]['grau'])
+            assert len(musD[parte][voz]['duracao']) == len(musD[parte][voz]['intCro']) == len(musD[parte][voz]['intDia']) == len(musD[parte][voz]['intQua'])
+            assert len(musD[parte][voz]['duracao']) == len(musD[parte][voz]['Fcompasso'])-1
     return musD
-
-'''                 
-def mus_dict(xmlD, tie='stop', rest=None):
-    musD = {}
-    divisions = xmlD['divisions']
-    for part, voices in xmlD['notes'].items():
-        for voice, notes in voices.items():
-            p = 0
-            while p < len(notes):
-                if notes[p]
-                note1 = notes[p]
-                timeRefn1 = f_c.referencia(note1,xmlD['times'])
-                keyRef = f_c.referencia(note1,xmlD['keys'])
-                metronome = f_c.referencia(note1,xmlD['metronomes'])
-                Pcompasso = f_c.P_compasso(divisions,timeRefn1,note1)
-                grau = f_c.grau_escala(keyRef,note1)
-                Ptempo = f_c.P_tempo(divisions,timeRefn1,note1)
-                Ntempo = f_c.N_tempo(divisions,timeRefn1,note1)
-                musD.setdefault(part, {}).setdefault(voice, [])
-                musD[part][voice].setdefault('notaStep', []).append(note1[1][0])
-                musD[part][voice].setdefault('notaOitava', []).append(note1[1][1])
-                musD[part][voice].setdefault('notaAlter', []).append(note1[1][2])
-                musD[part][voice].setdefault('Ncompasso', []).append(f_c.Ncompasso(note1))
-                musD[part][voice].setdefault('tonalidade', []).append(f_c.val(keyRef))
-                musD[part][voice].setdefault('Fcompasso', []).append(f_c.val(timeRefn1))
-                musD[part][voice].setdefault('andamento', []).append(f_c.val(metronome))
-                musD[part][voice].setdefault('grau',[]).append(grau)
-                musD[part][voice].setdefault('Pcompasso',[]).append(Pcompasso)
-                musD[part][voice].setdefault('Ptempo', []).append(Ptempo)
-                musD[part][voice].setdefault('Ntempo', []).append(Ntempo)
-                if f_c.tie(notes[p]) == 'start':
-                    p += 2
-                    tie = f_c.tie(notes[p])
-                    while tie != None or f_c.step(notes[p]) == rest:
-                        tie = f_c.tie(notes[p])
-                        p += 1
-                else:
-                    p += 1
-                if p < len(notes):
-                    note2 = notes[p]
-                    timeRefn2 = f_c.referencia(note2,xmlD['times'])      
-                    duracao = f_c.duracao_inicio(divisions,timeRefn2,note2) - f_c.duracao_inicio(divisions,timeRefn1,note1)
-                    intDia = f_c.int_diatonico(note1,note2)
-                    intCro = f_c.int_cromatico(note1,note2)
-                    intQua = f_c.int_qualidade(intDia,intCro)
-                    musD[part][voice].setdefault('duracao', []).append(duracao)
-                    musD[part][voice].setdefault('intDia', []).append(intDia)
-                    musD[part][voice].setdefault('intCro', []).append(intCro)
-                    musD[part][voice].setdefault('intQua', []).append(intQua)    
-    return musD
-'''

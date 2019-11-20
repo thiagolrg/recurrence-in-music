@@ -66,7 +66,6 @@ for analisePar, analiseLog in zip(analisesPar, analisesLog):
         print('segmentando ',caminhosdict.index(caminho)+1,' de ', len(caminhosdict))
         mDicio = f_d.le_pickle(caminho)
         analise = analisePar[0][1][0](mDicio, analise)
-        debug = 0
     #filtros e ordenacoes
     for filtroord in analisePar[1:]:
         print(filtroord[0], analisePar[1:].index(filtroord)+1,' de ', len(analisePar[1:]))
@@ -74,12 +73,13 @@ for analisePar, analiseLog in zip(analisesPar, analisesLog):
     #salva o log e a analise
     #nomes de todos os arquivos, que é o nome da música
     nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
-    nomesmusicas = [f_d.caminho_nome(caminho, '.p') for caminho in caminhosdict]
+    nomesmusicas = [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]
     loganalise = {'nomes': nomesmusicas, 'quantidade': len(nomesmusicas), 'parametros': analiseLog}
     f_d.escreve_txt(diA,loganalise, nomeanalise)
     f_d.escreve_txt(diA,analise, nomeanalise)
 
 '''
+fazer inputs de parametros do modulo
 testar e refinar funcoes de analise
 limpar inputs, não é prioridade mas é o que falta
 

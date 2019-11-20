@@ -72,7 +72,6 @@ def segmentacao(caracteristicas, parametros=dict()):
             for voz, caracteristicas in musica[parte].items():
                 for p1 in range(len(caracteristicas['grau'])):
                     for p2 in range(p1+1,len(caracteristicas['grau'])):
-
                         #caracteristicas nos segmentos
                         keyAnalise = []
                         for segmentoPar in parametros['segmentosPar']:
@@ -90,8 +89,6 @@ def segmentacao(caracteristicas, parametros=dict()):
                                 if (p2-1)-p1 == 0:
                                     continue
                                 keyAnalise.append(tuple(set(caracteristicas[segmentoPar[0]][p1:p2-1])))
-                        if keyAnalise == []:
-                            continue
                         keyAnalise = tuple(keyAnalise)
 
                         #esse set criado no index 0 do valor permite ver valores unicos para
