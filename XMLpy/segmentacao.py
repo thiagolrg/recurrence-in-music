@@ -68,7 +68,7 @@ def segmentacao(caracteristicas, parametros=dict()):
     def funcao_(mDicio, aDicio):
         musica = mDicio.copy()
         nome = musica.pop('nome')
-        for parte, vozes in musica.items():
+        for parte in musica:
             for voz, caracteristicas in parte.items():
                 for p1 in range(len(caracteristicas['grau'])):
                     for p2 in range(p1+1,len(caracteristicas['grau'])):

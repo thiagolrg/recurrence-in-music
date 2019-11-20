@@ -1,11 +1,13 @@
+import inspect
+import parametrosanalises as m_paramana
 import segmentacao as m_segmentacao
 import filtrosord as m_filtrosord
 import dirEinp as f_d
-import inspect
 
 segmentacao = inspect.getmembers(m_segmentacao, inspect.isfunction)
 assert(len(segmentacao)==1)
 filtrosord = dict([(x,y) for x,y in inspect.getmembers(m_filtrosord, inspect.isfunction)])
+paramanaM = dict([(x,y) for x,y in inspect.getmembers(m_filtrosord, inspect.isfunction)]
 def analiseLog_(analisePar):
     return [(x[0],x[1][1]) for x in analisePar]
 def analisesLog_(analisesPar):
@@ -63,17 +65,21 @@ def analisesPar_(caracteristicas, salvosPar, analisesPar):
         if op == 'refazer analises':
             return analisesPar_(caracteristicas, salvosPar, [])
     if op == 'usar salva':
-        if salvosPar == []:
-            print('não existem analises salvas')
-            return analisesPar_(caracteristicas, salvosPar, analisesPar)
+        op = f_d.inp('do modulo ou do arquivo:', ('modulo','arquivo'))
+        if op = 'arquivo':
+            if salvosPar == []:
+                print('não existem analises salvas')
+                return analisesPar_(caracteristicas, salvosPar, analisesPar)
+            else:
+                analisesPar = usarsalvas(analisesPar,caracteristicas , salvosPar)
+                op = f_d.inp(analisesLog_(analisesPar), ('confirmar analises', 'refazer analises'))
+                if op == 'confirmar analises':    
+                    op = f_d.inp('outra analise?', ('s', 'n'))
+                    if op == 's':
+                        return analisesPar_(caracteristicas,salvosPar,analisesPar)
+                    if op == 'n':
+                        return analisesPar
+                if op == 'refazer analises':
+                    return analisesPar_(caracteristicas, salvosPar, [])
         else:
-            analisesPar = usarsalvas(analisesPar,caracteristicas , salvosPar)
-            op = f_d.inp(analisesLog_(analisesPar), ('confirmar analises', 'refazer analises'))
-            if op == 'confirmar analises':    
-                op = f_d.inp('outra analise?', ('s', 'n'))
-                if op == 's':
-                    return analisesPar_(caracteristicas,salvosPar,analisesPar)
-                if op == 'n':
-                    return analisesPar
-            if op == 'refazer analises':
-                return analisesPar_(caracteristicas, salvosPar, [])
+            #usar paramanaM
