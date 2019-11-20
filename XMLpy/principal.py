@@ -3,7 +3,8 @@ import xmldict as f_xd
 import insp as f_i
 
 #pede diretorio do usuário e cria pastas e caminhos que vão ser usados
-di = f_d.diretorio_ler('.xml')
+extensoes = ['.xml','.mxl']
+di = f_d.diretorio_ler(extensoes)
 diD = di+'\\Dicts'
 diA = di+'\\Analises'
 diP = di+'\\Parametros'
@@ -13,11 +14,14 @@ f_d.cria_pasta(diA)
 f_d.cria_pasta(diP)
 
 #converte xmls que não existem na pasta Dicts e salva usando pickle
-caminhosxml = f_d.xml_sem_dict(f_d.caminhos_extensao(di, '.xml'), f_d.caminhos_extensao(diD, '.p'))
-for xml in caminhosxml:
-    print('convertendo xml', caminhosxml.index(xml)+1,' de ', len(caminhosxml))
-    nome = f_d.caminho_nome(xml, '.xml')
-    xml = f_d.entrada_xml(xml)
+caminhosconverter = f_d.xml_sem_dict(di, extensoes, diD, ['.p'])
+for caminho in caminhosconverter:
+    nome = f_d.caminho_nome(caminho, extensoes)
+    print(f'convertendo {nome}', caminhosconverter.index(caminho)+1,' de ', len(caminhosconverter))
+    if '.xml' in caminho:
+        xml = f_d.entrada_xml(caminho)
+    elif '.mxl' in caminho:
+        xml = f_d.entrada_mxl(caminho, nome)
     xml = f_xd.ad_counter(xml)
     xmlDicio = f_xd.xml_dict(xml)
     mDicio = f_xd.mus_dict(xmlDicio)
@@ -26,7 +30,7 @@ for xml in caminhosxml:
 print()
 
 #lista com todos os dicionarios
-caminhosdict = f_d.caminhos_extensao(diD, '.p')
+caminhosdict = f_d.caminhos_extensoes(diD, ['.p'])
 #puxa as caracteristicas do primeiro dicionario e confere para que todos tenham as mesmas
 mDicio = f_d.le_pickle(caminhosdict[0])
 caracteristicas = [k for k in mDicio['P1'].keys()]
@@ -69,7 +73,7 @@ for analisePar, analiseLog in zip(analisesPar, analisesLog):
         analise = filtroord[1][0](analise)
     #salva o log e a analise
     #nomes de todos os arquivos, que é o nome da música
-    nomeanalise = 'analise'+str(len(f_d.caminhos_extensao(diA, '.txt'))+1)
+    nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
     nomesmusicas = [f_d.caminho_nome(caminho, '.p') for caminho in caminhosdict]
     loganalise = {'nomes': nomesmusicas, 'quantidade': len(nomesmusicas), 'parametros': analiseLog}
     f_d.escreve_txt(diA,loganalise, nomeanalise)

@@ -1,60 +1,71 @@
 import os
 import pickle
 
-def diretorio_ler(extensao):
-    di=input('diretorio para ler '+extensao+': ')
+def diretorio_ler(extensoes):
+    di=input(f'diretorio para ler {extensoes}:')
     if os.path.exists(di) == False:
         print('diretorio nao existe')
-        return diretorio_ler(extensao)
+        return diretorio_ler(extensoes)
     else:
-        # r=root, d=directories, f=folder
+        #r=root, d=directoriesinroot, f=filesinroot
         for r, d, f in os.walk(di):
             for file in f:
-                if extensao in file:
-                    break
-            else:
-                continue
-            break
+                for extensao in extensoes:
+                    if extensao in file:
+                        return di
         else:
-            print('nao existem '+extensao+' no diretorio')
-            return diretorio_ler(extensao)         
-    return di
+            print(f'nao existem {extensoes} no diretorio')
+            return diretorio_ler(extensoes)         
+
 
 def cria_pasta(diretorio):
     os.makedirs(diretorio, exist_ok=True)
     return None
 
 #retorna uma lista com o caminho de todos os arquivos do diretorio com a extensao
-def caminhos_extensao(diretorio, extensao):
+def caminhos_extensoes(diretorio, extensoes):
     caminhos = []
-    # r=root, d=directories, f=folder
+    #r=root, d=directoriesinroot, f=filesinroot
     for r, d, f in os.walk(diretorio):
         for file in f:
-            if extensao in file:
-                caminhos.append(os.path.join(r, file))
+            for extensao in extensoes:
+                if extensao in file:
+                    caminhos.append(os.path.join(r, file))
     return caminhos
 
-def caminho_nome(caminho, extensao):
+def caminho_nome(caminho, extensoes):
     for linha in caminho.split('\\'):
-        if extensao in linha:
-            return linha.replace(extensao,'')
+        for extensao in extensoes:
+            if extensao in linha:
+                return linha.replace(extensao,'')
 
-def xml_sem_dict(caminhosxml,caminhosdict):
+def xml_sem_dict(di, extensoes, diD, extensaoP):
     nomesdict = []
     caminhosxmlsemdict = []
+    caminhosxml = caminhos_extensoes(di, extensoes)
+    caminhosdict = caminhos_extensoes(diD, extensaoP)
     for caminho in caminhosdict:
-        nomesdict.append(caminho_nome(caminho, '.p'))
+        nomesdict.append(caminho_nome(caminho, extensaoP))
     for caminho in caminhosxml:
-        if caminho_nome(caminho, '.xml') not in nomesdict:
+        if caminho_nome(caminho, extensoes) not in nomesdict:
             caminhosxmlsemdict.append(caminho)
     return caminhosxmlsemdict
 
 def entrada_xml(caminho):
     with open(caminho) as f:
-        arquivo = []
-        for l in f.readlines():
-            arquivo.append(l.strip().replace('\n', ''))
-    return arquivo
+        xml = []
+        for l in f.read().splitlines():
+            xml.append(l.strip())
+    return xml
+
+def entrada_mxl(caminho, nome):
+    import zipfile
+    xml = []
+    with zipfile.ZipFile(caminho) as z:
+        with z.open(nome+'.xml') as arq:
+            for l in arq.read().splitlines():
+                xml.append(l.decode().strip())
+    return xml
 
 def le_pickle(caminho):
    with open(caminho, 'rb') as f:
