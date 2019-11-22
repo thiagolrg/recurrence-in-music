@@ -55,21 +55,18 @@ def filtroposicoes_amontoadas(parametroanalise, parametros=str()):
         parametros = Par()
 
     def funcao_(aDicio):
-        musica1 = aDicio.copy()
-        for segmento1, localizacoes1 in musica1.items():
-            amontado = False
-            for segmento2, localizacoes2 in aDicio.items():
+        for segmento1, localizacoes1 in aDicio.copy().items():
+            amontoado = False
+            for segmento2, localizacoes2 in aDicio.copy().items():
                 for localizacao1 in localizacoes1[1]:
                     for localizacao2 in localizacoes2[1]:
-                        if localizacao2[0][0:2] != localizacao1[0][0:2]:
-                            continue
-                        if localizacao2[0][2][0] <= localizacao1[0][2][1] and localizacao2[0][2][1] > localizacao1[0][2][1]:
-                            aDicio[segmento2][1].pop(aDicio[segmento2][1].index(localizacao2)) 
-                            amontado = True
-            if amontado == True:
-                if parametros == 'marcar segundo':
-                    aDicio[segmento2][0].setdefault('amontoado', tuple([localizacao1[0][2][1]-localizacao2[0][2][0], segmento1]))
-                elif parametros == 'retirar vazios' and aDicio[segmento2][1] == []:
+                        if localizacao2[0][0:3] == localizacao1[0][0:3] and localizacao2[0][3] != localizacao1[0][3]:
+                            if localizacao2[0][3][0] <= localizacao1[0][3][1] and localizacao2[0][3][1] > localizacao1[0][3][1]:
+                                aDicio[segmento2][1].pop(aDicio[segmento2][1].index(localizacao2)) 
+                                amontoado = True
+                                if parametros == 'marcar segundo':
+                                    aDicio[segmento2][0].setdefault('amontoado', tuple([localizacao1[0][3][1]-localizacao2[0][3][0], segmento1]))
+                if amontoado == True and parametros == 'retirar vazios' and aDicio[segmento2][1] == []:
                     aDicio.pop(segmento2)
         return aDicio
     return (funcao_, parametros)
@@ -198,16 +195,6 @@ def filtroset_tipo(parametroanalise, parametros=list()):
                 filtrado.setdefault(segmento, localizacoes)
         return filtrado
     return (funcao_, parametros)
-
-def ord_tamSegQantLoc(parametrosanalise, parametros=str()):
-    def funcao_(aDicio):
-        pronto = {}
-        for chave, valor in sorted(aDicio.items(), key=lambda item: (len(item[0][0]), len(item[1][1])), reverse=True):
-            pronto.setdefault(chave, valor)
-        return pronto
-    if parametros == str():    
-        parametros = 's'
-    return (funcao_,parametros)
 
 def ord_tamSegQantLoc(parametrosanalise, parametros=str()):
     def funcao_(aDicio):
