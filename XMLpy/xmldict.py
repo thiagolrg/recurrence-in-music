@@ -83,12 +83,12 @@ def xml_dict(xml):
                     if 'sound' in direction:
                         for sound in to_list(direction['sound']):
                             if '@tempo' in sound:
-                                metronome = ((int(direction['@counter']), measureN), f_c.den(time), (int(sound['@tempo'])/4)*f_c.den(time))
+                                metronome = ((int(direction['@counter']), measureN), f_c.m_soundtempo(int(sound['@tempo']),time))
                     elif 'direction-type' in direction:
                         for directionType in to_list(direction['direction-type']):
                             if 'metronome' in directionType:
                                 for m in to_list(directionType['metronome']):
-                                    metronome = ((int(m['@counter']), measureN), (m['beat-unit'], int(m['per-minute'])))
+                                    metronome = ((int(m['@counter']), measureN), f_c.m_metronome(m))
                     try:
                         if metronome not in xmlD['metronomes']:
                             metronomelocs = [f_c.loc(x) for x in xmlD['metronomes']]
@@ -286,10 +286,4 @@ def mus_dict(xmlD, tie=None, rest=None, chord=True):
                     musD[part][voice].setdefault('intCro', []).append(intCro)
                     musD[part][voice].setdefault('intDia', []).append(intDia)
                     musD[part][voice].setdefault ('intQua', []).append(intQua)
-    for parte in musD:
-        for voz in musD[parte]:
-            assert len(musD[parte][voz]['Fcompasso']) == len(musD[parte][voz]['tonalidade']) == len(musD[parte][voz]['andamento']) == len(musD[parte][voz]['Ncompasso']) == len(musD[parte][voz]['Pcompasso']) == len(musD[parte][voz]['Ntempo']) == len(musD[parte][voz]['Ptempo']) == len(musD[parte][voz]['notaStep']) == len(musD[parte][voz]['notaOitava']) == len(musD[parte][voz]['notaAlter']) == len(musD[parte][voz]['grau'])
-            assert len(musD[parte][voz]['duracao']) == len(musD[parte][voz]['intCro']) == len(musD[parte][voz]['intDia']) == len(musD[parte][voz]['intQua'])
-            assert len(musD[parte][voz]['duracao']) == len(musD[parte][voz]['Fcompasso'])-1
-    return musD
- 
+    return musD 
