@@ -7,11 +7,8 @@ extensoes = ['.xml','.mxl']
 di = f_d.diretorio_ler(extensoes)
 diD = di+'\\Dicts'
 diA = di+'\\Analises'
-diP = di+'\\Parametros'
-cPar = diP+'\\parametros.p'
 f_d.cria_pasta(diD)
 f_d.cria_pasta(diA)
-f_d.cria_pasta(diP)
 
 #converte xmls que não existem na pasta Dicts e salva usando pickle
 caminhosconverter = f_d.xml_sem_dict(di, extensoes, diD, ['.p'])
@@ -37,25 +34,6 @@ caracteristicas = [k for k in mDicio['P1'].keys()]
 for caminho in caminhosdict:
     mDicio = f_d.le_pickle(caminho)
     assert(caracteristicas == [k for k in mDicio['P1'].keys()])
-
-#abre o arquivo de parametros salvos, caso exista
-#pede inputs de parametros do usuário (precisa das caracteristicas e parametros salvos)
-try:
-    salvosPar = f_d.le_pickle(cPar)
-except FileNotFoundError:
-    salvosPar = []
-analisesPar = f_i.analisesPar_(caracteristicas, salvosPar, [])
-analisesLog = f_i.analisesLog_(analisesPar)
-
-#atualiza o arquivo de parametros com novos criados, caso existam
-try:
-    f_d.escreve_pickle(diP, analisesLog, 'parametros')
-except FileExistsError:
-    salvosPar = f_d.le_pickle(cPar)
-    for analiseLog in analisesLog:
-        if analiseLog not in salvosPar:
-            salvosPar.append(analiseLog)
-    f_d.escreve_pickle(diP, salvosPar, 'parametros', trunca=True)
 
 
 #executa as analises criadas
