@@ -80,18 +80,22 @@ def xml_dict(xml):
             #metronomes
             if 'direction' in measure:
                 for direction in to_list(measure['direction']):
-                    if 'direction-type' in direction:
+                    if 'sound' in direction:
+                        for sound in to_list(direction['sound']):
+                            if '@tempo' in sound:
+                                metronome = ((int(direction['@counter']), measureN), f_c.den(time), (int(sound['@tempo'])/4)*f_c.den(time))
+                    elif 'direction-type' in direction:
                         for directionType in to_list(direction['direction-type']):
                             if 'metronome' in directionType:
                                 for m in to_list(directionType['metronome']):
                                     metronome = ((int(m['@counter']), measureN), (m['beat-unit'], int(m['per-minute'])))
-                                    try:
-                                        if metronome not in xmlD['metronomes']:
-                                            metronomelocs = [f_c.loc(x) for x in xmlD['metronomes']]
-                                            assert(f_c.loc(metronome) not in metronomelocs)
-                                            xmlD.setdefault('metronomes', []).append(metronome)
-                                    except KeyError:
-                                        xmlD.setdefault('metronomes', []).append(metronome)
+                    try:
+                        if metronome not in xmlD['metronomes']:
+                            metronomelocs = [f_c.loc(x) for x in xmlD['metronomes']]
+                            assert(f_c.loc(metronome) not in metronomelocs)
+                            xmlD.setdefault('metronomes', []).append(metronome)
+                    except KeyError:
+                        xmlD.setdefault('metronomes', []).append(metronome)
             
             #notas
             for note in to_list(measure['note']):
@@ -288,3 +292,4 @@ def mus_dict(xmlD, tie=None, rest=None, chord=True):
             assert len(musD[parte][voz]['duracao']) == len(musD[parte][voz]['intCro']) == len(musD[parte][voz]['intDia']) == len(musD[parte][voz]['intQua'])
             assert len(musD[parte][voz]['duracao']) == len(musD[parte][voz]['Fcompasso'])-1
     return musD
+ 

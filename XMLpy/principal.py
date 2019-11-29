@@ -79,9 +79,12 @@ for analisePar, analiseLog in zip(analisesPar, analisesLog):
     f_d.escreve_txt(diA,analise, nomeanalise)
 
 '''
+
+Pensar em um jeito de igualar sound tempo e metronome
+
 fazer inputs de parametros do modulo
-testar e refinar funcoes de analise:
-    melhorar eficiencia dos contidos e amontoados ordenando antes de fazer o loop
+OK testar e refinar funcoes de analise:
+OK    melhorar eficiencia dos contidos e amontoados ordenando antes de fazer o loop
 
 
 limpar inputs, não é prioridade mas é o que falta
