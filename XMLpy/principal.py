@@ -1,6 +1,6 @@
 import dirEinp as f_d
 import xmldict as f_xd
-import insp as f_i
+import analises as f_a
 
 #pede diretorio do usuário e cria pastas e caminhos que vão ser usados
 extensoes = ['.xml','.mxl']
@@ -14,7 +14,7 @@ f_d.cria_pasta(diA)
 caminhosconverter = f_d.xml_sem_dict(di, extensoes, diD, ['.p'])
 for caminho in caminhosconverter:
     nome = f_d.caminho_nome(caminho, extensoes)
-    print(f'convertendo {nome}', caminhosconverter.index(caminho)+1,' de ', len(caminhosconverter))
+    print(f'convertendo {nome}, ', caminhosconverter.index(caminho)+1,' de ', len(caminhosconverter))
     if '.xml' in caminho:
         xml = f_d.entrada_xml(caminho)
     elif '.mxl' in caminho:
@@ -24,25 +24,17 @@ for caminho in caminhosconverter:
     mDicio = f_xd.mus_dict(xmlDicio)
     mDicio.setdefault('nome',nome)
     f_d.escreve_pickle(diD, mDicio, nome)
-print()
-
 #lista com todos os dicionarios
 caminhosdict = f_d.caminhos_extensoes(diD, ['.p'])
-#puxa as caracteristicas do primeiro dicionario e confere para que todos tenham as mesmas
-mDicio = f_d.le_pickle(caminhosdict[0])
-caracteristicas = [k for k in mDicio['P1'].keys()]
-for caminho in caminhosdict:
-    mDicio = f_d.le_pickle(caminho)
-    assert(caracteristicas == [k for k in mDicio['P1'].keys()])
+print()
 
+f_a.segdur(caminhosdict)
 
+'''
 #executa as analises criadas
 for analisePar, analiseLog in zip(analisesPar, analisesLog):
     analise = {}
     #segmentacao
-    for caminho in caminhosdict:
-        print('segmentando ',caminhosdict.index(caminho)+1,' de ', len(caminhosdict))
-        mDicio = f_d.le_pickle(caminho)
         analise = analisePar[0][1][0](mDicio, analise)
     #filtros e ordenacoes
     for filtroord in analisePar[1:]:
@@ -55,9 +47,8 @@ for analisePar, analiseLog in zip(analisesPar, analisesLog):
     loganalise = {'nomes': nomesmusicas, 'quantidade': len(nomesmusicas), 'parametros': analiseLog}
     f_d.escreve_txt(diA,loganalise, nomeanalise)
     f_d.escreve_txt(diA,analise, nomeanalise)
-
 '''
-
+'''
 Pensar em um jeito de igualar sound tempo e metronome
 
 fazer inputs de parametros do modulo
