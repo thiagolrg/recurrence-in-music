@@ -8,15 +8,15 @@ def segdur(caminhosdict):
     '''
     aDicio = defaultdict(list)
     for caminho in caminhosdict:
-        print('analisando, ',caminhosdict.index(caminho)+1,' de ', len(caminhosdict))
         musD = f_d.le_pickle(caminho)
         musA = defaultdict(list)
         nome = musD.pop('nome')
+        print(f'analisando {nome}, ',caminhosdict.index(caminho)+1,' de ', len(caminhosdict))
         for parte in musD:
-            for voz in parte:
-                for p1 in range(len(voz['grau'])):
-                    for p2 in range(p1 + 1, len(voz['grau']) + 1):
-                        musA[tuple(tuple(voz['intDia'][p1:p2]),tuple(voz['dur'][p1:p2]))].append([tuple(nome, parte, voz, (p1, p2)), [voz['Ncompasso'], voz['Pcompasso']]])
+            for voz, caracteristicas in musD[parte].items():
+                for p1 in range(len(caracteristicas['grau'])):
+                    for p2 in range(p1 + 1, len(caracteristicas['grau']) + 1):
+                        musA[(tuple(caracteristicas['intDia'][p1:p2]),tuple(caracteristicas['duracao'][p1:p2]))].append((nome, parte, voz, (p1, p2), (caracteristicas['Ncompasso'][p1], caracteristicas['Pcompasso'][p1])))
 
         slices = []
         uslices = []

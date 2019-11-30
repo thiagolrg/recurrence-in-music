@@ -28,7 +28,7 @@ for caminho in caminhosconverter:
 caminhosdict = f_d.caminhos_extensoes(diD, ['.p'])
 print()
 
-f_a.segdur(caminhosdict)
+aDicio = f_a.segdur(caminhosdict)
 
 '''
 #executa as analises criadas

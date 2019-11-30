@@ -37,7 +37,10 @@ def xml_dict(xml):
         partID = part['@id']
         #numero do compasso
         for measure in to_list(part['measure']):
-            measureN = int(measure['@number'])
+            if measure['@number'] == 'X1':
+                pass
+            else:
+                measureN = int(measure['@number'])
 
             #atributos do compasso
             if 'attributes' in measure and measure['attributes'] != None:
