@@ -102,9 +102,13 @@ def segdur2(caminhosdict):
                             aDicio[(tuple(caracteristicas['intDia'][p1:p2]),tuple(caracteristicas['duracao'][p1:p2]))].append((nome, parte, voz, (p1, p2)))
                             p2 += 1
     #aDicio = dict(sorted(((k, v) for k, v in aDicio.items() if len(v) > 1), key=lambda x: (len(x[0])), reverse=True))
-    aDicio = dict(sorted(aDicio.items(), key=lambda item: (len(item[0][0]), len(item[1])), reverse=True))
+    pronto = {}
+    for chave, valor in sorted(aDicio.items(), key=lambda item: (len(item[0][0]), len(item[1])), reverse=True):
+        if valor > 1:
+            pronto.setdefault(chave, valor)
+    
     items = []
-    for item in aDicio.items():
+    for item in pronto.items():
                 items.append(item) 
 
     debug = 0
