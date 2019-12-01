@@ -49,7 +49,7 @@ for analisePar, analiseLog in zip(analisesPar, analisesLog):
     f_d.escreve_txt(diA,analise, nomeanalise)
 '''
 '''
-Pensar em um jeito de igualar sound tempo e metronome
+testar função part_of
 
 fazer inputs de parametros do modulo
 OK testar e refinar funcoes de analise:
