@@ -1,5 +1,6 @@
 import dirEinp as f_d
 import xmldict as f_xd
+
 import analises as f_a
 
 #pede diretorio do usuário e cria pastas e caminhos que vão ser usados
@@ -28,7 +29,7 @@ for caminho in caminhosconverter:
 caminhosdict = f_d.caminhos_extensoes(diD, ['.p'])
 print()
 
-aDicio = f_a.segdur(caminhosdict)
+aDicio = f_a.segdur2(caminhosdict)
 
 '''
 #executa as analises criadas
