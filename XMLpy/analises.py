@@ -12,15 +12,17 @@ filtrosset = caractetisticas p1f p1p2f p2m1f
 '''
 
 def subset_of(longest_slices, slise):
-    for ls in longest_slices:
-        if slise[3][0] >= ls[3][0] and slise[3][1] <= ls[3][1] and slise[0:3] == ls[0:3]:
-            return True
+    for item in longest_slices:
+        for ls in item[1]:
+            if slise[3][0] >= ls[3][0] and slise[3][1] <= ls[3][1] and slise[0:3] == ls[0:3]:
+                return True
     return False
 
 def part_of(longest_slices, slise):
-    for ls in longest_slices:
-        if slise[3][0] > ls[3][0] and slise[3][0] <= ls[3][1] and slise[3][1] > ls[3][1] and slise[0:3] == ls[0:3]:
-            return True
+    for item in longest_slices:
+        for ls in item[1]:
+            if slise[3][0] > ls[3][0] and slise[3][0] <= ls[3][1] and slise[3][1] > ls[3][1] and slise[0:3] == ls[0:3]:
+                return True
     return False
 
 
@@ -101,15 +103,16 @@ def segdur2(caminhosdict):
                         while p2-p1 <= 105 and p2 <= len(caracteristicas['intDia']):
                             aDicio[(tuple(caracteristicas['intDia'][p1:p2]),tuple(caracteristicas['duracao'][p1:p2]))].append((nome, parte, voz, (p1, p2)))
                             p2 += 1
-    #aDicio = dict(sorted(((k, v) for k, v in aDicio.items() if len(v) > 1), key=lambda x: (len(x[0])), reverse=True))
-    pronto = {}
-    for chave, valor in sorted(aDicio.items(), key=lambda item: (len(item[0][0]), len(item[1])), reverse=True):
-        if valor > 1:
-            pronto.setdefault(chave, valor)
+    aDicio = sorted([(k, v) for k, v in aDicio.items() if len(v) > 1], key=lambda x: (len(x[0][0]), len(x[1])), reverse=True)
     
-    items = []
-    for item in pronto.items():
-                items.append(item) 
+    pronto = []
+    for seg, pos in aDicio:
+        posp = []
+        for loc in pos:
+            if not subset_of(pronto, loc) and not part_of(pronto, loc):
+                posp.append(loc)
+        if len(posp) > 0:
+            pronto.append((seg,posp))
 
     debug = 0
     '''

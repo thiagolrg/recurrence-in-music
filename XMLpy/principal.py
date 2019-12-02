@@ -32,6 +32,14 @@ print()
 aDicio = f_a.segdur2(caminhosdict)
 
 '''
+testar um tirando todos os que acontecem <=1 vezes
+testar um marcando os contidos e amontoados
+testar um organizando por quantidade de músicas em que aparece, do maior para o menor.
+colocar numeros e posicoes de compassos
+
+'''
+
+'''
 #executa as analises criadas
 for analisePar, analiseLog in zip(analisesPar, analisesLog):
     analise = {}
