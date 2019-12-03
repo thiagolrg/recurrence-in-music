@@ -29,11 +29,24 @@ for caminho in caminhosconverter:
 caminhosdict = f_d.caminhos_extensoes(diD, ['.p'])
 print()
 
-aDicio = f_a.segdur2(caminhosdict)
+#cria resgata ou atualiza tamanho minimo necessário para pegar todas as recorrencias
+#no conjunto de músicas
+if len(caminhosconverter) > 0:
+    tamanho = f_a.encontrartamanho(caminhosdict)
+    f_d.escreve_pickle(diD,tamanho, 'tamanho.tamanho', trunca=True)
+else:
+    try:
+        tamanho = f_d.le_pickle(diA+'\\_tamanho_.p')
+    except FileNotFoundError:
+        tamanho = f_a.encontrartamanho(caminhosdict)
+        f_d.escreve_pickle(diA,tamanho, '_tamanho_')
+
+aDicio = f_a.segdur_todosatetamanho(caminhosdict, tamanho)
+
 nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
 parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
 parametros.setdefault('quantidade', len(caminhosdict))
-parametros.setdefault('analise',f_a.segdur2.__doc__)
+parametros.setdefault('analise',f_a.segdur_todosatetamanho.__doc__)
 f_d.escreve_txt(diA, parametros, nomeanalise)
 f_d.escreve_txt(diA,aDicio, nomeanalise)
 
