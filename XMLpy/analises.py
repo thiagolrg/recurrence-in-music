@@ -17,25 +17,31 @@ def segdur_sodotamanho(caminhosdict, janela):
     aDicio = sorted([(k, v) for k, v in aDicio.items() if len(v) > 1], key=lambda x: (len(x[0][0]), len(x[1])), reverse=True)
     return aDicio
 
-def encontrartamanho(caminhosdict, j=1):
+def tamanho_todasrecorrencias(caminhosdict, j=1):
     if len(segdur_sodotamanho(caminhosdict, j)) == 0:
         print('tamanho ', j-1)
         return j -1
     else:
         return encontrartamanho(caminhosdict, j=j+1)
 
+def tamanho_maiorquantidade(caminhosdict, t1=0, j=1):
+    t2 = len(segdur_sodotamanho(caminhosdict, j))
+    if t2 < t1:
+        print('tamanho ', j-1)
+        return j -1
+    else:
+        return tamanho_maiorquantidade(caminhosdict, t1=t2, j=j+1)
+
 def subset_of(longest_slices, slise):
-    for item in longest_slices:
-        for ls in item[1]:
-            if slise[3][0] >= ls[3][0] and slise[3][1] <= ls[3][1] and slise[0:3] == ls[0:3]:
-                return True
+    for ls in longest_slices:
+        if slise[3][0] >= ls[3][0] and slise[3][1] <= ls[3][1] and slise[0:3] == ls[0:3]:
+            return True
     return False
 
 def part_of(longest_slices, slise):
-    for item in longest_slices:
-        for ls in item[1]:
-            if slise[3][0] > ls[3][0] and slise[3][0] <= ls[3][1] and slise[3][1] > ls[3][1] and slise[0:3] == ls[0:3]:
-                return True
+    for ls in longest_slices:
+        if slise[3][0] > ls[3][0] and slise[3][0] <= ls[3][1] and slise[3][1] > ls[3][1] and slise[0:3] == ls[0:3]:
+            return True
     return False
 
 
@@ -58,27 +64,25 @@ def segdur_todosatetamanho(caminhosdict, tamanho):
                         p1 += 1
     return sorted([(k, v) for k, v in aDicio.items() if len(v) > 1], key=lambda x: (len(x[0][0]), len(x[1])), reverse=True)
 
-'''
-    semconteamont = []
+def sem_cont_amont(aDicio):
+    semcontamont = []
+    quepassaram = []
     for seg, pos in aDicio:
         posp = []
         for loc in pos:
-            if not subset_of(semconteamont, loc) and not part_of(semconteamont, loc):
+            if not subset_of(quepassaram, loc) and not part_of(quepassaram, loc):
                 posp.append(loc)
+                quepassaram.append(loc)
+                sorted(quepassaram, key=lambda x: x[3][0])
         if len(posp) > 1:
-            semconteamont.append((seg,posp))
+            semcontamont.append((seg,posp))
     print(len(aDicio))
-    return {x:y for x,y in semconteamont}
+    return {x:y for x,y in semcontamont}
 
-def tamanho_seg(caminhosdict, n=1, t1=0):
-    print(n)
-    t2 = len(segdur2(caminhosdict))
-    if t2 == t1:
-        print(n-1)
-        return n-1
-    else:
-        tamanho_seg(caminhosdict, n=n+1, t1=t2)
-'''
+def analise1(caminhosdict, tamanho):
+    '''segdur todos que repetem ate tamanho, sem contidos e amontados'''
+    aDicio = segdur_todosatetamanho(caminhosdict,tamanho)
+    return sem_cont_amont(aDicio)
 
 '''
 contidos = True

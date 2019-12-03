@@ -32,17 +32,18 @@ print()
 #cria resgata ou atualiza tamanho minimo necessário para pegar todas as recorrencias
 #no conjunto de músicas
 if len(caminhosconverter) > 0:
-    tamanho = f_a.encontrartamanho(caminhosdict)
-    f_d.escreve_pickle(diD,tamanho, 'tamanho.tamanho', trunca=True)
+    tamanho = f_a.tamanho_todasrecorrencias(caminhosdict)
+    f_d.escreve_pickle(diA,tamanho, '_tamanho_.p', trunca=True)
 else:
     try:
         tamanho = f_d.le_pickle(diA+'\\_tamanho_.p')
     except FileNotFoundError:
-        tamanho = f_a.encontrartamanho(caminhosdict)
+        tamanho = f_a.tamanho_todasrecorrencias(caminhosdict)
         f_d.escreve_pickle(diA,tamanho, '_tamanho_')
 
+tamanho = f_a.tamanho_maiorquantidade(caminhosdict)
 aDicio = f_a.segdur_todosatetamanho(caminhosdict, tamanho)
-
+aDicio = f_a.sem_cont_amont(aDicio)
 nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
 parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
 parametros.setdefault('quantidade', len(caminhosdict))
