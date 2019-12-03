@@ -161,9 +161,9 @@ def mus_dict(xmlD, tie=None, rest=None, chord=True):
                                 tonalidade = f_c.referencia(note1[p],xmlD['keys'])
                                 andamento = f_c.referencia(note1[p],xmlD['metronomes'])
                                 Ncompasso = f_c.Ncompasso(note1[p])
-                                Pcompasso = f_c.P_compasso(divisions,Fcompasso1,note1[p])
+                                Pcompasso = round(f_c.P_compasso(divisions,Fcompasso1,note1[p]),2)
                                 Ntempo = f_c.N_tempo(divisions,Fcompasso1,note1[p])
-                                Ptempo = f_c.P_tempo(divisions,Fcompasso1,note1[p])
+                                Ptempo = round(f_c.P_tempo(divisions,Fcompasso1,note1[p]),2)
                                 notaStep = note1[p][1][0]
                                 notaOitava = note1[p][1][1]
                                 notaAlter = note1[p][1][2]
@@ -176,7 +176,7 @@ def mus_dict(xmlD, tie=None, rest=None, chord=True):
 
                                 if p+1 < len(note1):
                                     Fcompasso2 = f_c.referencia(note1[p+1],xmlD['times'])
-                                    duracao = f_c.duracao_inicio(divisions,Fcompasso2,note1[p+1]) - f_c.duracao_inicio(divisions,Fcompasso1,note1[p])
+                                    duracao = round(f_c.duracao_inicio(divisions,Fcompasso2,note1[p+1]) - f_c.duracao_inicio(divisions,Fcompasso1,note1[p]),2)
                                     intCro = f_c.int_cromatico(note1[p],note1[p+1])
                                     intDia = f_c.int_diatonico(note1[p],note1[p+1])
                                     intQua = f_c.int_qualidade(intDia,intCro)
@@ -221,7 +221,7 @@ def mus_dict(xmlD, tie=None, rest=None, chord=True):
                                 continue
 
                             Fcompasso2 = f_c.referencia(note2,xmlD['times'])
-                            duracao = f_c.duracao_inicio(divisions,Fcompasso2,note2) - f_c.duracao_inicio(divisions,Fcompasso1,note1)
+                            duracao = round(f_c.duracao_inicio(divisions,Fcompasso2,note2) - f_c.duracao_inicio(divisions,Fcompasso1,note1),2)
                             intCro = f_c.int_cromatico(note1,note2)
                             intDia = f_c.int_diatonico(note1,note2)
                             intQua = f_c.int_qualidade(intDia,intCro)
@@ -242,9 +242,9 @@ def mus_dict(xmlD, tie=None, rest=None, chord=True):
                     tonalidade = f_c.referencia(note1,xmlD['keys'])
                     andamento = f_c.referencia(note1,xmlD['metronomes'])
                     Ncompasso = f_c.Ncompasso(note1)
-                    Pcompasso = f_c.P_compasso(divisions,Fcompasso1,note1)
+                    Pcompasso = round(f_c.P_compasso(divisions,Fcompasso1,note1),2)
                     Ntempo = f_c.N_tempo(divisions,Fcompasso1,note1)
-                    Ptempo = f_c.P_tempo(divisions,Fcompasso1,note1)
+                    Ptempo = round(f_c.P_tempo(divisions,Fcompasso1,note1),2)
                     notaStep = note1[1][0]
                     notaOitava = note1[1][1]
                     notaAlter = note1[1][2]
@@ -280,7 +280,7 @@ def mus_dict(xmlD, tie=None, rest=None, chord=True):
                         continue
   
                     Fcompasso2 = f_c.referencia(note2,xmlD['times'])
-                    duracao = f_c.duracao_inicio(divisions,Fcompasso2,note2) - f_c.duracao_inicio(divisions,Fcompasso1,note1)
+                    duracao = round(f_c.duracao_inicio(divisions,Fcompasso2,note2) - f_c.duracao_inicio(divisions,Fcompasso1,note1),2)
                     intCro = f_c.int_cromatico(note1,note2)
                     intDia = f_c.int_diatonico(note1,note2)
                     intQua = f_c.int_qualidade(intDia,intCro)

@@ -30,12 +30,22 @@ caminhosdict = f_d.caminhos_extensoes(diD, ['.p'])
 print()
 
 aDicio = f_a.segdur2(caminhosdict)
+nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
+parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
+parametros.setdefault('quantidade', len(caminhosdict))
+parametros.setdefault('analise',f_a.segdur2.__doc__)
+f_d.escreve_txt(diA, parametros, nomeanalise)
+f_d.escreve_txt(diA,aDicio, nomeanalise)
+
 
 '''
 testar um tirando todos os que acontecem <=1 vezes
 testar um marcando os contidos e amontoados
 testar um organizando por quantidade de músicas em que aparece, do maior para o menor.
 colocar numeros e posicoes de compassos
+
+intDia duração e Pcompasso: Loc....
+
 
 '''
 

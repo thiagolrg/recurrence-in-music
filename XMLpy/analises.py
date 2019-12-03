@@ -83,10 +83,7 @@ def segdur(caminhosdict):
     return aDicio
 
 def segdur2(caminhosdict):
-    '''
-    seguimento de intervalo e durações únicos que repetem pelo menos uma vez,
-    sem contidos e amontoados
-    '''
+    '''seguimento de intervalo e durações únicos que repetem pelo menos uma vez, contidos e amontoados retirados e somente os que continuam repetindo ficam, janela de analise colocada a mão em 133'''
     aDicio = defaultdict(list)
     for caminho in caminhosdict:
         musD = f_d.le_pickle(caminho)
@@ -96,30 +93,32 @@ def segdur2(caminhosdict):
         for parte in musD:
             for voz, caracteristicas in musD[parte].items():
                 if 'intDia' in caracteristicas:
-                    p1 = -1
+                    p1 = 0
                     while p1 < len(caracteristicas['intDia']):
-                        p1 += 1
                         p2 = p1+1
-                        while p2-p1 <= 105 and p2 <= len(caracteristicas['intDia']):
-                            aDicio[(tuple(caracteristicas['intDia'][p1:p2]),tuple(caracteristicas['duracao'][p1:p2]))].append((nome, parte, voz, (p1, p2)))
+                        while p2-p1 <= 133 and p2 <= len(caracteristicas['intDia']):
+                            aDicio[(tuple(caracteristicas['intDia'][p1:p2]),tuple(caracteristicas['duracao'][p1:p2]))].append((nome, parte, voz, (p1, p2),(caracteristicas['Ncompasso'][p1], caracteristicas['Pcompasso'][p1])))
                             p2 += 1
+                        p1 += 1
+    print(len(aDicio))
     aDicio = sorted([(k, v) for k, v in aDicio.items() if len(v) > 1], key=lambda x: (len(x[0][0]), len(x[1])), reverse=True)
-    
-    pronto = []
+    print(len(aDicio))
+    semconteamont = []
     for seg, pos in aDicio:
         posp = []
         for loc in pos:
-            if not subset_of(pronto, loc) and not part_of(pronto, loc):
+            if not subset_of(semconteamont, loc) and not part_of(semconteamont, loc):
                 posp.append(loc)
-        if len(posp) > 0:
-            pronto.append((seg,posp))
+        if len(posp) > 1:
+            semconteamont.append((seg,posp))
+    print(len(aDicio))
+    return {x:y for x,y in semconteamont}
 
-    debug = 0
-    '''
-    slices = sorted(slices, key=lambda item: item[3][1] - item[3][0], reverse=True) #longest to shortest
-    longest_slices = []
-    for n, slise in enumerate(slices):
-        if not subset_of(longest_slices, slise) or not part_of(longest_slices, slise):
-            longest_slices.append(slise)    
-    '''
-    return aDicio
+def tamanho_seg(caminhosdict, n=1, t1=0):
+    print(n)
+    t2 = len(segdur2(caminhosdict))
+    if t2 == t1:
+        print(n-1)
+        return n-1
+    else:
+        tamanho_seg(caminhosdict, n=n+1, t1=t2)
