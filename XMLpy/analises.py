@@ -12,7 +12,7 @@ def segdur_sodotamanho(caminhosdict, janela):
                     p1 = 0
                     while p1 + janela <= len(caracteristicas['intDia']):
                         p2 = p1 + janela
-                        aDicio[(tuple(caracteristicas['intDia'][p1:p2]),tuple(caracteristicas['duracao'][p1:p2]))].append((nome, parte, voz, (p1, p2), (caracteristicas['Ncompasso'][p1], caracteristicas['Pcompasso'][p1]),(caracteristicas['Ncompasso'][p2], caracteristicas['Pcompasso'][p2])))
+                        aDicio[(tuple(caracteristicas['intDia'][p1:p2]),tuple(caracteristicas['duracao'][p1:p2]))].append((nome, parte, voz, (p1, p2), (caracteristicas['Ncompasso'][p1], caracteristicas['Pcompasso'][p1]),(caracteristicas['Ncompasso'][p2-1], caracteristicas['Pcompasso'][p2-1])))
                         p1 += 1
     aDicio = sorted([(k, v) for k, v in aDicio.items() if len(v) > 1], key=lambda x: (len(x[0][0]), len(x[1])), reverse=True)
     return aDicio
@@ -22,7 +22,7 @@ def tamanho_todasrecorrencias(caminhosdict, j=1):
         print('tamanho ', j-1)
         return j -1
     else:
-        return encontrartamanho(caminhosdict, j=j+1)
+        return tamanho_todasrecorrencias(caminhosdict, j=j+1)
 
 def tamanho_maiorquantidade(caminhosdict, t1=0, j=1):
     t2 = len(segdur_sodotamanho(caminhosdict, j))
@@ -64,7 +64,7 @@ def segdur_todosatetamanho(caminhosdict, tamanho):
                         p1 += 1
     return sorted([(k, v) for k, v in aDicio.items() if len(v) > 1], key=lambda x: (len(x[0][0]), len(x[1])), reverse=True)
 
-def sem_cont_amont(aDicio):
+def sem_cont_amont(aDicio, le=0):
     semcontamont = []
     quepassaram = []
     for seg, pos in aDicio:
@@ -73,16 +73,13 @@ def sem_cont_amont(aDicio):
             if not subset_of(quepassaram, loc) and not part_of(quepassaram, loc):
                 posp.append(loc)
                 quepassaram.append(loc)
-                sorted(quepassaram, key=lambda x: x[3][0])
-        if len(posp) > 1:
+        if len(posp) > le:
             semcontamont.append((seg,posp))
-    print(len(aDicio))
     return {x:y for x,y in semcontamont}
 
-def analise1(caminhosdict, tamanho):
-    '''segdur todos que repetem ate tamanho, sem contidos e amontados'''
+def analise1(caminhosdict, tamanho, le):
     aDicio = segdur_todosatetamanho(caminhosdict,tamanho)
-    return sem_cont_amont(aDicio)
+    return sem_cont_amont(aDicio, le=le)
 
 '''
 contidos = True

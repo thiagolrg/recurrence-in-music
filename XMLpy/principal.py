@@ -1,8 +1,7 @@
 import dirEinp as f_d
 import xmldict as f_xd
-
 import analises as f_a
-
+import timeit
 #pede diretorio do usuário e cria pastas e caminhos que vão ser usados
 extensoes = ['.xml','.mxl']
 di = f_d.diretorio_ler(extensoes)
@@ -32,8 +31,8 @@ print()
 #cria resgata ou atualiza tamanho minimo necessário para pegar todas as recorrencias
 #no conjunto de músicas
 if len(caminhosconverter) > 0:
-    tamanho = f_a.tamanho_todasrecorrencias(caminhosdict)
-    f_d.escreve_pickle(diA,tamanho, '_tamanho_.p', trunca=True)
+    tamanho = f_a.tamanho_todasrecorrencias (caminhosdict)
+    f_d.escreve_pickle(diA,tamanho, '_tamanho_', trunca=True)
 else:
     try:
         tamanho = f_d.le_pickle(diA+'\\_tamanho_.p')
@@ -41,15 +40,55 @@ else:
         tamanho = f_a.tamanho_todasrecorrencias(caminhosdict)
         f_d.escreve_pickle(diA,tamanho, '_tamanho_')
 
-tamanho = f_a.tamanho_maiorquantidade(caminhosdict)
-aDicio = f_a.segdur_todosatetamanho(caminhosdict, tamanho)
-aDicio = f_a.sem_cont_amont(aDicio)
-nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
-parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
-parametros.setdefault('quantidade', len(caminhosdict))
-parametros.setdefault('analise',f_a.segdur_todosatetamanho.__doc__)
-f_d.escreve_txt(diA, parametros, nomeanalise)
-f_d.escreve_txt(diA,aDicio, nomeanalise)
+for caminhodict in caminhosdict:
+    caminhodict = [caminhodict]
+
+    tamanho = f_a.tamanho_todasrecorrencias(caminhodict)
+
+    le = 0
+    aDicio = f_a.analise1(caminhodict, tamanho, le)
+    nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
+    parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhodict]}
+    parametros.setdefault('quantidade', len(caminhodict))
+    parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, > {le} continuam depois de contidos e amontoados retirados')
+    f_d.escreve_txt(diA, parametros, nomeanalise)
+    f_d.escreve_txt(diA,aDicio, nomeanalise)
+
+    le = 1
+    aDicio = f_a.analise1(caminhodict, tamanho, le)
+    nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
+    parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhodict]}
+    parametros.setdefault('quantidade', len(caminhodict))
+    parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, > {le} continuam depois de contidos e amontoados retirados')
+    f_d.escreve_txt(diA, parametros, nomeanalise)
+    f_d.escreve_txt(diA,aDicio, nomeanalise)
+
+    tamanho = f_a.tamanho_maiorquantidade(caminhodict)
+
+    le = 0
+    aDicio = f_a.analise1(caminhodict, tamanho, le)
+    nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
+    parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhodict]}
+    parametros.setdefault('quantidade', len(caminhodict))
+    parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, > {le} continuam depois de contidos e amontoados retirados')
+    f_d.escreve_txt(diA, parametros, nomeanalise)
+    f_d.escreve_txt(diA,aDicio, nomeanalise)
+
+    le = 1
+    aDicio = f_a.analise1(caminhodict, tamanho, le)
+    nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
+    parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhodict]}
+    parametros.setdefault('quantidade', len(caminhodict))
+    parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, > {le} continuam depois de contidos e amontoados retirados')
+    f_d.escreve_txt(diA, parametros, nomeanalise)
+    f_d.escreve_txt(diA,aDicio, nomeanalise)
+
+'''
+tamanhomaior deixa 1
+tamanhomaior nao deixa 1
+tamanho quantidadedeixa 1
+tamanoquantidade naodeixa 1
+'''
 
 
 '''
