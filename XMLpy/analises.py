@@ -71,7 +71,7 @@ def segdur_todosatetamanho(caminhosdict, tamanho):
                         p1 += 1
     return sorted([(k, v) for k, v in aDicio.items() if len(v) > 1], key=lambda x: (len(x[0][0]), len(x[1])), reverse=True)
 
-def sem_cont_amont(aDicio, le=0):
+def sem_cont_amont(aDicio, le=1):
     semcontamont = []
     quepassaram = []
     for seg, pos in aDicio:
@@ -85,7 +85,7 @@ def sem_cont_amont(aDicio, le=0):
             semcontamont.append((seg,posp))
     return {x:y for x,y in semcontamont}
 
-def sem_cont(aDicio, le=0):
+def sem_cont(aDicio, le=1):
     semcontamont = []
     quepassaram = []
     for seg, pos in aDicio:
@@ -99,21 +99,40 @@ def sem_cont(aDicio, le=0):
             semcontamont.append((seg,posp))
     return {x:y for x,y in semcontamont}
 
-def maisdeumamusica(aDicio, qtm=2):
+def maisdeumamusica(aDicio, qtm=1):
     maism = []
     for seg, pos in aDicio:
         if nomes(pos) == qtm:
             maism.append((seg,pos))
     return maism
 
+def por_tempo(aDicio, t):
+    portempo = []
+    for seg, pos in aDicio:
+        dur = float()
+        for se in seg[1]:
+            if isinstance(se, tuple):
+                for s in se:
+                    dur = dur+s
+            else:
+                dur = dur+se
+        if dur < t:
+            portempo.append((seg,pos))
+    return portempo
+
 def analise1(caminhosdict, tamanho, le):
     aDicio = segdur_todosatetamanho(caminhosdict,tamanho)
     return sem_cont_amont(aDicio, le=le)
 
-def analise2(caminhosdict, tamanho, le):
+def analise2(caminhosdict, tamanho, le=1, qtm=1):
     aDicio = segdur_todosatetamanho(caminhosdict,tamanho)
-    aDicio = maisdeumamusica(aDicio)
+    aDicio = maisdeumamusica(aDicio, qtm=qtm)
     return sem_cont_amont(aDicio, le=le)
+
+def analise3(caminhosdict, tamanho, le=1, t=1):
+    aDicio = segdur_todosatetamanho(caminhosdict, tamanho)
+    aDicio = por_tempo(aDicio, t)
+    return sem_cont_amont(aDicio)
 
 '''
 contidos = True
