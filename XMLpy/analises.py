@@ -124,10 +124,10 @@ def analise1(caminhosdict, tamanho, le):
     aDicio = segdur_todosatetamanho(caminhosdict,tamanho)
     return sem_cont_amont(aDicio, le=le)
 
-def analise2(caminhosdict, tamanho, le=1, qtm=1):
+def analise2(caminhosdict, tamanho, qtm=1):
     aDicio = segdur_todosatetamanho(caminhosdict,tamanho)
     aDicio = maisdeumamusica(aDicio, qtm=qtm)
-    return sem_cont_amont(aDicio, le=le)
+    return {x:y for x,y in aDicio}
 
 def analise3(caminhosdict, tamanho, le=1, t=1):
     aDicio = segdur_todosatetamanho(caminhosdict, tamanho)
