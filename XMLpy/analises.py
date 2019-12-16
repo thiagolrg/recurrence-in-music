@@ -66,7 +66,7 @@ def segdur_todosatetamanho(caminhosdict, tamanho):
                     while p1 < len(caracteristicas['intDia']):
                         p2 = p1+1
                         while p2-p1 <= tamanho and p2 <= len(caracteristicas['intDia']):
-                            aDicio[(tuple(caracteristicas['intDia'][p1:p2]),tuple(caracteristicas['duracao'][p1:p2]))].append((nome, parte, voz, (p1, p2),(caracteristicas['Ncompasso'][p1], caracteristicas['Pcompasso'][p1]), (caracteristicas['Ncompasso'][p2-1], caracteristicas['Pcompasso'][p2-1])))
+                            aDicio[(tuple(caracteristicas['intDia'][p1:p2]),tuple(caracteristicas['duracao'][p1:p2]),caracteristicas['Ptempo'][p1])].append((nome, parte, voz, (p1, p2),(caracteristicas['Ncompasso'][p1], caracteristicas['Pcompasso'][p1]), (caracteristicas['Ncompasso'][p2-1], caracteristicas['Pcompasso'][p2-1])))
                             p2 += 1
                         p1 += 1
     return sorted([(k, v) for k, v in aDicio.items() if len(v) > 1], key=lambda x: (len(x[0][0]), len(x[1])), reverse=True)
