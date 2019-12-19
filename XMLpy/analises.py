@@ -6,6 +6,7 @@ def segdur_sodotamanho(caminhosdict, janela):
     for caminho in caminhosdict:
         musD = f_d.le_pickle(caminho)
         nome = musD.pop('nome')
+        print(f'analisando {nome}, ',caminhosdict.index(caminho)+1,' de ', len(caminhosdict))
         for parte in musD:
             for voz, caracteristicas in musD[parte].items():
                 if 'intDia' in caracteristicas:
@@ -16,6 +17,39 @@ def segdur_sodotamanho(caminhosdict, janela):
                         p1 += 1
     aDicio = sorted([(k, v) for k, v in aDicio.items() if len(v) > 1], key=lambda x: (len(x[0][0]), len(x[1])), reverse=True)
     return aDicio
+
+def segdur_sodotamanhopormusica(musD, nome, janela):
+    aDicio = defaultdict(list)
+    for parte in musD:
+        for voz, caracteristicas in musD[parte].items():
+            if 'intDia' in caracteristicas:
+                p1 = 0
+                while p1 + janela <= len(caracteristicas['intDia']):
+                    p2 = p1 + janela
+                    aDicio[(tuple(caracteristicas['intDia'][p1:p2]),tuple(caracteristicas['duracao'][p1:p2]))].append((nome, parte, voz, (p1, p2), (caracteristicas['Ncompasso'][p1], caracteristicas['Pcompasso'][p1]),(caracteristicas['Ncompasso'][p2-1], caracteristicas['Pcompasso'][p2-1])))
+                    p1 += 1
+    aDicio = [(k, v) for k, v in aDicio.items() if len(v) > 1]
+    return aDicio
+
+def segdur_todasasrecorrenciaspormusica(musD, nome, aDiciopronto, j=1):
+    aDicio = segdur_sodotamanhopormusica(musD, nome, j) 
+    if len(aDicio) == 0:
+        print('tamanho ', j-1)
+        return aDiciopronto
+    else:
+        for x in aDicio:
+            aDiciopronto.append(x)
+        return segdur_todasasrecorrenciaspormusica(musD, nome, aDiciopronto ,j=j+1)
+
+def segdur_maisdeumamusica(caminhosdict):
+    aDiciopronto = []
+    for caminho in caminhosdict:
+        musD = f_d.le_pickle(caminho)
+        nome = musD.pop('nome')
+        print('analisando',caminhosdict.index(caminho)+1,' de ', len(caminhosdict))
+        aDiciopronto = segdur_todasasrecorrenciaspormusica(musD, nome , aDiciopronto)
+    aDiciopronto = [(k, v) for k, v in aDiciopronto if len(v) > 1]
+    return aDiciopronto
 
 def tamanho_todasrecorrencias(caminhosdict, j=1):
     if len(segdur_sodotamanho(caminhosdict, j)) == 0:
@@ -46,9 +80,9 @@ def subset_of(longest_slices, slise):
 
 def part_of(longest_slices, slise):
     for ls in longest_slices:
-        if slise[3][0] > ls[3][0] and slise[3][0] <= ls[3][1] and slise[3][1] > ls[3][1] and slise[0:3] == ls[0:3]:
+        if slise[3][0] > ls[3][0] and slise[3][0] < ls[3][1] and slise[3][1] > ls[3][1] and slise[0:3] == ls[0:3]:
             return True
-        if slise[3][1] >= ls[3][0] and slise[3][1] < ls[3][1] and slise[3][0] < ls[3][0] and slise[0:3] == ls[0:3]:
+        if slise[3][1] > ls[3][0] and slise[3][1] < ls[3][1] and slise[3][0] < ls[3][0] and slise[0:3] == ls[0:3]:
             return True
     return False
 
@@ -66,7 +100,7 @@ def segdur_todosatetamanho(caminhosdict, tamanho):
                     while p1 < len(caracteristicas['intDia']):
                         p2 = p1+1
                         while p2-p1 <= tamanho and p2 <= len(caracteristicas['intDia']):
-                            aDicio[(tuple(caracteristicas['intDia'][p1:p2]),tuple(caracteristicas['duracao'][p1:p2]),caracteristicas['Ptempo'][p1])].append((nome, parte, voz, (p1, p2),(caracteristicas['Ncompasso'][p1], caracteristicas['Pcompasso'][p1]), (caracteristicas['Ncompasso'][p2-1], caracteristicas['Pcompasso'][p2-1])))
+                            aDicio[(tuple(caracteristicas['intDia'][p1:p2]),tuple(caracteristicas['duracao'][p1:p2]))].append((nome, parte, voz, (p1, p2), (caracteristicas['Ncompasso'][p1], caracteristicas['Pcompasso'][p1]),(caracteristicas['Ncompasso'][p2-1], caracteristicas['Pcompasso'][p2-1])))
                             p2 += 1
                         p1 += 1
     return sorted([(k, v) for k, v in aDicio.items() if len(v) > 1], key=lambda x: (len(x[0][0]), len(x[1])), reverse=True)
