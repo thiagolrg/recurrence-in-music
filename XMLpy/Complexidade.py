@@ -37,17 +37,22 @@ print(listanova)
 '''
 Sendo possível criar as sublistas, para encontrar recorrências em lista é necessário saber se suas sublistas têm a mesma constituição, para isso as sublistas são acrescentadas como chaves em um defaultdict e suas posições de início e fim na lista de origem como valores das chaves. Isso significa que toda vez que uma sublista tem a mesma constituição de outra já acrescentada no defaultdict, sua posição é acrescentada como valor da chave já existente, se a sublista for nova será acrescentada uma nova chave para ela e sua posição como valor.
 '''
+
+xmlconvertido = {'P1': {'1': {'caracteristica1': listateste}}}
+
 from collections import defaultdict
-def recorrencias2(lista, tamanho):
-    dicio = defaultdict(list)
-    p1 = 0 #posicao 1
-    while p1 < len(lista):
-        p2 = p1+1 #posicao 2
-        while p2-p1 <= tamanho and p2 <= len(lista):
-            dicio[tuple(lista[p1:p2])].append((p1,p2))
-            p2 += 1
-        p1 += 1
-    return dicio
+def recorrencias2(xmlconvertido, tamanho):
+    recorrencias = defaultdict(list)
+    for parte in xmlconvertido:
+        for voz, caracteristicas in xmlconvertido[parte].items():
+            p1 = 0 #posicao 1
+            while p1 < len(caracteristicas['caracteristica1']):
+                p2 = p1+1 #posicao 2
+                while p2-p1 <= tamanho and p2 <= len(caracteristicas['caracteristica1']):
+                    recorrencias[tuple(lista[p1:p2])].append((parte, voz, p1 , p2))
+                    p2 += 1
+                p1 += 1
+    return recorrencias
 
 '''
 Como o interesse está somente nas recorrências, podemos manter do dicionário resultante somente as chaves, ou seja, sublistas, que aparecem mais de uma vez, sou seja, que tem len(valor) > 1 e transformar o resultado novamente em lista, pois desse ponto em diante o propósito de identificar todas as recorrências já está cumprido e a lista é um formato de interação mais rápida para continuar sendo processada pelo programa.
