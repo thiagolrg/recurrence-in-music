@@ -1,6 +1,6 @@
 import dirEinp as f_d
 import xmldict as f_xd
-import analises as f_a
+import analises2 as f_a
 import timeit
 #pede diretorio do usuário e cria pastas e caminhos que vão ser usados
 extensoes = ['.xml','.mxl']
@@ -31,26 +31,21 @@ print()
 #cria resgata ou atualiza tamanho minimo necessário para pegar todas as recorrencias
 #no conjunto de músicas
 if len(caminhosconverter) > 0:
-    tamanho = f_a.tamanho_todasrecorrencias (caminhosdict)
+    tamanho = f_a.tam_min(caminhosdict)
     f_d.escreve_pickle(diA,tamanho, '_tamanho_', trunca=True)
 else:
     try:
         tamanho = f_d.le_pickle(diA+'\\_tamanho_.p')
     except FileNotFoundError:
-        tamanho = f_a.tamanho_todasrecorrencias(caminhosdict)
+        tamanho = f_a.tam_min(caminhosdict)
         f_d.escreve_pickle(diA,tamanho, '_tamanho_')
 
-#diciofa = f_a.segdur_todosatetamanho(caminhosdict,tamanho)
-diciofn = f_a.segdur_maisdeumamusica(caminhosdict)
 
-tfa = timeit.timeit('f_a.segdur_todosatetamanho(caminhosdict,tamanho)', globals=globals(), number=1)
-tfn = timeit.timeit('f_a.segdur_todasasrecorrenciaspormusica(caminhosdict, [])', globals=globals(), number=1)
-
-aDicio = f_a.analise3(caminhosdict, tamanho)
+aDicio = f_a.recorrencias(caminhosdict, tamanho)
 nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
 parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
 parametros.setdefault('quantidade', len(caminhosdict))
-parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, que tem aparecem em {9} musicas, sem retirar contidos e amontoados retirados')
+parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, contidos e intercalados retirados')
 f_d.escreve_txt(diA, parametros, nomeanalise)
 f_d.escreve_txt(diA,aDicio, nomeanalise)
 
