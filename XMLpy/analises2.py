@@ -72,8 +72,36 @@ def sem_cont_inter(listarecorrencias):
             for v in posicoessegmento:
                 quepassaram.append(v)
             semcontinter.append((segmento,posicoessegmento))
-    return semcontinter
+    return {x:y for x,y in semcontinter}
 
-def recorrencias(caminhosdict,tamanho=0):
-    return {x:y for x,y in sem_cont_inter(segmentacao(caminhosdict, tamanho=tamanho))}
- 
+"""
+"""
+
+lista = [-3, 4, -3, 4, -3, 4, -3, -2, -3, 4, -3, 4, -3, 4, -3, -2, -3, 4, -3, 4, -3, 4, -3, 2]
+
+def cortes(lista,tamanho, p1=0):
+    listacortes = []
+    p2 = p1+tamanho
+    while p2 <= len(lista):
+        listacortes.append((p1,p2))
+        p1 = p2+1
+        p2 = p1+tamanho
+    return listacortes
+
+def maiorsequencia(lista):
+    sequencia1 = []
+    sequencia2 = []
+    while len(lista) > 2:
+        tamanho = 1
+        while True:
+            listacortes = cortes(lista,tamanho)
+            if len(listacortes) == 1:
+                break
+            if len({tuple(lista[p1:p2]) for p1,p2 in listacortes}) == 1:
+                sequencia1 = listacortes
+            tamanho += 1
+        for x in sequencia1:
+            sequencia2.append(x)
+    return sequencia2
+
+listapronta = maiorsequencia(lista)
