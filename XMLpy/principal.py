@@ -40,8 +40,8 @@ else:
         tamanho = f_a.tam_min(caminhosdict)
         f_d.escreve_pickle(diA,tamanho, '_tamanho_')
 
-
-aDicio = f_a.recorrencias(caminhosdict, tamanho)
+caminhosdict = caminhosdict[0]
+aDicio = f_a.sequencias(caminhosdict, tamanho)
 nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
 parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
 parametros.setdefault('quantidade', len(caminhosdict))

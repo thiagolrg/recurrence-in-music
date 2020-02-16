@@ -67,9 +67,9 @@ def seq(posicoes):
     posicoesseq = []
     p = 0
     while p+1 < len(posicoes):
-        if posicoes[p+1][3][0] - posicoes[p][3][1] == 1:
+        if posicoes[p+1][3][0] - posicoes[p][3][1] == 1 and posicoes[p+1][0:3] == posicoes[p][0:3]:
             s1 = p
-            while posicoes[p+1][3][0] - posicoes[p][3][1] == 1:
+            while posicoes[p+1][3][0] - posicoes[p][3][1] == 1 and posicoes[p+1][0:3] == posicoes[p][0:3]:
                 p = p+1
                 if p == len(posicoes)-1:
                     break
@@ -77,6 +77,17 @@ def seq(posicoes):
             posicoesseq.append(posicoes[s1:s2])
         p = p+1
     return posicoesseq
+
+def so_seq(listarecorrencias):
+    soseq = []
+    for segmento, posicoes in listarecorrencias:
+        posicoesseq = seq(posicoes)
+        if len(posicoesseq) > 1:
+            soseq.append((segmento,posicoesseq))
+    return {x:y for x,y in soseq}
+
+def sequencias(caminhosdict,tamanho=0):
+    return so_seq(segmentacao_rec(caminhosdict, tamanho=tamanho))
 
 def sem_cont_inter(listarecorrencias):
     semcontinter = []
