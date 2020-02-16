@@ -26,7 +26,7 @@ def tam_min(caminhosdict, tamanho=1):
     print(f'tamanho: {tamanho-1}')
     return tamanho-1
 
-def segmentacao(caminhosdict, tamanho=0):
+def segmentacao_rec(caminhosdict, tamanho=0):
     dicio = defaultdict(list)
     for caminho in caminhosdict:
         musD = f_d.le_pickle(caminho)
@@ -45,7 +45,10 @@ def segmentacao(caminhosdict, tamanho=0):
                                 p2 += 1
                             p1 += 1
     return sorted([(c, v) for c, v in dicio.items() if len(v) > 1], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)
- 
+
+def recorrencias(caminhosdict,tamanho=0):
+    return sem_cont_inter(segmentacao_rec(caminhosdict, tamanho=tamanho))
+
 def contida(listaposicoes, posicao):
     for outra in listaposicoes:
         if posicao[0:3] == outra[0:3] and posicao[3][0] >= outra[3][0] and posicao[3][1] <= outra[3][1]:
@@ -60,6 +63,21 @@ def intercalada(listaposicoes, posicao):
             return True
     return False
 
+def seq(posicoes):
+    posicoesseq = []
+    p = 0
+    while p+1 < len(posicoes):
+        if posicoes[p+1][3][0] - posicoes[p][3][1] == 1:
+            s1 = p
+            while posicoes[p+1][3][0] - posicoes[p][3][1] == 1:
+                p = p+1
+                if p == len(posicoes)-1:
+                    break
+            s2 = p+1
+            posicoesseq.append(posicoes[s1:s2])
+        p = p+1
+    return posicoesseq
+
 def sem_cont_inter(listarecorrencias):
     semcontinter = []
     quepassaram = []
@@ -73,35 +91,3 @@ def sem_cont_inter(listarecorrencias):
                 quepassaram.append(v)
             semcontinter.append((segmento,posicoessegmento))
     return {x:y for x,y in semcontinter}
-
-"""
-"""
-
-lista = [-3, 4, -3, 4, -3, 4, -3, -2, -3, 4, -3, 4, -3, 4, -3, -2, -3, 4, -3, 4, -3, 4, -3, 2]
-
-def cortes(lista,tamanho, p1=0):
-    listacortes = []
-    p2 = p1+tamanho
-    while p2 <= len(lista):
-        listacortes.append((p1,p2))
-        p1 = p2+1
-        p2 = p1+tamanho
-    return listacortes
-
-def maiorsequencia(lista):
-    sequencia1 = []
-    sequencia2 = []
-    while len(lista) > 2:
-        tamanho = 1
-        while True:
-            listacortes = cortes(lista,tamanho)
-            if len(listacortes) == 1:
-                break
-            if len({tuple(lista[p1:p2]) for p1,p2 in listacortes}) == 1:
-                sequencia1 = listacortes
-            tamanho += 1
-        for x in sequencia1:
-            sequencia2.append(x)
-    return sequencia2
-
-listapronta = maiorsequencia(lista)
