@@ -45,7 +45,7 @@ aDicio = f_a.sequencias(caminhosdict, tamanho)
 nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
 parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
 parametros.setdefault('quantidade', len(caminhosdict))
-parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, contidos e intercalados retirados')
+parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, sequencias')
 f_d.escreve_txt(diA, parametros, nomeanalise)
 f_d.escreve_txt(diA,aDicio, nomeanalise)
 
