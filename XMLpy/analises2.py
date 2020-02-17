@@ -74,7 +74,8 @@ def seq(posicoes):
                 if p == len(posicoes)-1:
                     break
             s2 = p+1
-            posicoesseq.append(posicoes[s1:s2])
+            for p in range(s1,s2):
+                posicoesseq.append(posicoes[p])
         p = p+1
     return posicoesseq
 
