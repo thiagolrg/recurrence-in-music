@@ -74,8 +74,7 @@ def seq(posicoes):
                 if p == len(posicoes)-1:
                     break
             s2 = p+1
-            for p in range(s1,s2):
-                posicoesseq.append(posicoes[p])
+            posicoesseq.append(posicoes[s1:s2])
         p = p+1
     return posicoesseq
 
@@ -83,12 +82,27 @@ def so_seq(listarecorrencias):
     soseq = []
     for segmento, posicoes in listarecorrencias:
         posicoesseq = seq(posicoes)
-        if len(posicoesseq) > 1:
+        if len(posicoesseq) > 0:
             soseq.append((segmento,posicoesseq))
-    return {x:y for x,y in soseq}
+    return soseq
+
+def sortsoseq(listarecorrencias):
+    listasort = []
+    for segmento, posicoes in listarecorrencias:
+        for posicao in posicoes:
+            tamanhoseq = posicao[-1][3][1] - posicao[0][3][0]
+            listasort.append((segmento,posicoes,tamanhoseq))
+    listasort = sorted(listasort, key= lambda x: x[2], reverse=True)
+    listasort = [(s,p) for s,p,t in listasort]
+    return listasort
+
 
 def sequencias(caminhosdict,tamanho=0):
-    return so_seq(segmentacao_rec(caminhosdict, tamanho=tamanho))
+    listarecorrencias = segmentacao_rec(caminhosdict, tamanho=tamanho)
+    listarecorrencias = so_seq(listarecorrencias)
+    listarecorrencias = sortsoseq(listarecorrencias)
+    listarecorrencias = sem_cont_inter_seq(listarecorrencias) 
+    return listarecorrencias
 
 def sem_cont_inter(listarecorrencias):
     semcontinter = []
@@ -103,3 +117,26 @@ def sem_cont_inter(listarecorrencias):
                 quepassaram.append(v)
             semcontinter.append((segmento,posicoessegmento))
     return {x:y for x,y in semcontinter}
+
+def contida_seq(listaposicoes, posicao):
+    for outra in listaposicoes:
+        if posicao[0][0:3] == outra[0][0:3] and posicao[0][3][0] >= outra[0][3][0] and posicao[-1][3][1] <= outra[-1][3][1]:
+            return True
+    return False
+
+def sem_cont_inter_seq(listarecorrencias):
+    semcontinter = []
+    quepassaram = []
+    for segmento, posicoes in listarecorrencias:
+        posicoessegmento = []
+        for posicao in posicoes:
+            if not contida_seq(quepassaram, posicao):
+                posicoessegmento.append(posicao)
+        if len(posicoessegmento) > 0:
+            for v in posicoessegmento:
+                quepassaram.append(v)
+            semcontinter.append((segmento,posicoessegmento))
+    dicio = defaultdict(list)
+    for s, p in semcontinter:
+        dicio[s].append(p)
+    return dicio
