@@ -44,10 +44,19 @@ def segmentacao_rec(caminhosdict, tamanho=0):
                                 dicio[(tuple(caracteristicas['intDia'][p1:p2]),tuple(caracteristicas['duracao'][p1:p2]))].append((nome, parte, voz, (p1, p2), (caracteristicas['Ncompasso'][p1], caracteristicas['Pcompasso'][p1]),(caracteristicas['Ncompasso'][p2-1], caracteristicas['Pcompasso'][p2-1])))
                                 p2 += 1
                             p1 += 1
+    return dicio
+
+def sort_recorrencias(dicio):
     return sorted([(c, v) for c, v in dicio.items() if len(v) > 1], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)
 
+def sort_sequencias(dicio):
+    return sorted([(c, v) for c, v in dicio.items() if len(v) > 1 and len(c[0]) > 1], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)    
+
 def recorrencias(caminhosdict,tamanho=0):
-    return sem_cont_inter(segmentacao_rec(caminhosdict, tamanho=tamanho))
+    rec = segmentacao_rec(caminhosdict, tamanho=tamanho)
+    rec = sort_recorrencias(rec)
+    rec = sem_cont_inter(rec)
+    return rec
 
 def contida(listaposicoes, posicao):
     for outra in listaposicoes:
@@ -99,6 +108,7 @@ def sortsoseq(listarecorrencias):
 
 def sequencias(caminhosdict,tamanho=0):
     listarecorrencias = segmentacao_rec(caminhosdict, tamanho=tamanho)
+    listarecorrencias = sort_sequencias(listarecorrencias)
     listarecorrencias = so_seq(listarecorrencias)
     listarecorrencias = sortsoseq(listarecorrencias)
     listarecorrencias = sem_cont_inter_seq(listarecorrencias) 
@@ -124,13 +134,22 @@ def contida_seq(listaposicoes, posicao):
             return True
     return False
 
+def intercalada_seq(listaposicoes, posicao):
+    for outra in listaposicoes:
+        if posicao[0][0:3] == outra[0][0:3] and posicao[0][3][0] > outra[0][3][0] and posicao[0][3][0] < outra[-1][3][1] and posicao[-1][3][1] > outra[-1][3][1]:
+            return True
+        if posicao[0][0:3] == outra[0][0:3] and posicao[-1][3][1] > outra[0][3][0] and posicao[-1][3][1] < outra[0][3][1] and posicao[0][3][0] < outra[0][3][0]:
+            return True
+    return False
+
+
 def sem_cont_inter_seq(listarecorrencias):
     semcontinter = []
     quepassaram = []
     for segmento, posicoes in listarecorrencias:
         posicoessegmento = []
         for posicao in posicoes:
-            if not contida_seq(quepassaram, posicao):
+            if not intercalada_seq(posicoessegmento, posicao) and not intercalada_seq(quepassaram, posicao) and not contida_seq(quepassaram, posicao):
                 posicoessegmento.append(posicao)
         if len(posicoessegmento) > 0:
             for v in posicoessegmento:
