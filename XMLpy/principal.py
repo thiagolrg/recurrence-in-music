@@ -20,10 +20,10 @@ for caminho in caminhosconverter:
     elif '.mxl' in caminho:
         xml = f_d.entrada_mxl(caminho, nome)
     xml = f_xd.ad_counter(xml)
-    xmlDicio = f_xd.xml_dict(xml)
-    mDicio = f_xd.mus_dict(xmlDicio)
-    mDicio.setdefault('nome',nome)
-    f_d.escreve_pickle(diD, mDicio, nome)
+    xmlDict = f_xd.xml_dict(xml)
+    musDict = f_xd.mus_dict(xmlDict)
+    musDict.setdefault('nome',nome)
+    f_d.escreve_pickle(diD, musDict, nome)
 #lista com todos os dicionarios
 caminhosdict = f_d.caminhos_extensoes(diD, ['.p'])
 print()
