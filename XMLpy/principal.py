@@ -40,71 +40,74 @@ else:
         tamanho = f_a.tam_min(caminhosdict)
         f_d.escreve_pickle(diA,tamanho, '_tamanho_')
 
-caminhosdict = [caminhosdict[0]]
-aDicio = f_a.sequencias(caminhosdict, tamanho)
+for caminho in caminhosdict:
+    seg = f_a.segmentacao([caminho], tamanho=tamanho)
+
+    rec = f_a.recorrencias(seg)
+    nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
+    parametros = {'nomes': f_d.caminho_nome(caminho, ['.p'])}
+    parametros.setdefault('quantidade', len([caminho]))
+    parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, recorrências')
+    f_d.escreve_txt(diA, parametros, nomeanalise)
+    f_d.escreve_txt(diA, {x:y for x,y in rec}, nomeanalise)
+
+    seq = f_a.sequencias(seg)
+    nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
+    parametros = {'nomes': f_d.caminho_nome(caminho, ['.p'])}
+    parametros.setdefault('quantidade', len([caminho]))
+    parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, sequências')
+    f_d.escreve_txt(diA, parametros, nomeanalise)
+    f_d.escreve_txt(diA, {x:y for x,y in seq}, nomeanalise)
+
+
+
+seg = f_a.segmentacao(caminhosdict, tamanho=tamanho)
+rec = f_a.recorrencias(seg)
 nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
 parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
 parametros.setdefault('quantidade', len(caminhosdict))
-parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, sequencias')
+parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, recorrências')
 f_d.escreve_txt(diA, parametros, nomeanalise)
-f_d.escreve_txt(diA,aDicio, nomeanalise)
+f_d.escreve_txt(diA, {x:y for x,y in rec}, nomeanalise)
 
+seq = f_a.sequencias(seg)
+nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
+parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
+parametros.setdefault('quantidade', len(caminhosdict))
+parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, sequências')
+f_d.escreve_txt(diA, parametros, nomeanalise)
+f_d.escreve_txt(diA, {x:y for x,y in seq}, nomeanalise)
 
-'''
-tamanhomaior deixa 1
-tamanhomaior nao deixa 1
-tamanho quantidadedeixa 1
-tamanoquantidade naodeixa 1
-'''
-
-
-'''
-testar um tirando todos os que acontecem <=1 vezes
-testar um marcando os contidos e amontoados
-testar um organizando por quantidade de músicas em que aparece, do maior para o menor.
-colocar numeros e posicoes de compassos
-
-intDia duração e Pcompasso: Loc....
-
-
-'''
-
-'''
-#executa as analises criadas
-for analisePar, analiseLog in zip(analisesPar, analisesLog):
-    analise = {}
-    #segmentacao
-        analise = analisePar[0][1][0](mDicio, analise)
-    #filtros e ordenacoes
-    for filtroord in analisePar[1:]:
-        print(filtroord[0], analisePar[1:].index(filtroord)+1,' de ', len(analisePar[1:]))
-        analise = filtroord[1][0](analise)
-    #salva o log e a analise
-    #nomes de todos os arquivos, que é o nome da música
+for quantidade in range(1,len(caminhosdict)):
+    recq = []
+    for item in rec:
+        nomes = set()
+        for valor in item[1]:
+            nomes.add(valor[0])
+        if len(nomes) == quantidade:
+            recq.append(item)
+    if len(recq) == 0:
+        break
     nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
-    nomesmusicas = [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]
-    loganalise = {'nomes': nomesmusicas, 'quantidade': len(nomesmusicas), 'parametros': analiseLog}
-    f_d.escreve_txt(diA,loganalise, nomeanalise)
-    f_d.escreve_txt(diA,analise, nomeanalise)
-'''
-'''
-testar função part_of
+    parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
+    parametros.setdefault('quantidade', len(caminhosdict))
+    parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, que acontecem em {quantidade} músicas do conjunto, recorrências')
+    f_d.escreve_txt(diA, parametros, nomeanalise)
+    f_d.escreve_txt(diA, {x:y for x,y in recq}, nomeanalise)
 
-fazer inputs de parametros do modulo
-OK testar e refinar funcoes de analise:
-OK    melhorar eficiencia dos contidos e amontoados ordenando antes de fazer o loop
-
-
-limpar inputs, não é prioridade mas é o que falta
-
-talvez seja melhor fazer várias condições já na função de segmentação em vez de funções filtros depois da segmentação.
-tamanho do segmento <= que, (ou a mesma condicao vista pera diferença de p1p2)
-por alguma outra caracteristica da posição (inicio do compasso, duração == tamanho do compasso)
-para os que acontecem também na música ou também no compasso ou também no andamento é possível filtrar direto
-para os que acontecem exclusivamente nessas carácteristicas é necessário ver todos e filtrar depois
-
-homogeneidade dos valores:
-    ver distribuição dos valores agredgados as posições
-    quantas categorias e quantas vezes em cada categoria, quantos% em cada categoria
-    música, posição tempo e posicao compasso
-'''
+for quantidade in range(1,len(caminhosdict)):
+    seqq = []
+    for item in seq:
+        nomes = set()
+        for valor in item[1]:
+            nomes.add(valor[0][0])
+        if len(nomes) == quantidade:
+            seqq.append(item)
+    if len(seqq) == 0:
+        break
+    nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
+    parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
+    parametros.setdefault('quantidade', len(caminhosdict))
+    parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, que acontecem em {quantidade} músicas do conjunto, sequências')
+    f_d.escreve_txt(diA, parametros, nomeanalise)
+    f_d.escreve_txt(diA, {x:y for x,y in seqq}, nomeanalise)

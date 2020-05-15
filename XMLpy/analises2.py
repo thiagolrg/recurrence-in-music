@@ -26,7 +26,7 @@ def tam_min(caminhosdict, tamanho=1):
     print(f'tamanho: {tamanho-1}')
     return tamanho-1
 
-def segmentacao_rec(caminhosdict, tamanho=0):
+def segmentacao(caminhosdict, tamanho=0):
     dicio = defaultdict(list)
     for caminho in caminhosdict:
         musD = f_d.le_pickle(caminho)
@@ -52,9 +52,8 @@ def sort_recorrencias(dicio):
 def sort_sequencias(dicio):
     return sorted([(c, v) for c, v in dicio.items() if len(v) > 1 and len(c[0]) > 1], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)    
 
-def recorrencias(caminhosdict,tamanho=0):
-    rec = segmentacao_rec(caminhosdict, tamanho=tamanho)
-    rec = sort_recorrencias(rec)
+def recorrencias(seg):
+    rec = sort_recorrencias(seg)
     rec = sem_cont_inter(rec)
     return rec
 
@@ -64,11 +63,11 @@ def contida(listaposicoes, posicao):
             return True
     return False
 
-def intercalada(listaposicoes, posicao):
+def intercalada(listaposicoes, posicao, distancia=1):
     for outra in listaposicoes:
-        if posicao[0:3] == outra[0:3] and posicao[3][0] > outra[3][0] and posicao[3][0] < outra[3][1] and posicao[3][1] > outra[3][1]:
+        if posicao[0:3] == outra[0:3] and posicao[3][0] > outra[3][0] and posicao[3][0] < outra[3][1]+distancia and posicao[3][1] > outra[3][1]:
             return True
-        if posicao[0:3] == outra[0:3] and posicao[3][1] > outra[3][0] and posicao[3][1] < outra[3][1] and posicao[3][0] < outra[3][0]:
+        if posicao[0:3] == outra[0:3] and posicao[3][1] > outra[3][0]-distancia and posicao[3][1] < outra[3][1] and posicao[3][0] < outra[3][0]:
             return True
     return False
 
@@ -91,7 +90,7 @@ def so_seq(listarecorrencias):
     soseq = []
     for segmento, posicoes in listarecorrencias:
         posicoesseq = seq(posicoes)
-        if len(posicoesseq) > 0:
+        if len(posicoesseq) > 1:
             soseq.append((segmento,posicoesseq))
     return soseq
 
@@ -105,14 +104,12 @@ def sortsoseq(listarecorrencias):
     listasort = [(s,p) for s,p,t in listasort]
     return listasort
 
-
-def sequencias(caminhosdict,tamanho=0):
-    listarecorrencias = segmentacao_rec(caminhosdict, tamanho=tamanho)
-    listarecorrencias = sort_sequencias(listarecorrencias)
-    listarecorrencias = so_seq(listarecorrencias)
-    listarecorrencias = sortsoseq(listarecorrencias)
-    listarecorrencias = sem_cont_inter_seq(listarecorrencias) 
-    return listarecorrencias
+def sequencias(seg):
+    seq = sort_sequencias(seg)
+    seq = so_seq(seq)
+    seq = sortsoseq(seq)
+    seq = sem_cont_inter_seq(seq) 
+    return seq
 
 def sem_cont_inter(listarecorrencias):
     semcontinter = []
@@ -126,7 +123,7 @@ def sem_cont_inter(listarecorrencias):
             for v in posicoessegmento:
                 quepassaram.append(v)
             semcontinter.append((segmento,posicoessegmento))
-    return {x:y for x,y in semcontinter}
+    return semcontinter
 
 def contida_seq(listaposicoes, posicao):
     for outra in listaposicoes:
@@ -155,7 +152,4 @@ def sem_cont_inter_seq(listarecorrencias):
             for v in posicoessegmento:
                 quepassaram.append(v)
             semcontinter.append((segmento,posicoessegmento))
-    dicio = defaultdict(list)
-    for s, p in semcontinter:
-        dicio[s].append(p)
-    return dicio
+    return semcontinter
