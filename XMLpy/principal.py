@@ -37,9 +37,10 @@ else:
     try:
         tamanho = f_d.le_pickle(diA+'\\_tamanho_.p')
     except FileNotFoundError:
-        tamanho = f_a.tam_min(caminhosdict)
+        tamanho = f_a.tam_min(caminhosdict, tamanho=100)
         f_d.escreve_pickle(diA,tamanho, '_tamanho_')
 
+'''
 for caminho in caminhosdict:
     seg = f_a.segmentacao([caminho], tamanho=tamanho)
 
@@ -58,10 +59,14 @@ for caminho in caminhosdict:
     parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, sequências')
     f_d.escreve_txt(diA, parametros, nomeanalise)
     f_d.escreve_txt(diA, {x:y for x,y in seq}, nomeanalise)
-
+'''
 
 
 seg = f_a.segmentacao(caminhosdict, tamanho=tamanho)
+rec = f_a.sort_recorrencias(seg)
+
+'''
+print('rec em tudo')
 rec = f_a.recorrencias(seg)
 nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
 parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
@@ -70,6 +75,7 @@ parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, recorrênc
 f_d.escreve_txt(diA, parametros, nomeanalise)
 f_d.escreve_txt(diA, {x:y for x,y in rec}, nomeanalise)
 
+print('seq em tudo')
 seq = f_a.sequencias(seg)
 nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
 parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
@@ -77,8 +83,10 @@ parametros.setdefault('quantidade', len(caminhosdict))
 parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, sequências')
 f_d.escreve_txt(diA, parametros, nomeanalise)
 f_d.escreve_txt(diA, {x:y for x,y in seq}, nomeanalise)
+'''
 
 for quantidade in range(1,len(caminhosdict)):
+    print(f'rec em {quantidade}')
     recq = []
     for item in rec:
         nomes = set()
@@ -88,14 +96,17 @@ for quantidade in range(1,len(caminhosdict)):
             recq.append(item)
     if len(recq) == 0:
         break
+    recq = f_a.sem_cont_rec(recq)
     nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
     parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
     parametros.setdefault('quantidade', len(caminhosdict))
-    parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, que acontecem em {quantidade} músicas do conjunto, recorrências')
+    parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, que acontecem em {quantidade} músicas do conjunto, recorrências sem cont')
     f_d.escreve_txt(diA, parametros, nomeanalise)
     f_d.escreve_txt(diA, {x:y for x,y in recq}, nomeanalise)
 
+'''
 for quantidade in range(1,len(caminhosdict)):
+    print(f'sec em {quantidade}')
     seqq = []
     for item in seq:
         nomes = set()
@@ -111,3 +122,4 @@ for quantidade in range(1,len(caminhosdict)):
     parametros.setdefault('analise', f'int e dur de tamanhomax {tamanho}, que acontecem em {quantidade} músicas do conjunto, sequências')
     f_d.escreve_txt(diA, parametros, nomeanalise)
     f_d.escreve_txt(diA, {x:y for x,y in seqq}, nomeanalise)
+'''

@@ -19,11 +19,12 @@ def segmentacao_tam(caminhosdict, tamanho=0):
     return [(c, v) for c, v in dicio.items() if len(v) > 1]
  
 def tam_min(caminhosdict, tamanho=1):
+    print(f'testando tamanho: {tamanho}')
     listarecorrencias = segmentacao_tam(caminhosdict, tamanho=tamanho)
     listarecorrencias = sem_cont_inter(listarecorrencias)
     while len(listarecorrencias) != 0:
         return tam_min(caminhosdict, tamanho=tamanho+1)
-    print(f'tamanho: {tamanho-1}')
+    print(f'tamanho min: {tamanho-1}')
     return tamanho-1
 
 def segmentacao(caminhosdict, tamanho=0):
@@ -110,6 +111,20 @@ def sequencias(seg):
     seq = sortsoseq(seq)
     seq = sem_cont_inter_seq(seq) 
     return seq
+
+def sem_cont_rec(listarecorrencias):
+    semcont = []
+    quepassaram = []
+    for segmento, posicoes in listarecorrencias:
+        posicoessegmento = []
+        for posicao in posicoes:
+            if not contida(quepassaram, posicao):
+                posicoessegmento.append(posicao)
+        if len(posicoessegmento) > 1:
+            for v in posicoessegmento:
+                quepassaram.append(v)
+            semcont.append((segmento,posicoessegmento))
+    return semcont
 
 def sem_cont_inter(listarecorrencias):
     semcontinter = []
