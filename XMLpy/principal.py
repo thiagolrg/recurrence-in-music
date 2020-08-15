@@ -38,7 +38,7 @@ else:
     try:
         tamanho = f_d.le_pickle(diA+'\\_tamanho_.p')
     except FileNotFoundError:
-        tamanho = f_a.tam_min(caminhosdict, tamanho=50)
+        tamanho = f_a.tam_min(caminhosdict, tamanho=100)
         f_d.escreve_pickle(diA,tamanho, '_tamanho_')
 
 for caminho in caminhosdict:
