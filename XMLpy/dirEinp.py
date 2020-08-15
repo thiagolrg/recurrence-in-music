@@ -62,7 +62,7 @@ def entrada_mxl(caminho, nome):
     import zipfile
     xml = []
     with zipfile.ZipFile(caminho) as z:
-        with z.open(nome+'.xml') as arq:
+        with z.open(nome+'.mxl') as arq:
             for l in arq.read().splitlines():
                 xml.append(l.decode().strip())
     return xml

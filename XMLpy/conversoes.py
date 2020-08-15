@@ -73,14 +73,14 @@ def int_qualidade(intDiatonic,intCromatic):
 #recebe todas as Fcompasso e coloca seu inicio em duracoes
 def times_com_duracoes(times):
     if counter(times[0]) == 0:
-        loc(times[0]).append(0)
-        times[0][0] = tuple(loc(times[0]))
+        val(times[0]).append(0)
+        times[0][1] = tuple(val(times[0]))
         times[0] = tuple(times[0])
         for p in range(len(times)):
             if p+1 < len(times):
                 tempos = ((Ncompasso(times[p+1])-Ncompasso(times[p]))*num(times[p]))+duracao(times[p])
-                loc(times[p+1]).append(tempos)
-                times[p+1][0] = tuple(loc(times[p+1]))
+                val(times[p+1]).append(tempos)
+                times[p+1][1] = tuple(val(times[p+1]))
                 times[p+1] = tuple(times[p+1])
     return times
 
@@ -201,10 +201,14 @@ def val(mensagem):
     return mensagem[1]
 def loc(mensagem):
     return mensagem[0]
+
 def counter(mensagem):
     return loc(mensagem)[0]
 def Ncompasso(mensagem):
     return loc(mensagem)[1]
+def division(mensagem):
+    return loc(mensagem)[2]
+
 def step(nota):
     return val(nota)[0]
 def octave(nota):
@@ -213,16 +217,18 @@ def alter(nota):
     return val(nota)[2]
 def tie(nota):
     return val(nota)[3]
+
 def tom(key):
     return val(key)[0]
 def modo(key):
     val(key)[1]
+
 def num(time):
     return val(time)[0]
 def den(time):
     return val(time)[1]
 def duracao(time):
-    return loc(time)[2]
+    return val(time)[2]
 
 def octa_base(step):
     p = base(step)
