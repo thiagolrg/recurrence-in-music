@@ -1990,14 +1990,6 @@ London (ca. 1739)</credit-words>
         <staff>2</staff>
         <beam number="1">end</beam>
       </note>
-      <backup>
-        <duration>64</duration>
-      </backup>
-      <forward>
-        <duration>32</duration>
-        <voice>4</voice>
-        <staff>2</staff>
-      </forward>
     </measure>
     <!--=======================================================-->
     <measure number="7" width="415">
