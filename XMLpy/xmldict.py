@@ -305,4 +305,4 @@ def mus_dict(xmlDict, tie=None, rest=None, chord=True, keys=True, metronomes=Tru
                 musDict[part][voice].setdefault('intCro', []).append(intCro)
                 musDict[part][voice].setdefault('intDia', []).append(intDia)
                 musDict[part][voice].setdefault ('intQua', []).append(intQua)
-    return musDict 
+    return musDict
