@@ -69,6 +69,25 @@ def segmentacao_IntDia_Dur_Ptempo(caminhosdict, tamanho=0):
                             p1 += 1
     return dicio
 
+def segmentacao_IntDia_Dur_Pcompasso(caminhosdict, tamanho=0):
+    dicio = defaultdict(list)
+    for caminho in caminhosdict:
+        musD = f_d.le_pickle(caminho)
+        nome = musD.pop('nome')
+        print(f'analisando {nome}, ',caminhosdict.index(caminho)+1,' de ', len(caminhosdict))
+        for parte in musD:
+                for voz, caracteristicas in musD[parte].items():
+                    if 'intDia' in caracteristicas:
+                        if tamanho <= 0:
+                            tamanho = len(caracteristicas['intDia'])
+                        p1 = 0 #posicao 1
+                        while p1 < len(caracteristicas['intDia']):
+                            p2 = p1+1 #posicao 2
+                            while p2-p1 <= tamanho and p2 <= len(caracteristicas['intDia']):
+                                dicio[(tuple(caracteristicas['intDia'][p1:p2]),tuple(caracteristicas['duracao'][p1:p2]),tuple(caracteristicas['Pcompasso'][p1:p2]))].append((nome, parte, voz, (p1, p2), (caracteristicas['Ncompasso'][p1], caracteristicas['Pcompasso'][p1]),(caracteristicas['Ncompasso'][p2-1], caracteristicas['Pcompasso'][p2-1])))
+                                p2 += 1
+                            p1 += 1
+    return dicio
 
 #Recorrências sem contidos e intercalados
 def sort_recorrencias(dicio):
