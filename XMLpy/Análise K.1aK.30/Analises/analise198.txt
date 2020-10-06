@@ -1,0 +1,6 @@
+1 .    ('nomes', 'K.1 Musicalion') 
+
+2 .    ('quantidade', 1) 
+
+3 .    ('analise', 'sequências IntDiaDurPcompasso sem contidos e intercalados') 
+

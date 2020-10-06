@@ -1,0 +1,6 @@
+1 .    ('nomes', 'K.347 Corrigida por mim') 
+
+2 .    ('quantidade', 1) 
+
+3 .    ('analise', 'sequências IntDiaDurPcompasso sem contidos e intercalados') 
+
