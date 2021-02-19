@@ -1,7 +1,7 @@
 import dirEinp as f_d
 import xmldict as f_xd
-import analises2 as f_a
-import timeit
+import algoritmonovo as f_a
+
 
 #pede diretorio do usuário e cria pastas e caminhos que vão ser usados
 extensoes = ['.xml','.mxl']
@@ -32,18 +32,66 @@ print()
 #cria resgata ou atualiza tamanho minimo necessário para pegar todas as recorrencias
 #no conjunto de músicas
 if len(caminhosconverter) > 0:
-    tamanho = f_a.tam_min(caminhosdict)
-    f_d.escreve_pickle(diA,tamanho, '_tamanho_', trunca=True)
+    TamMax = False
 else:
     try:
-        tamanho = f_d.le_pickle(diA+'\\_tamanho_.p')
+        TamMax = f_d.le_pickle(diA+'\\_tamanho_.p')
     except FileNotFoundError:
-        tamanho = f_a.tam_min(caminhosdict, tamanho=50)
-        f_d.escreve_pickle(diA,tamanho, '_tamanho_')
+        TamMax = False
+
+LocalizacoesCaracteristicas = [('Ncompasso', 'p1'), ('Pcompasso', 'p1'), ('Ncompasso', 'p2'), ('Pcompasso', 'p2')]
+"""
+SegmentosCaracteristicas = [('intDia', 'p1p2')]
+SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2')]
+SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ptempo', 'p1')]
+SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1'), ('Ptempo', 'p1')]
+SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ptempo', 'p1p2')]
+SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1p2'), ('Ptempo', 'p1p2')]
+"""
+
+# Segmentacao IntDia
+SegmentosCaracteristicas = [('intDia', 'p1p2')]
+segmentacao = f_a.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, TamMax, diA)
+
+iguaiouigualemaior = '=='
+for quantidade in range(1,len(caminhosdict)):
+    print(f'{iguaiouigualemaior} a {quantidade} de {len(caminhosdict)}')
+    emquantidade = f_a.porquantidade(segmentacao, quantidade, iguaiouigualemaior)
+    if emquantidade == None:
+        break
+
+    emquantidadeSemCont = f_a.sem_cont(emquantidade)
+    nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
+    parametros = {'nomes': f_d.caminho_nome(caminho, ['.p'])}
+    parametros.setdefault('quantidade', len([caminho]))
+    parametros.setdefault('analise', f'{SegmentosCaracteristicas} {iguaiouigualemaior} {quantidade} SemCont')
+    f_d.escreve_txt(diA, parametros, nomeanalise)
+    f_d.escreve_txt(diA, {x:y for x,y in rec}, nomeanalise)
+
+    emquantidadeSemContInter = f_a.sem_cont_inter(emquantidade)
+    nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
+    parametros = {'nomes': f_d.caminho_nome(caminho, ['.p'])}
+    parametros.setdefault('quantidade', len([caminho]))
+    parametros.setdefault('analise', f'{SegmentosCaracteristicas} {iguaiouigualemaior} {quantidade} SemContInter')
+    f_d.escreve_txt(diA, parametros, nomeanalise)
+    f_d.escreve_txt(diA, {x:y for x,y in rec}, nomeanalise)
+
+"""
+iguaiouigualemaior = '>='
+for quantidade in range(1,len(caminhosdict)):
+    print(f'{iguaiouigualemaior} a {quantidade} de {len(caminhosdict)}')
+    emquantidade = f_a.porquantidade(segmentacao, quantidade, iguaiouigualemaior)
+    if emquantidade == None:
+        break
+    emquantidadeSemCont = f_a.sem_cont(emquantidade)
+    emquantidadeSemContInter = f_a.sem_cont_inter(emquantidade)
+"""
+
+"""
 
 for caminho in caminhosdict:
 
-    """
+    
     segIntDiaDur = f_a.segmentacao_IntDia_Dur([caminho], tamanho=tamanho)
 
     rec = f_a.sort_recorrencias(segIntDiaDur)
@@ -87,7 +135,7 @@ for caminho in caminhosdict:
     f_d.escreve_txt(diA, {x:y for x,y in rec}, nomeanalise)
 
     del segIntDiaDurPtempo
-    """
+    
     segIntDiaDurPcompasso = f_a.segmentacao_IntDia_Dur_Pcompasso([caminho], tamanho=tamanho)
 
     rec = f_a.sort_recorrencias(segIntDiaDurPcompasso)
@@ -110,7 +158,6 @@ for caminho in caminhosdict:
 
     del segIntDiaDurPcompasso
 
-"""
 segIntDiaDur = f_a.segmentacao_IntDia_Dur(caminhosdict, tamanho=tamanho)
 recIntDiaDur = f_a.sort_recorrencias(segIntDiaDur)
 seqIntDiaDur = f_a.sorts_sequencias(segIntDiaDur)
@@ -171,27 +218,6 @@ for quantidade in range(1,len(caminhosdict)):
     f_d.escreve_txt(diA, {x:y for x,y in rec}, nomeanalise)
 del recIntDiaDur, seqIntDiaDur
 
-segIntDiaDurPtempo = f_a.segmentacao_IntDia_Dur_Ptempo(caminhosdict, tamanho=tamanho)
-recIntDiaDurPtempo = f_a.sort_recorrencias(segIntDiaDurPtempo)
-SeqIntDiaDurPtempo = f_a.sorts_sequencias(segIntDiaDurPtempo)
-del segIntDiaDurPtempo
-
-rec = f_a.sem_cont_inter(recIntDiaDurPtempo)
-nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
-parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
-parametros.setdefault('quantidade', len(caminhosdict))
-parametros.setdefault('analise', f'recorrências IntDiaDurPtempo sem cont e inter em tudo')
-f_d.escreve_txt(diA, parametros, nomeanalise)
-f_d.escreve_txt(diA, {x:y for x,y in rec}, nomeanalise)
-
-rec = f_a.sem_cont_inter_seq(SeqIntDiaDurPtempo)
-nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
-parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
-parametros.setdefault('quantidade', len(caminhosdict))
-parametros.setdefault('analise', f'sequências IntDiaDurPtempo sem cont e inter em tudo')
-f_d.escreve_txt(diA, parametros, nomeanalise)
-f_d.escreve_txt(diA, {x:y for x,y in rec}, nomeanalise)
-
 for quantidade in range(1,len(caminhosdict)):
     print(f'rec em {quantidade}')
     rec = []
@@ -230,29 +256,6 @@ for quantidade in range(1,len(caminhosdict)):
     f_d.escreve_txt(diA, parametros, nomeanalise)
     f_d.escreve_txt(diA, {x:y for x,y in rec}, nomeanalise)
 
-"""
-
-segIntDiaDurPcompasso = f_a.segmentacao_IntDia_Dur_Pcompasso(caminhosdict, tamanho=tamanho)
-recIntDiaDurPcompasso = f_a.sort_recorrencias(segIntDiaDurPcompasso)
-SeqIntDiaDurPcompasso = f_a.sorts_sequencias(segIntDiaDurPcompasso)
-del segIntDiaDurPcompasso
-
-rec = f_a.sem_cont_inter(recIntDiaDurPcompasso)
-nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
-parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
-parametros.setdefault('quantidade', len(caminhosdict))
-parametros.setdefault('analise', f'recorrências IntDiaDurPcompasso sem cont e inter em tudo')
-f_d.escreve_txt(diA, parametros, nomeanalise)
-f_d.escreve_txt(diA, {x:y for x,y in rec}, nomeanalise)
-
-rec = f_a.sem_cont_inter_seq(SeqIntDiaDurPcompasso)
-nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
-parametros = {'nomes': [f_d.caminho_nome(caminho, ['.p']) for caminho in caminhosdict]}
-parametros.setdefault('quantidade', len(caminhosdict))
-parametros.setdefault('analise', f'sequências IntDiaDurPcompasso sem cont e inter em tudo')
-f_d.escreve_txt(diA, parametros, nomeanalise)
-f_d.escreve_txt(diA, {x:y for x,y in rec}, nomeanalise)
-
 for quantidade in range(1,len(caminhosdict)):
     print(f'rec em {quantidade}')
     rec = []
@@ -290,3 +293,5 @@ for quantidade in range(1,len(caminhosdict)):
     parametros.setdefault('analise', f'sequências IntDiaDurPcompasso sem cont e inter, int e dur de tamanhomax {tamanho}, que acontecem em {quantidade} músicas do conjunto')
     f_d.escreve_txt(diA, parametros, nomeanalise)
     f_d.escreve_txt(diA, {x:y for x,y in rec}, nomeanalise)
+
+"""
