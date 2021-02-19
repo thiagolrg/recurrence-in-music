@@ -205,3 +205,75 @@ def ord_tamSegQantLoc(parametrosanalise, parametros=str()):
     if parametros == str():    
         parametros = 's'
     return (funcao_,parametros)
+
+#Sequencias sem contidos e intecalados
+#Antigo e muito provavelmente precisa de ser refeito para funcionar, foi pouco testado
+def sorts_sequencias(dicio):
+    seq = sort_sequencias(dicio)
+    seq = so_seq(seq)
+    seq = sortsoseq(seq)
+    return seq
+
+def sort_sequencias(dicio):
+    return sorted([(c, v) for c, v in dicio.items() if len(v) > 1 and len(c[0]) > 1], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)    
+
+def so_seq(listarecorrencias):
+    soseq = []
+    for segmento, posicoes in listarecorrencias:
+        posicoesseq = seq(posicoes)
+        if len(posicoesseq) > 1:
+            soseq.append((segmento,posicoesseq))
+    return soseq
+
+def seq(posicoes):
+    posicoesseq = []
+    p = 0
+    while p+1 < len(posicoes):
+        if posicoes[p+1][3][0] - posicoes[p][3][1] == 1 and posicoes[p+1][0:3] == posicoes[p][0:3]:
+            s1 = p
+            while posicoes[p+1][3][0] - posicoes[p][3][1] == 1 and posicoes[p+1][0:3] == posicoes[p][0:3]:
+                p = p+1
+                if p == len(posicoes)-1:
+                    break
+            s2 = p+1
+            posicoesseq.append(posicoes[s1:s2])
+        p = p+1
+    return posicoesseq
+
+def sortsoseq(listarecorrencias):
+    listasort = []
+    for segmento, posicoes in listarecorrencias:
+        for posicao in posicoes:
+            tamanhoseq = posicao[-1][3][1] - posicao[0][3][0]
+            listasort.append((segmento,posicoes,tamanhoseq))
+    listasort = sorted(listasort, key= lambda x: x[2], reverse=True)
+    listasort = [(s,p) for s,p,t in listasort]
+    return listasort
+
+def sem_cont_inter_seq(listarecorrencias):
+    semcontinter = []
+    quepassaram = []
+    for segmento, posicoes in listarecorrencias:
+        posicoessegmento = []
+        for posicao in posicoes:
+            if not intercalada_seq(posicoessegmento, posicao) and not intercalada_seq(quepassaram, posicao) and not contida_seq(quepassaram, posicao):
+                posicoessegmento.append(posicao)
+        if len(posicoessegmento) > 0:
+            for v in posicoessegmento:
+                quepassaram.append(v)
+            semcontinter.append((segmento,posicoessegmento))
+    return semcontinter
+
+def contida_seq(listaposicoes, posicao):
+    for outra in listaposicoes:
+        if posicao[0][0:3] == outra[0][0:3] and posicao[0][3][0] >= outra[0][3][0] and posicao[-1][3][1] <= outra[-1][3][1]:
+            return True
+    return False
+
+def intercalada_seq(listaposicoes, posicao):
+    for outra in listaposicoes:
+        if posicao[0][0:3] == outra[0][0:3] and posicao[0][3][0] > outra[0][3][0] and posicao[0][3][0] < outra[-1][3][1] and posicao[-1][3][1] > outra[-1][3][1]:
+            return True
+        if posicao[0][0:3] == outra[0][0:3] and posicao[-1][3][1] > outra[0][3][0] and posicao[-1][3][1] < outra[0][3][1] and posicao[0][3][0] < outra[0][3][0]:
+            return True
+    return False
