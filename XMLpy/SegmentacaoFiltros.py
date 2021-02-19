@@ -88,7 +88,9 @@ def sort_recorrencias(segmentacao):
     return sorted([(c, v) for c, v in segmentacao], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)
 
 def contido(maior, menor):
-    if maior[0:3] == menor[0:3] and menor[3][0] >= maior[3][0] and menor[3][1] <= maior[3][1]:
+    if maior[0:3] == menor[0:3] and menor[3][0] > maior[3][0] and menor[3][1] <= maior[3][1]:
+        return True
+    if maior[0:3] == menor[0:3] and menor[3][0] >= maior[3][0] and menor[3][1] < maior[3][1]:
         return True
     return False
 
@@ -98,48 +100,49 @@ def intercalado(antes, depois, distancia=0):
     return False
 
 def Sem_Cont_Inte(listarecorrencias, SemCont=True, SemInte=True):
+    listarecorrencias = sort_recorrencias(listarecorrencias)
     print(f'SemCont: {SemCont}, SemInte: {SemInte}')
     listarecorrencias = sort_recorrencias(listarecorrencias)
-    leninicial = len(listarecorrencias)
-    print(f'\rquantidade de segmentos: {leninicial}',end='')
+    print(f'\rquantidade de segmentos: {len(listarecorrencias)} ')
+
     SegIni = 0
     LocIni = 0
     SegComp = SegIni
     LocComp = LocIni + 1
+
     while SegIni < len(listarecorrencias):
-        while LocIni < len(listarecorrencias[SegIni][1]):
-            Ini = listarecorrencias[SegIni][1][LocIni]
+        nomesSegIni = set()
+        for v in listarecorrencias[SegComp][1]:
+            nomesSegIni.add(v[0:3])
+        while SegComp < len(listarecorrencias):
+            nomesSegComp = set()
+            for v in listarecorrencias[SegComp][1]:
+                nomesSegComp.add(v[0:3])
 
-            while SegComp < len(listarecorrencias):
-                while LocComp < len(listarecorrencias[SegComp][1]):
-                    Comp = listarecorrencias[SegComp][1][LocComp]
-
-                    if SemCont and contido(Ini, Comp):
-                        listarecorrencias[SegComp][1].pop(LocComp)
-                        LocComp -= 1
-                    elif SemInte and (intercalado(Ini, Comp) or intercalado(Comp, Ini)):
-                        listarecorrencias[SegComp][1].pop(LocComp)
-                        LocComp -= 1
-                    LocComp += 1
-
+            if nomesSegIni.issubset(nomesSegComp):
+                while LocIni < len(listarecorrencias[SegIni][1]):
+                    Ini = listarecorrencias[SegIni][1][LocIni]
+                    while LocComp < len(listarecorrencias[SegComp][1]):
+                        Comp = listarecorrencias[SegComp][1][LocComp]
+                        if SemCont and contido(Ini, Comp):
+                            listarecorrencias[SegComp][1].pop(LocComp)
+                            LocComp -= 1
+                        elif SemInte and (intercalado(Ini, Comp) or intercalado(Comp, Ini)):
+                            listarecorrencias[SegComp][1].pop(LocComp)
+                            LocComp -= 1
+                        LocComp += 1
+                    LocIni += 1
+                    LocComp = 0
                 if len(listarecorrencias[SegComp][1]) <= 1:
                     listarecorrencias.pop(SegComp)
                     SegComp -= 1
-                SegComp += 1
-                LocComp = 0
-
-            SegComp = SegIni
-            LocIni += 1
-            LocComp = LocIni + 1
+            SegComp += 1
+            LocIni = 0
 
         SegIni += 1
         SegComp = SegIni
-        LocIni = 0
         LocComp = LocIni + 1
-        lenatual = len(listarecorrencias)
-        if lenatual < leninicial:
-            print(f'\rquantidade de segmentos: {lenatual}',end='')
-            leninicial = lenatual
+        print(f'\rquantidade de segmentos: {len(listarecorrencias)} ',end='')
     print()
     return listarecorrencias
 

@@ -2,6 +2,7 @@ import dirEinp as f_d
 import xmldict as f_xd
 import SegmentacaoFiltros as f_sf
 from collections import defaultdict
+import copy
 
 #pede diretorio do usuário e cria pastas e caminhos que vão ser usados
 extensoes = ['.xml','.mxl']
@@ -38,14 +39,14 @@ SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ptempo', 
 SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1p2'), ('Ptempo', 'p1p2')]
 """
 
+#verificar se a quantidade mantém depois de Sem_Cont_Inte
 def quantidades(segmentacao, SegmentosCaracteristicas, caminhosdict, diA, nomes, iguaiouigualemaior='=='):
     for quantidade in range(1,len(caminhosdict)):
-        print(f'{iguaiouigualemaior} a {quantidade} de {len(caminhosdict)}')
+        print(f'{iguaiouigualemaior} a {quantidade} de {len(caminhosdict)} ')
         emquantidade = f_sf.porquantidade(segmentacao, quantidade, iguaiouigualemaior)
         if emquantidade == None:
             break
-
-        emquantidadeSemCont = f_sf.Sem_Cont_Inte(emquantidade, SemInte=False)
+        emquantidadeSemCont = f_sf.Sem_Cont_Inte(copy.deepcopy(emquantidade), SemInte=False)
         nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
         parametros = {'nomes': nomes}
         parametros.setdefault('quantidade', len(nomes))
@@ -53,7 +54,7 @@ def quantidades(segmentacao, SegmentosCaracteristicas, caminhosdict, diA, nomes,
         f_d.escreve_txt(diA, parametros, nomeanalise)
         f_d.escreve_txt(diA, {x:y for x,y in emquantidadeSemCont}, nomeanalise)
 
-        emquantidadeSemContInter = f_sf.Sem_Cont_Inte(emquantidade)
+        emquantidadeSemContInter = f_sf.Sem_Cont_Inte(copy.deepcopy(emquantidade))
         nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
         parametros = {'nomes': nomes}
         parametros.setdefault('quantidade', len(nomes))
@@ -64,7 +65,7 @@ def quantidades(segmentacao, SegmentosCaracteristicas, caminhosdict, diA, nomes,
     return None
 
 def emumasozinha(segmentacao, diA, caminho, SegmentosCaracteristicas):
-    segmentacaoSemCont = f_sf.Sem_Cont_Inte(segmentacao, SemInte=False)
+    segmentacaoSemCont = f_sf.Sem_Cont_Inte(copy.deepcopy(segmentacao), SemInte=False)
     nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
     parametros = {'nomes': f_d.caminho_nome(caminho, ['.p'])}
     parametros.setdefault('quantidade', 1)
@@ -72,7 +73,7 @@ def emumasozinha(segmentacao, diA, caminho, SegmentosCaracteristicas):
     f_d.escreve_txt(diA, parametros, nomeanalise)
     f_d.escreve_txt(diA, {x:y for x,y in segmentacaoSemCont}, nomeanalise)
 
-    segmentacaoSemCont = f_sf.Sem_Cont_Inte(segmentacao)
+    segmentacaoSemCont = f_sf.Sem_Cont_Inte(copy.deepcopy(segmentacao))
     nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
     parametros = {'nomes': f_d.caminho_nome(caminho, ['.p'])}
     parametros.setdefault('quantidade', 1 )
