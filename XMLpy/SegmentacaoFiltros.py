@@ -55,7 +55,7 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
                     print([nome, parte, voz, 'IntDia', len(caracteristicas["intDia"])])
 
     start = time.perf_counter()
-    print(f'\ncaracteristicas: {SegmentosCaracteristicas}')
+    print(f'caracteristicas: {SegmentosCaracteristicas}')
     nomes = tuple([f_d.caminho_nome(x, ['.p']) for x in caminhosdict])
     try:
         tamanhos = f_d.le_pickle(diA+'\\_tamanhos_.p')
@@ -94,7 +94,7 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
             for seg, loc in sorecorrencias:
                 QSRr = QSRr + len(loc)
             
-            print(f'\nQuaSegRep: {QSR}')
+            print(f'QuaSegRep: {QSR}')
             print(f'QuaSegUnicos: {QSU}')
             print(f'QuaSegRepRec: {QSRr}')
             print(f'QuaSegUnicosRec: {QSUr}')
@@ -121,7 +121,7 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
     for seg, loc in sorecorrencias:
         QSRr = QSRr + len(loc)
 
-    print(f'\nQuaSegRep: {QSR}')        
+    print(f'QuaSegRep: {QSR}')        
     print(f'QuaSegUnicos: {QSU}')
     print(f'QuaSegRepRec: {QSRr}')
     print(f'QuaSegUnicosRec: {QSUr}')
@@ -169,16 +169,16 @@ def sem_cont(listarecorrencias):
     print()
     return semcont
 
-def sem_cont_inte(listarecorrencias):
+def sem_cont_inte(listarecorrencias, distancia=0):
     listarecorrencias = sort_recorrencias(listarecorrencias)
     start = time.perf_counter()
-    print(f'sem cont inte:\nquantidade de segmentos: {len(listarecorrencias)}')
+    print(f'sem cont inte distancia: {distancia}\nquantidade de segmentos: {len(listarecorrencias)}')
     semcontinte = []
     quepassaram = []
     for segmento, posicoes in listarecorrencias:
         posicoessegmento = []
         for posicao in posicoes:
-            if not intercalada(posicoessegmento, posicao) and not intercalada(quepassaram, posicao) and not contida(quepassaram, posicao):
+            if not intercalada(posicoessegmento, posicao, distancia=distancia) and not intercalada(quepassaram, posicao, distancia=distancia) and not contida(quepassaram, posicao):
                 posicoessegmento.append(posicao)
         if len(posicoessegmento) > 1:
             for v in posicoessegmento:
