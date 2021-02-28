@@ -1,5 +1,6 @@
 from collections import defaultdict
 import dirEinp as f_d
+import time
 
 #Segmentação
 def Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho):
@@ -43,7 +44,18 @@ def Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, cami
     return SegmentosLocalizacoes
 
 def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA, SegmentosLocalizacoes, tam=1):
-    print(f'caracteristicas: {SegmentosCaracteristicas}')
+    print('segmentacao:')
+    print('lTV:')
+    for caminho in caminhosdict:
+        musD = f_d.le_pickle(caminho)
+        nome = musD.pop('nome')
+        for parte in musD:
+            for voz, caracteristicas in musD[parte].items():
+                if 'intDia' in caracteristicas:
+                    print([nome, parte, voz, 'IntDia', len(caracteristicas["intDia"])])
+
+    start = time.perf_counter()
+    print(f'\ncaracteristicas: {SegmentosCaracteristicas}')
     nomes = tuple([f_d.caminho_nome(x, ['.p']) for x in caminhosdict])
     try:
         tamanhos = f_d.le_pickle(diA+'\\_tamanhos_.p')
@@ -65,12 +77,29 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
                 if len(localizacoes) > 1:
                     SegmentosLocalizacoes.update(SegmentosDoTam)
                     return verificandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho+1)
-            TamMax = tamanho
-            print(f'\nsalvando tamanho máximo: {TamMax}')
+            TamMax = tamanho-1
             tamanhos.setdefault((nomes,tuple(SegmentosCaracteristicas)),TamMax)
             f_d.escreve_pickle(diA,tamanhos, '_tamanhos_', trunca=True)
+            print(f'\ntamanho máximo salvo: {TamMax}')
             sorecorrencias = [(c, v) for c, v in SegmentosLocalizacoes.items() if len(v) > 1]
-            print(f'quantidade de segmentos: {len(sorecorrencias)}\n')
+            stop = time.perf_counter()
+
+            QSU = len(SegmentosLocalizacoes)
+            QSR = 0
+            for seg, loc in SegmentosLocalizacoes.items():
+                QSR = QSR + len(loc)
+
+            QSUr = len(sorecorrencias)
+            QSRr = 0
+            for seg, loc in sorecorrencias:
+                QSRr = QSRr + len(loc)
+            
+            print(f'\nQuaSegRep: {QSR}')
+            print(f'QuaSegUnicos: {QSU}')
+            print(f'QuaSegRepRec: {QSRr}')
+            print(f'QuaSegUnicosRec: {QSUr}')
+            print(f'{stop-start} segundos\n')
+
             return sorecorrencias
         return verificandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict)
 
@@ -80,71 +109,86 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
         SegmentosDoTam = Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho=tam)
         SegmentosLocalizacoes.update(SegmentosDoTam)
     sorecorrencias = [(c, v) for c, v in SegmentosLocalizacoes.items() if len(v) > 1]
-    print(f'\nquantidade de segmentos: {len(sorecorrencias)}\n')
+    stop = time.perf_counter()
+
+    QSU = len(SegmentosLocalizacoes)
+    QSR = 0
+    for seg, loc in SegmentosLocalizacoes.items():
+        QSR = QSR + len(loc)
+
+    QSUr = len(sorecorrencias)
+    QSRr = 0
+    for seg, loc in sorecorrencias:
+        QSRr = QSRr + len(loc)
+
+    print(f'\nQuaSegRep: {QSR}')        
+    print(f'QuaSegUnicos: {QSU}')
+    print(f'QuaSegRepRec: {QSRr}')
+    print(f'QuaSegUnicosRec: {QSUr}')
+    print(f'{stop-start} segundos\n')
     return sorecorrencias
+
+
 
 #Recorrências sem contidos e intercalados
 def sort_recorrencias(segmentacao):
     return sorted([(c, v) for c, v in segmentacao], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)
 
-def contido(maior, menor):
-    if maior[0:3] == menor[0:3] and menor[3][0] > maior[3][0] and menor[3][1] <= maior[3][1]:
-        return True
-    if maior[0:3] == menor[0:3] and menor[3][0] >= maior[3][0] and menor[3][1] < maior[3][1]:
-        return True
+def contida(listaposicoes, posicao):
+    for outra in listaposicoes:
+        if posicao[0:3] == outra[0:3] and posicao[3][0] >= outra[3][0] and posicao[3][1] <= outra[3][1]:
+            return True
     return False
 
-def intercalado(antes, depois, distancia=0):
-    if antes[0:3] == depois[0:3] and depois[3][0] > antes[3][0] and depois[3][0] < antes[3][1]+distancia and depois[3][1] > antes[3][1]:
-        return True
+def intercalada(listaposicoes, posicao, distancia=0):
+    for outra in listaposicoes:
+        if posicao[0:3] == outra[0:3] and posicao[3][0] > outra[3][0] and posicao[3][0] < outra[3][1]+distancia and posicao[3][1] > outra[3][1]:
+            return True
+        if posicao[0:3] == outra[0:3] and posicao[3][1] > outra[3][0]-distancia and posicao[3][1] < outra[3][1] and posicao[3][0] < outra[3][0]:
+            return True
     return False
 
-def Sem_Cont_Inte(listarecorrencias, SemCont=True, SemInte=True):
+def sem_cont(listarecorrencias):
     listarecorrencias = sort_recorrencias(listarecorrencias)
-    print(f'SemCont: {SemCont}, SemInte: {SemInte}')
-    listarecorrencias = sort_recorrencias(listarecorrencias)
-    print(f'\rquantidade de segmentos: {len(listarecorrencias)} ')
-
-    SegIni = 0
-    LocIni = 0
-    SegComp = SegIni
-    LocComp = LocIni + 1
-
-    while SegIni < len(listarecorrencias):
-        nomesSegIni = set()
-        for v in listarecorrencias[SegComp][1]:
-            nomesSegIni.add(v[0:3])
-        while SegComp < len(listarecorrencias):
-            nomesSegComp = set()
-            for v in listarecorrencias[SegComp][1]:
-                nomesSegComp.add(v[0:3])
-
-            if nomesSegIni.issubset(nomesSegComp):
-                while LocIni < len(listarecorrencias[SegIni][1]):
-                    Ini = listarecorrencias[SegIni][1][LocIni]
-                    while LocComp < len(listarecorrencias[SegComp][1]):
-                        Comp = listarecorrencias[SegComp][1][LocComp]
-                        if SemCont and contido(Ini, Comp):
-                            listarecorrencias[SegComp][1].pop(LocComp)
-                            LocComp -= 1
-                        elif SemInte and (intercalado(Ini, Comp) or intercalado(Comp, Ini)):
-                            listarecorrencias[SegComp][1].pop(LocComp)
-                            LocComp -= 1
-                        LocComp += 1
-                    LocIni += 1
-                    LocComp = 0
-                if len(listarecorrencias[SegComp][1]) <= 1:
-                    listarecorrencias.pop(SegComp)
-                    SegComp -= 1
-            SegComp += 1
-            LocIni = 0
-
-        SegIni += 1
-        SegComp = SegIni
-        LocComp = LocIni + 1
-        print(f'\rquantidade de segmentos: {len(listarecorrencias)} ',end='')
+    start = time.perf_counter()
+    print(f'sem cont:\nquantidade de segmentos: {len(listarecorrencias)}')
+    semcont = []
+    quepassaram = []
+    for segmento, posicoes in listarecorrencias:
+        posicoessegmento = []
+        for posicao in posicoes:
+            if not contida(quepassaram, posicao):
+                posicoessegmento.append(posicao)
+        if len(posicoessegmento) > 1:
+            for v in posicoessegmento:
+                quepassaram.append(v)
+            semcont.append((segmento,posicoessegmento))
+            print(f'\rquantidade de segmentos: {len(semcont)} ', end='')
+    stop = time.perf_counter()
+    print(f'\n{stop-start} segundos')
     print()
-    return listarecorrencias
+    return semcont
+
+def sem_cont_inte(listarecorrencias):
+    listarecorrencias = sort_recorrencias(listarecorrencias)
+    start = time.perf_counter()
+    print(f'sem cont inte:\nquantidade de segmentos: {len(listarecorrencias)}')
+    semcontinte = []
+    quepassaram = []
+    for segmento, posicoes in listarecorrencias:
+        posicoessegmento = []
+        for posicao in posicoes:
+            if not intercalada(posicoessegmento, posicao) and not intercalada(quepassaram, posicao) and not contida(quepassaram, posicao):
+                posicoessegmento.append(posicao)
+        if len(posicoessegmento) > 1:
+            for v in posicoessegmento:
+                quepassaram.append(v)
+            semcontinte.append((segmento,posicoessegmento))
+            print(f'\rquantidade de segmentos: {len(semcontinte)} ', end='')
+        stop = time.perf_counter()
+    print(f'\n{stop-start} segundos')
+    print()
+    return semcontinte
 
 #Por Quantidade
 def porquantidade(segmentacao, quantidade, iguaiouigualemaior):
