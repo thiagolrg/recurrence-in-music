@@ -45,6 +45,7 @@ def Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, cami
 
 def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA, SegmentosLocalizacoes, tam=1):
     print('segmentacao:')
+    """
     print('lTV:')
     for caminho in caminhosdict:
         musD = f_d.le_pickle(caminho)
@@ -53,7 +54,7 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
             for voz, caracteristicas in musD[parte].items():
                 if 'intDia' in caracteristicas:
                     print([nome, parte, voz, 'IntDia', len(caracteristicas["intDia"])])
-
+    """
     start = time.perf_counter()
     print(f'caracteristicas: {SegmentosCaracteristicas}')
     nomes = tuple([f_d.caminho_nome(x, ['.p']) for x in caminhosdict])
@@ -178,14 +179,14 @@ def sem_cont_inte(listarecorrencias, distancia=0):
     for segmento, posicoes in listarecorrencias:
         posicoessegmento = []
         for posicao in posicoes:
-            if not intercalada(posicoessegmento, posicao, distancia=distancia) and not intercalada(quepassaram, posicao, distancia=distancia) and not contida(quepassaram, posicao):
+            if not contida(quepassaram, posicao) and not intercalada(posicoessegmento, posicao, distancia=distancia) and not intercalada(quepassaram, posicao, distancia=distancia):
                 posicoessegmento.append(posicao)
         if len(posicoessegmento) > 1:
             for v in posicoessegmento:
                 quepassaram.append(v)
             semcontinte.append((segmento,posicoessegmento))
             print(f'\rquantidade de segmentos: {len(semcontinte)} ', end='')
-        stop = time.perf_counter()
+    stop = time.perf_counter()
     print(f'\n{stop-start} segundos')
     print()
     return semcontinte
@@ -201,5 +202,4 @@ def porquantidade(segmentacao, quantidade, iguaiouigualemaior):
             quepassaram.append(item)
         elif iguaiouigualemaior == '>=' and len(nomes) >= quantidade:
             quepassaram.append(item)
-    if len(quepassaram) > 0:
-        return quepassaram
+    return quepassaram
