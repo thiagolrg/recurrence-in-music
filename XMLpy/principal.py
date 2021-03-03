@@ -15,21 +15,25 @@ f_d.cria_pasta(diA)
 
 #converte xmls que não existem na pasta Dicts e salva usando pickle
 caminhosconverter = f_d.xml_sem_dict(di, extensoes, diD, ['.p'])
+
+t = 0
 for caminho in caminhosconverter:
     nome = f_d.caminho_nome(caminho, extensoes)
     print(f'\rconvertendo {nome}, {caminhosconverter.index(caminho)+1} de {len(caminhosconverter)} '  , end='')
     if '.xml' in caminho:
-        start = time.perf_counter()
         xml = f_d.entrada_xml(caminho)
-        stop = time.perf_counter()
-        print(f'{stop-start} segundos')
     elif '.mxl' in caminho:
         xml = f_d.entrada_mxl(caminho, nome)
+
+    start = time.perf_counter()
     xml = f_xd.ad_counter(xml)
     musDict = f_xd.xml_mus(xml, metronomes=False)
     musDict.setdefault('nome',nome)
+    stop = time.perf_counter()
+    t = t + stop-start
+    print(f'{stop-start} segundos')
     f_d.escreve_pickle(diD, musDict, nome)
-print()
+print(f'{t} segundos\n')
 
 #lista com todos os dicionarios
 caminhosdict = f_d.caminhos_extensoes(diD, ['.p'])
@@ -91,7 +95,6 @@ def emumasozinha(segmentacao, diA, caminho, SegmentosCaracteristicas):
     f_d.escreve_txt(diA, parametros, nomeanalise)
     f_d.escreve_txt(diA, {x:y for x,y in segmentacaoFiltro}, nomeanalise)
     return None
-
 """
 print('por musica:\n')
 for i in range(len(caminhosdict)):
@@ -121,7 +124,7 @@ for i in range(len(caminhosdict)):
     SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1p2'), ('Ptempo', 'p1p2')]
     segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, [caminho], diA, defaultdict(list))
     emumasozinha(segmentacao, diA, caminho,SegmentosCaracteristicas)
-
+"""
 
 print('por quantidade:\n')
 SegmentosCaracteristicas = [('intDia', 'p1p2')]
@@ -129,13 +132,14 @@ segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracterist
 nomes = [f_d.caminho_nome(x, ['.p']) for x in caminhosdict]
 quantidades(segmentacao, SegmentosCaracteristicas, len(caminhosdict), diA, nomes, iguaiouigualemaior='==')
 quantidades(segmentacao, SegmentosCaracteristicas, 1, diA, nomes, iguaiouigualemaior='>=')
-"""
+
 SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2')]
 segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA, defaultdict(list))
+f_d.escreve_pickle(r'XMLpy', segmentacao,'segsalvoteste', trunca=True)
 nomes = [f_d.caminho_nome(x, ['.p']) for x in caminhosdict]
-#quantidades(segmentacao, SegmentosCaracteristicas, len(caminhosdict), diA, nomes, iguaiouigualemaior='==')
+quantidades(segmentacao, SegmentosCaracteristicas, len(caminhosdict), diA, nomes, iguaiouigualemaior='==')
 quantidades(segmentacao, SegmentosCaracteristicas, 1, diA, nomes, iguaiouigualemaior='>=')
-"""
+
 SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ptempo', 'p1')]
 segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA,defaultdict(list))
 nomes = [f_d.caminho_nome(x, ['.p']) for x in caminhosdict]
@@ -159,4 +163,3 @@ segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracterist
 nomes = [f_d.caminho_nome(x, ['.p']) for x in caminhosdict]
 quantidades(segmentacao, SegmentosCaracteristicas, len(caminhosdict), diA, nomes, iguaiouigualemaior='==')
 quantidades(segmentacao, SegmentosCaracteristicas, 1, diA, nomes, iguaiouigualemaior='>=')
-"""

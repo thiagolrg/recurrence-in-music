@@ -44,7 +44,6 @@ def Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, cami
     return SegmentosLocalizacoes
 
 def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA, SegmentosLocalizacoes, tam=1):
-    print('segmentacao:')
     """
     print('lTV:')
     for caminho in caminhosdict:
@@ -55,77 +54,54 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
                 if 'intDia' in caracteristicas:
                     print([nome, parte, voz, 'IntDia', len(caracteristicas["intDia"])])
     """
-    start = time.perf_counter()
-    print(f'caracteristicas: {SegmentosCaracteristicas}')
+    print(f'segmentacao caracteristicas: {SegmentosCaracteristicas}')
     nomes = tuple([f_d.caminho_nome(x, ['.p']) for x in caminhosdict])
+    chavearquivo = (nomes,tuple(SegmentosCaracteristicas))
     try:
-        tamanhos = f_d.le_pickle(diA+'\\_tamanhos_.p')
+        segmentacoes = f_d.le_pickle(diA+'\\_segmentacoes_.p')
         try:
-            TamMax = tamanhos[(nomes,tuple(SegmentosCaracteristicas))]
-        except KeyError:
-            TamMax = False
-    except FileNotFoundError:
-        f_d.escreve_pickle(diA,dict(), '_tamanhos_')
-        tamanhos = f_d.le_pickle(diA+'\\_tamanhos_.p')
-        TamMax = False        
-
-    if TamMax == False:
-        print('verificando tamanho máximo:')
-        def verificandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho=1):
-            print(f'\rgerando segmentos de tamanho: {tamanho}', end='')
-            SegmentosDoTam = Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho)
-            for localizacoes in SegmentosDoTam.values():
-                if len(localizacoes) > 1:
-                    SegmentosLocalizacoes.update(SegmentosDoTam)
-                    return verificandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho+1)
-            TamMax = tamanho-1
-            tamanhos.setdefault((nomes,tuple(SegmentosCaracteristicas)),TamMax)
-            f_d.escreve_pickle(diA,tamanhos, '_tamanhos_', trunca=True)
-            print(f'\ntamanho máximo salvo: {TamMax}')
-            sorecorrencias = [(c, v) for c, v in SegmentosLocalizacoes.items() if len(v) > 1]
-            stop = time.perf_counter()
-
-            QSU = len(SegmentosLocalizacoes)
-            QSR = 0
-            for seg, loc in SegmentosLocalizacoes.items():
-                QSR = QSR + len(loc)
-
+            sorecorrencias = segmentacoes[chavearquivo]
+            print(f'resgatada do arquivo\n')
             QSUr = len(sorecorrencias)
             QSRr = 0
             for seg, loc in sorecorrencias:
                 QSRr = QSRr + len(loc)
-            
-            print(f'QuaSegRep: {QSR}')
-            print(f'QuaSegUnicos: {QSU}')
-            print(f'QuaSegRepRec: {QSRr}')
             print(f'QuaSegUnicosRec: {QSUr}')
-            print(f'{stop-start} segundos\n')
-
+            print(f'QuaSegRepRec: {QSRr}')
             return sorecorrencias
-        return verificandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict)
+        except KeyError:
+            pass
+    except FileNotFoundError:
+        segmentacoes = dict()
+        f_d.escreve_pickle(diA,segmentacoes, '_segmentacoes_')    
 
-    print(f'tamanho máximo armanezado: {TamMax}')
-    for tam in range(1,TamMax+1):
-        print(f'\rgerando segmentos de tamanho: {tam}', end='')
-        SegmentosDoTam = Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho=tam)
-        SegmentosLocalizacoes.update(SegmentosDoTam)
+    def verificandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho=1):
+        print(f'\rgerando segmentos de tamanho: {tamanho}', end='')
+        SegmentosDoTam = Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho)
+        for localizacoes in SegmentosDoTam.values():
+            if len(localizacoes) > 1:
+                SegmentosLocalizacoes.update(SegmentosDoTam)
+                return verificandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho+1)
+        return SegmentosLocalizacoes
+    start = time.perf_counter()
+    SegmentosLocalizacoes = verificandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict)
     sorecorrencias = [(c, v) for c, v in SegmentosLocalizacoes.items() if len(v) > 1]
     stop = time.perf_counter()
+    segmentacoes.setdefault(chavearquivo,sorecorrencias)
+    f_d.escreve_pickle(diA,segmentacoes, '_segmentacoes_', trunca=True)
 
     QSU = len(SegmentosLocalizacoes)
     QSR = 0
     for seg, loc in SegmentosLocalizacoes.items():
         QSR = QSR + len(loc)
-
     QSUr = len(sorecorrencias)
     QSRr = 0
     for seg, loc in sorecorrencias:
         QSRr = QSRr + len(loc)
-
-    print(f'QuaSegRep: {QSR}')        
-    print(f'QuaSegUnicos: {QSU}')
-    print(f'QuaSegRepRec: {QSRr}')
+    print(f'\nQuaSegUnicos: {QSU}')
+    print(f'QuaSegRep: {QSR}')
     print(f'QuaSegUnicosRec: {QSUr}')
+    print(f'QuaSegRepRec: {QSRr}')
     print(f'{stop-start} segundos\n')
     return sorecorrencias
 
@@ -151,8 +127,8 @@ def intercalada(listaposicoes, posicao, distancia=0):
 
 def sem_cont(listarecorrencias):
     listarecorrencias = sort_recorrencias(listarecorrencias)
+    print(f'sem cont:')
     start = time.perf_counter()
-    print(f'sem cont:\nquantidade de segmentos: {len(listarecorrencias)}')
     semcont = []
     quepassaram = []
     for segmento, posicoes in listarecorrencias:
@@ -164,16 +140,20 @@ def sem_cont(listarecorrencias):
             for v in posicoessegmento:
                 quepassaram.append(v)
             semcont.append((segmento,posicoessegmento))
-            print(f'\rquantidade de segmentos: {len(semcont)} ', end='')
+            print(f'\rQuaSegUnicos: {len(semcont)} ', end='')
     stop = time.perf_counter()
-    print(f'\n{stop-start} segundos')
-    print()
+    QSR = 0
+    for SegPos in semcont:
+        for Pos in SegPos[1]:
+            QSR = QSR + len(Pos)
+    print(f'\nQuaSegRep: {QSR}')
+    print(f'{stop-start} segundos\n')
     return semcont
 
 def sem_cont_inte(listarecorrencias, distancia=0):
     listarecorrencias = sort_recorrencias(listarecorrencias)
+    print(f'sem cont inte:')
     start = time.perf_counter()
-    print(f'sem cont inte distancia: {distancia}\nquantidade de segmentos: {len(listarecorrencias)}')
     semcontinte = []
     quepassaram = []
     for segmento, posicoes in listarecorrencias:
@@ -185,10 +165,14 @@ def sem_cont_inte(listarecorrencias, distancia=0):
             for v in posicoessegmento:
                 quepassaram.append(v)
             semcontinte.append((segmento,posicoessegmento))
-            print(f'\rquantidade de segmentos: {len(semcontinte)} ', end='')
+            print(f'\rQuaSegUnicos: {len(semcontinte)} ', end='')
     stop = time.perf_counter()
-    print(f'\n{stop-start} segundos')
-    print()
+    QSR = 0
+    for SegPos in semcontinte:
+        for Pos in SegPos[1]:
+            QSR = QSR + len(Pos)
+    print(f'\nQuaSegRep: {QSR}')
+    print(f'{stop-start} segundos\n')
     return semcontinte
 
 #Por Quantidade
