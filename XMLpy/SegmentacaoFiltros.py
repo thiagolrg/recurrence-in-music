@@ -195,7 +195,7 @@ def sem_cont_inte3(listarecorrencias, distancia=0):
     print(f'{stop-start} segundos\n')
     return listarecorrencias
 
-#Por Quantidade
+#Por Qt
 def porquantidade(segmentacao, quantidade, iguaiouigualemaior):
     quepassaram = []
     for item in segmentacao:
