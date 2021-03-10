@@ -8,8 +8,8 @@ def diretorio_ler(extensoes):
         return diretorio_ler(extensoes)
     else:
         #r=root, d=directoriesinroot, f=filesinroot
-        for r, d, f in os.walk(di):
-            for file in f:
+        for d in os.walk(di):
+            for file in d[2]:
                 for extensao in extensoes:
                     if extensao in file:
                         return di
@@ -26,11 +26,11 @@ def cria_pasta(diretorio):
 def caminhos_extensoes(diretorio, extensoes):
     caminhos = []
     #r=root, d=directoriesinroot, f=filesinroot
-    for r, d, f in os.walk(diretorio):
-        for file in f:
+    for d in os.walk(diretorio):
+        for file in d[2]:
             for extensao in extensoes:
                 if extensao in file:
-                    caminhos.append(os.path.join(r, file))
+                    caminhos.append(os.path.join(d[0], file))
     return caminhos
 
 def caminho_nome(caminho, extensoes):
@@ -86,7 +86,10 @@ def escreve_txt(diretorio, arquivo, nome):
         linha = 0
         for item in arquivo.items():
             linha = linha + 1
-            print(linha,'.   ',item,'\n',file=f)
+            print(f'{linha}.    {item[0]}:',file=f)
+            for val in item[1]:
+                print(val,file=f)
+            print(f'\n',end="",file=f)
     return None
 
 #inputs gerais do usuario
