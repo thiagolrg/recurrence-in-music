@@ -43,88 +43,66 @@ def Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, cami
                         p1 += 1
     return SegmentosLocalizacoes
 
-def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA, SegmentosLocalizacoes, tam=1):
-    print(f'segmentacao caracteristicas: {SegmentosCaracteristicas}')
-
-    #Verfica se a recorrencia já foi 
-    nomes = tuple([f_d.caminho_nome(x, ['.p']) for x in caminhosdict])
-    chavearquivo = (nomes,tuple(SegmentosCaracteristicas))
-    try:
-        segmentacoes = f_d.le_pickle(diA+'\\_segmentacoes_.p')
-        try:
-            sorecorrencias = segmentacoes[chavearquivo]
-            print(f'resgatada do arquivo\n')
-            QSUr = len(sorecorrencias)
-            QSRr = 0
-            for segloc in sorecorrencias:
-                QSRr = QSRr + len(segloc[1])
-            print(f'QuaSegUnicosRec: {QSUr}')
-            print(f'QuaSegRepRec: {QSRr}')
-            return sorecorrencias
-        except KeyError:
-            pass
-    except FileNotFoundError:
-        segmentacoes = dict()
-        f_d.escreve_pickle(diA,segmentacoes, '_segmentacoes_')    
-
-    #Se não foi feita verifica por tamanho
-    def verificandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho=1):
-        print(f'\rgerando segmentos de tamanho: {tamanho}', end='')
-        SegmentosDoTam = Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho)
-        for localizacoes in SegmentosDoTam.values():
-            if len(localizacoes) > 1:
-                SegmentosLocalizacoes.update(SegmentosDoTam)
-                return verificandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho+1)
-        return SegmentosLocalizacoes
-
-    start = time.perf_counter()
-    SegmentosLocalizacoes = verificandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict)
+#Guarda as recorrencias de cada tamanho até não ter recorrências
+def gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, SegmentosLocalizacoes, caminhosdict, tamanho=1):
+    print(f'\rgerando segmentos de tamanho: {tamanho}', end='')
+    SegmentosDoTam = Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho)
+    for localizacoes in SegmentosDoTam.values():
+        if len(localizacoes) > 1:
+            SegmentosLocalizacoes.update(SegmentosDoTam)
+            return gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, SegmentosLocalizacoes, caminhosdict, tamanho+1)
     sorecorrencias = [(c, v) for c, v in SegmentosLocalizacoes.items() if len(v) > 1]
-    stop = time.perf_counter()
-    
-    #Salva o resultado 
-    segmentacoes.setdefault(chavearquivo,sorecorrencias)
-    f_d.escreve_pickle(diA,segmentacoes, '_segmentacoes_', trunca=True)
-
-    #Imprime os dados das recorrencias e tempo de execução
-    QSU = len(SegmentosLocalizacoes)
-    QSR = 0
-    for segloc in SegmentosLocalizacoes.items():
-        QSR = QSR + len(segloc[1])
-    QSUr = len(sorecorrencias)
-    QSRr = 0
-    for segloc in sorecorrencias:
-        QSRr = QSRr + len(segloc[1])
-    print(f'\nQuaSegUnicos: {QSU}')
-    print(f'QuaSegRep: {QSR}')
-    print(f'QuaSegUnicosRec: {QSUr}')
-    print(f'QuaSegRepRec: {QSRr}')
-    print(f'{stop-start} segundos\n')
+    print()
     return sorecorrencias
 
+#Verifica se as recorrências já foram feitas para o repertorio e caracteristicas especificadas
+def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA, tam=1):
+    print(f'segmentacao caracteristicas: {SegmentosCaracteristicas}')
+    nomes = tuple([f_d.caminho_nome(x, ['.p']) for x in caminhosdict])
+    chavearquivo = (nomes,tuple(SegmentosCaracteristicas))
+    segmentacoes = dict()
+    try:
+        segmentacoes = f_d.le_pickle(diA+'\\_segmentacoes_.p')
+        sorecorrencias = segmentacoes[chavearquivo]
+        print(f'resgatada do arquivo:\n')
+        dadosseg(sorecorrencias)
+        return sorecorrencias
+    except (FileNotFoundError, KeyError):
+        start = time.perf_counter()
+        sorecorrencias = gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, defaultdict(list), caminhosdict)
+        print(time.perf_counter()-start)
+        segmentacoes.setdefault(chavearquivo,sorecorrencias)
+        f_d.escreve_pickle(diA,segmentacoes, '_segmentacoes_', trunca=True)
+        dadosseg(sorecorrencias)
+        return sorecorrencias
+
+def dadosseg(sorecorrencias):
+    QSeg = len(sorecorrencias)
+    QLoc = 0
+    for segloc in sorecorrencias:
+        QLoc = QLoc + len(segloc[1])
+    print(f'QSeg: {QSeg}')
+    print(f'QLoc: {QLoc}')
+
+#__________________________________________________________________
+#Filtros
+
 def sort_continte3(listarecorrencias):
-    print('sort')
+    #recorrencias em organizadas posicao, conjunto e segmentos
     p_pset_pseg = []
     for seg, pos in listarecorrencias:
         posset = {p[0:3] for p in pos}
         for p in pos:
             p_pset_pseg.append((p,tuple(sorted(posset)),seg))
-    #por nome, set, tamanho maior, posicao menor
-    start = time.perf_counter()
+    #por nome, conjunto, tamanho maior, posicao menor
     p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (item[0][3][0]))
-    print(time.perf_counter()-start)
     p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (len(item[2][0])), reverse=True)
-    print(time.perf_counter()-start)
     p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (item[1]))
-    print(time.perf_counter()-start)
     p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (item[0][0:3]))
-    print(time.perf_counter()-start)
     locpset = defaultdict(list)
     for p, pset, pseg in p_pset_pseg:
         locpset[(p[0:3], pset)].append((p,pseg))
     locpset = [(c[1],v) for c, v in locpset.items()]
-    print(time.perf_counter()-start)
-    print()
     return locpset
 
 def contida3(listaposicoes, posicao):
@@ -164,12 +142,7 @@ def sem_cont3(listarecorrencias):
             if tuple(sorted(setv)) == chave[1]:
                 listarecorrenciaspronta.append((chave[0], valor))
     stop = time.perf_counter()
-    print(f'\nQuaSegUnicos: {len(listarecorrenciaspronta)} ', end='')
-    QSR = 0
-    for SegPos in listarecorrencias:
-        for Pos in SegPos[1]:
-            QSR = QSR + len(Pos)
-    print(f'\nQuaSegRep: {QSR}')
+    dadosseg(listarecorrenciaspronta)
     print(f'{stop-start} segundos\n')
     return listarecorrencias
 
@@ -186,7 +159,7 @@ def sem_cont_inte3(listarecorrencias, distancia=0):
                 quepassaram.append(posicao)
         for posicao, segmento in quepassaram:
             dictrecorrencias[(segmento, grupo[0])].append(posicao)
-            print(f'\rQuaSegUnicos: {len(dictrecorrencias)} ', end='')
+            print(f'\rQSeq: {len(dictrecorrencias)} ', end='')
     listarecorrenciaspronta = []
     for chave, valor in dictrecorrencias.items():
         if len(valor) > 1:
@@ -194,12 +167,8 @@ def sem_cont_inte3(listarecorrencias, distancia=0):
             if tuple(sorted(setv)) == chave[1]:
                 listarecorrenciaspronta.append((chave[0], valor))
     stop = time.perf_counter()
-    print(f'\nQuaSegUnicos: {len(listarecorrenciaspronta)} ', end='')
-    QSR = 0
-    for SegPos in listarecorrencias:
-        for Pos in SegPos[1]:
-            QSR = QSR + len(Pos)
-    print(f'\nQuaSegRep: {QSR}')
+    print()
+    dadosseg(listarecorrenciaspronta)
     print(f'{stop-start} segundos\n')
     return listarecorrenciaspronta
 
