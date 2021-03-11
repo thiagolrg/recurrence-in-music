@@ -2,8 +2,11 @@ from collections import defaultdict
 import dirEinp as f_d
 import time
 
+#Segmentação___________________________________________
+
 #essa função é chamada para cada tamanho da segmenatção
-def Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho):
+def segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho):
+    print(f'\rgerando segmentos de tamanho: {tamanho}', end='')
     SegmentosLocalizacoes = defaultdict(list)
     for caminho in caminhosdict:
         musD = f_d.le_pickle(caminho)
@@ -44,19 +47,17 @@ def Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, cami
     return SegmentosLocalizacoes
 
 #Guarda as recorrencias de cada tamanho até não ter recorrências
-def gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, SegmentosLocalizacoes, caminhosdict, tamanho=1):
-    print(f'\rgerando segmentos de tamanho: {tamanho}', end='')
-    SegmentosDoTam = Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho)
+def gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, SegmentosLocalizacoes, caminhosdict, tamanho):
+    SegmentosDoTam = segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho)
     for localizacoes in SegmentosDoTam.values():
         if len(localizacoes) > 1:
             SegmentosLocalizacoes.update(SegmentosDoTam)
             return gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, SegmentosLocalizacoes, caminhosdict, tamanho+1)
     sorecorrencias = [(c, v) for c, v in SegmentosLocalizacoes.items() if len(v) > 1]
-    print()
     return sorecorrencias
 
-#Verifica se as recorrências já foram feitas para o repertorio e caracteristicas especificadas
-def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA, tam=1):
+#Verifica se as recorrências já foram feitas para o repertorio e caracteristicas especificadas, se não, gera
+def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA, tamanho=1):
     print(f'segmentacao caracteristicas: {SegmentosCaracteristicas}')
     nomes = tuple([f_d.caminho_nome(x, ['.p']) for x in caminhosdict])
     chavearquivo = (nomes,tuple(SegmentosCaracteristicas))
@@ -69,8 +70,9 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
         return sorecorrencias
     except (FileNotFoundError, KeyError):
         start = time.perf_counter()
-        sorecorrencias = gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, defaultdict(list), caminhosdict)
-        print(time.perf_counter()-start)
+        sorecorrencias = gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, defaultdict(list), caminhosdict, tamanho)
+        stop = time.perf_counter()
+        print(f'\n{stop-start} segundos')
         segmentacoes.setdefault(chavearquivo,sorecorrencias)
         f_d.escreve_pickle(diA,segmentacoes, '_segmentacoes_', trunca=True)
         dadosseg(sorecorrencias)
@@ -84,8 +86,7 @@ def dadosseg(sorecorrencias):
     print(f'QSeg: {QSeg}')
     print(f'QLoc: {QLoc}')
 
-#__________________________________________________________________
-#Filtros
+#Filtros___________________________________
 
 def sort_continte3(listarecorrencias):
     #recorrencias em organizadas posicao, conjunto e segmentos
