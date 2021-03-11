@@ -53,8 +53,14 @@ def gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, Segme
         if len(localizacoes) > 1:
             SegmentosLocalizacoes.update(SegmentosDoTam)
             return gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, SegmentosLocalizacoes, caminhosdict, tamanho+1)
-    sorecorrencias = [(c, v) for c, v in SegmentosLocalizacoes.items() if len(v) > 1]
-    return sorecorrencias
+    QSeg = len(SegmentosLocalizacoes)
+    QLoc = 0
+    for loc in SegmentosLocalizacoes.values():
+        QLoc = QLoc + len(loc)
+    print(f'\nQSu: {QSeg}')
+    print(f'QS: {QLoc}')
+    SegmentosLocalizacoes = [(c, v) for c, v in SegmentosLocalizacoes.items() if len(v) > 1]
+    return SegmentosLocalizacoes
 
 #Verifica se as recorrências já foram feitas para o repertorio e caracteristicas especificadas, se não, gera
 def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA, tamanho=1):
@@ -65,17 +71,17 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
     try:
         segmentacoes = f_d.le_pickle(diA+'\\_segmentacoes_.p')
         sorecorrencias = segmentacoes[chavearquivo]
-        print(f'resgatada do arquivo:\n')
+        print(f'resgatada do arquivo:')
         dadosseg(sorecorrencias)
         return sorecorrencias
     except (FileNotFoundError, KeyError):
         start = time.perf_counter()
         sorecorrencias = gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, defaultdict(list), caminhosdict, tamanho)
         stop = time.perf_counter()
-        print(f'\n{stop-start} segundos')
         segmentacoes.setdefault(chavearquivo,sorecorrencias)
         f_d.escreve_pickle(diA,segmentacoes, '_segmentacoes_', trunca=True)
         dadosseg(sorecorrencias)
+        print(f'{stop-start} segundos')
         return sorecorrencias
 
 def dadosseg(sorecorrencias):
@@ -83,8 +89,8 @@ def dadosseg(sorecorrencias):
     QLoc = 0
     for segloc in sorecorrencias:
         QLoc = QLoc + len(segloc[1])
-    print(f'QSeg: {QSeg}')
-    print(f'QLoc: {QLoc}')
+    print(f'QSu: {QSeg}')
+    print(f'QS: {QLoc}\n')
 
 #Filtros___________________________________
 
@@ -133,7 +139,7 @@ def sem_cont3(listarecorrencias):
                 quepassaram.append(posicao)
         for posicao, segmento in quepassaram:
             dictrecorrencias[(segmento, grupo[0])].append(posicao)
-            print(f'\rQuaSegUnicos: {len(dictrecorrencias)} ', end='')
+            print(f'\rQSu: {len(dictrecorrencias)} ', end='')
     listarecorrenciaspronta = []
     for chave, valor in dictrecorrencias.items():
         if len(valor) > 1:
@@ -151,7 +157,6 @@ def sem_cont_inte3(listarecorrencias, distancia=0):
     print(f'sem cont inte:')
     start = time.perf_counter()
     listarecorrencias = sort_continte3(listarecorrencias)
-    print(len(listarecorrencias))
     dictrecorrencias = defaultdict(list)
     for grupo in listarecorrencias:
         quepassaram = []
@@ -160,7 +165,7 @@ def sem_cont_inte3(listarecorrencias, distancia=0):
                 quepassaram.append(posicao)
         for posicao, segmento in quepassaram:
             dictrecorrencias[(segmento, grupo[0])].append(posicao)
-            print(f'\rQSeq: {len(dictrecorrencias)} ', end='')
+            print(f'\rQSu: {len(dictrecorrencias)} ', end='')
     listarecorrenciaspronta = []
     for chave, valor in dictrecorrencias.items():
         if len(valor) > 1:

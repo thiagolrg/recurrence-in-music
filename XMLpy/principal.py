@@ -33,7 +33,9 @@ for caminho in caminhosconverter:
     t = t + stop-start
     print(f'{stop-start} segundos')
     f_d.escreve_pickle(diD, musDict, nome)
-print(f'{t} segundos\n')
+if t > 0:
+    print(f'{t} segundos')
+print()
 
 #lista com todos os dicionarios
 caminhosdict = f_d.caminhos_extensoes(diD, ['.p'])
