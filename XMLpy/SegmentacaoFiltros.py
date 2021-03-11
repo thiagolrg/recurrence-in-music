@@ -56,8 +56,8 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
             print(f'resgatada do arquivo\n')
             QSUr = len(sorecorrencias)
             QSRr = 0
-            for seg, loc in sorecorrencias:
-                QSRr = QSRr + len(loc)
+            for segloc in sorecorrencias:
+                QSRr = QSRr + len(segloc[1])
             print(f'QuaSegUnicosRec: {QSUr}')
             print(f'QuaSegRepRec: {QSRr}')
             return sorecorrencias
@@ -89,12 +89,12 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
     #Imprime os dados das recorrencias e tempo de execução
     QSU = len(SegmentosLocalizacoes)
     QSR = 0
-    for seg, loc in SegmentosLocalizacoes.items():
-        QSR = QSR + len(loc)
+    for segloc in SegmentosLocalizacoes.items():
+        QSR = QSR + len(segloc[1])
     QSUr = len(sorecorrencias)
     QSRr = 0
-    for seg, loc in sorecorrencias:
-        QSRr = QSRr + len(loc)
+    for segloc in sorecorrencias:
+        QSRr = QSRr + len(segloc[1])
     print(f'\nQuaSegUnicos: {QSU}')
     print(f'QuaSegRep: {QSR}')
     print(f'QuaSegUnicosRec: {QSUr}')
@@ -103,11 +103,12 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
     return sorecorrencias
 
 def sort_continte3(listarecorrencias):
+    print('sort')
     p_pset_pseg = []
     for seg, pos in listarecorrencias:
         posset = {p[0:3] for p in pos}
         for p in pos:
-            p_pset_pseg.append((p,tuple(posset),seg))
+            p_pset_pseg.append((p,tuple(sorted(posset)),seg))
     #por nome, set, tamanho maior, posicao menor
     start = time.perf_counter()
     p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (item[0][3][0]))
@@ -123,6 +124,7 @@ def sort_continte3(listarecorrencias):
         locpset[(p[0:3], pset)].append((p,pseg))
     locpset = [(c[1],v) for c, v in locpset.items()]
     print(time.perf_counter()-start)
+    print()
     return locpset
 
 def contida3(listaposicoes, posicao):
@@ -159,7 +161,7 @@ def sem_cont3(listarecorrencias):
             setv = set()
             for v in valor:
                 setv.add(v[0:3])
-            if tuple(setv) == chave[1]:
+            if tuple(sorted(setv)) == chave[1]:
                 listarecorrenciaspronta.append((chave[0], valor))
     stop = time.perf_counter()
     print(f'\nQuaSegUnicos: {len(listarecorrenciaspronta)} ', end='')
@@ -185,15 +187,20 @@ def sem_cont_inte3(listarecorrencias, distancia=0):
         for posicao, segmento in quepassaram:
             dictrecorrencias[(segmento, grupo[0])].append(posicao)
             print(f'\rQuaSegUnicos: {len(dictrecorrencias)} ', end='')
-    return dictrecorrencias
-
-def sorec(dictrecorrencias):
     listarecorrenciaspronta = []
     for chave, valor in dictrecorrencias.items():
         if len(valor) > 1:
             setv = {v[0:3] for v in valor}
-            if tuple(setv) == chave[1]:
+            if tuple(sorted(setv)) == chave[1]:
                 listarecorrenciaspronta.append((chave[0], valor))
+    stop = time.perf_counter()
+    print(f'\nQuaSegUnicos: {len(listarecorrenciaspronta)} ', end='')
+    QSR = 0
+    for SegPos in listarecorrencias:
+        for Pos in SegPos[1]:
+            QSR = QSR + len(Pos)
+    print(f'\nQuaSegRep: {QSR}')
+    print(f'{stop-start} segundos\n')
     return listarecorrenciaspronta
 
 #Por Quantidade
