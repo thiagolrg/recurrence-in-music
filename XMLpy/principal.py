@@ -157,8 +157,11 @@ nomes = [f_d.caminho_nome(x, ['.p']) for x in caminhosdict]
 quantidades(segmentacao, SegmentosCaracteristicas, len(caminhosdict), diA, nomes, iguaiouigualemaior='==')
 quantidades(segmentacao, SegmentosCaracteristicas, len(caminhosdict), diA, nomes, iguaiouigualemaior='>=')
 """
+
 SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1p2'), ('Ptempo', 'p1p2')]
 segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA, defaultdict(list))
+segmentacao = f_sf.sem_cont_inte3(segmentacao)
+segmentacao = f_sf.sorec(segmentacao)
 nomes = [f_d.caminho_nome(x, ['.p']) for x in caminhosdict]
 #quantidades(segmentacao, SegmentosCaracteristicas, len(caminhosdict), diA, nomes, iguaiouigualemaior='==')
 quantidades(segmentacao, SegmentosCaracteristicas, 1, diA, nomes, iguaiouigualemaior='>=')

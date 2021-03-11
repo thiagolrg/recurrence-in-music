@@ -46,7 +46,7 @@ def Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, cami
 def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA, SegmentosLocalizacoes, tam=1):
     print(f'segmentacao caracteristicas: {SegmentosCaracteristicas}')
 
-    #Verfica se a recorrencia já foi feita
+    #Verfica se a recorrencia já foi 
     nomes = tuple([f_d.caminho_nome(x, ['.p']) for x in caminhosdict])
     chavearquivo = (nomes,tuple(SegmentosCaracteristicas))
     try:
@@ -109,14 +109,20 @@ def sort_continte3(listarecorrencias):
         for p in pos:
             p_pset_pseg.append((p,tuple(posset),seg))
     #por nome, set, tamanho maior, posicao menor
+    start = time.perf_counter()
     p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (item[0][3][0]))
+    print(time.perf_counter()-start)
     p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (len(item[2][0])), reverse=True)
+    print(time.perf_counter()-start)
     p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (item[1]))
+    print(time.perf_counter()-start)
     p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (item[0][0:3]))
+    print(time.perf_counter()-start)
     locpset = defaultdict(list)
     for p, pset, pseg in p_pset_pseg:
         locpset[(p[0:3], pset)].append((p,pseg))
     locpset = [(c[1],v) for c, v in locpset.items()]
+    print(time.perf_counter()-start)
     return locpset
 
 def contida3(listaposicoes, posicao):
@@ -149,7 +155,6 @@ def sem_cont3(listarecorrencias):
             print(f'\rQuaSegUnicos: {len(dictrecorrencias)} ', end='')
     listarecorrenciaspronta = []
     for chave, valor in dictrecorrencias.items():
-        c = chave[1]
         if len(valor) > 1:
             setv = set()
             for v in valor:
@@ -157,7 +162,7 @@ def sem_cont3(listarecorrencias):
             if tuple(setv) == chave[1]:
                 listarecorrenciaspronta.append((chave[0], valor))
     stop = time.perf_counter()
-    print(f'\rQuaSegUnicos: {len(listarecorrenciaspronta)} ', end='')
+    print(f'\nQuaSegUnicos: {len(listarecorrenciaspronta)} ', end='')
     QSR = 0
     for SegPos in listarecorrencias:
         for Pos in SegPos[1]:
@@ -170,6 +175,7 @@ def sem_cont_inte3(listarecorrencias, distancia=0):
     print(f'sem cont inte:')
     start = time.perf_counter()
     listarecorrencias = sort_continte3(listarecorrencias)
+    print(len(listarecorrencias))
     dictrecorrencias = defaultdict(list)
     for grupo in listarecorrencias:
         quepassaram = []
@@ -179,21 +185,16 @@ def sem_cont_inte3(listarecorrencias, distancia=0):
         for posicao, segmento in quepassaram:
             dictrecorrencias[(segmento, grupo[0])].append(posicao)
             print(f'\rQuaSegUnicos: {len(dictrecorrencias)} ', end='')
+    return dictrecorrencias
+
+def sorec(dictrecorrencias):
     listarecorrenciaspronta = []
     for chave, valor in dictrecorrencias.items():
         if len(valor) > 1:
             setv = {v[0:3] for v in valor}
             if tuple(setv) == chave[1]:
                 listarecorrenciaspronta.append((chave[0], valor))
-    stop = time.perf_counter()
-    print(f'\rQuaSegUnicos: {len(listarecorrenciaspronta)} ', end='')
-    QSR = 0
-    for SegPos in listarecorrencias:
-        for Pos in SegPos[1]:
-            QSR = QSR + len(Pos)
-    print(f'\nQuaSegRep: {QSR}')
-    print(f'{stop-start} segundos\n')
-    return listarecorrencias
+    return listarecorrenciaspronta
 
 #Por Quantidade
 def porquantidade(segmentacao, quantidade, iguaiouigualemaior):
