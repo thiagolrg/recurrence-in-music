@@ -18,6 +18,7 @@ caminhosconverter = f_d.xml_sem_dict(di, extensoes, diD, ['.p'])
 
 t = 0
 for caminho in caminhosconverter:
+    start = time.perf_counter()
     nome = f_d.caminho_nome(caminho, extensoes)
     print(f'\rconvertendo {nome}, {caminhosconverter.index(caminho)+1} de {len(caminhosconverter)} '  , end='')
     if '.xml' in caminho:
@@ -25,17 +26,14 @@ for caminho in caminhosconverter:
     elif '.mxl' in caminho:
         xml = f_d.entrada_mxl(caminho, nome)
 
-    start = time.perf_counter()
+    
     xml = f_xd.ad_counter(xml)
     musDict = f_xd.xml_mus(xml, metronomes=False)
     musDict.setdefault('nome',nome)
+    f_d.escreve_pickle(diD, musDict, nome)
     stop = time.perf_counter()
     t = t + stop-start
-    print(f'{stop-start} segundos')
-    f_d.escreve_pickle(diD, musDict, nome)
-if t > 0:
-    print(f'{t} segundos')
-print()
+print(f'{stop-start} segundos')
 
 #lista com todos os dicionarios
 caminhosdict = f_d.caminhos_extensoes(diD, ['.p'])
@@ -51,7 +49,6 @@ SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ptempo', 
 SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1'), ('Ptempo', 'p1')]
 SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ptempo', 'p1p2')]
 SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1p2'), ('Ptempo', 'p1p2')]
-"""
 
 def quantidades(segmentacao, SegmentosCaracteristicas, quantidade, diA, nomes, iguaiouigualemaior='=='):
     for quantidade in range(1,quantidade+1):
@@ -59,7 +56,7 @@ def quantidades(segmentacao, SegmentosCaracteristicas, quantidade, diA, nomes, i
         if len(emquantidade) == 0:
             break
         print(f'{iguaiouigualemaior} a {quantidade} de {len(caminhosdict)} ')
-        """
+        
         emquantidadeFiltro = f_sf.sem_cont3(copy.deepcopy(emquantidade))
         nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
         parametros = {'nomes': nomes}
@@ -67,7 +64,7 @@ def quantidades(segmentacao, SegmentosCaracteristicas, quantidade, diA, nomes, i
         parametros.setdefault('analise', [f'{SegmentosCaracteristicas} {iguaiouigualemaior} {quantidade} SemCont'])
         f_d.escreve_txt(diA, parametros, nomeanalise)
         f_d.escreve_txt(diA, {x:y for x,y in emquantidadeFiltro}, nomeanalise)
-        """
+        
         distancia = 0
         emquantidadeFiltro = f_sf.sem_cont_inte3(emquantidade,distancia=distancia)
         nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
@@ -77,7 +74,7 @@ def quantidades(segmentacao, SegmentosCaracteristicas, quantidade, diA, nomes, i
         f_d.escreve_txt(diA, parametros, nomeanalise)
         f_d.escreve_txt(diA, {x:y for x,y in emquantidadeFiltro}, nomeanalise)
     return None
-"""
+
 def emumasozinha(segmentacao, diA, caminho, SegmentosCaracteristicas):
     segmentacaoFiltro = f_sf.sem_cont3(copy.deepcopy(segmentacao))
     nomeanalise = 'analise'+str(len(f_d.caminhos_extensoes(diA, ['.txt']))+1)
@@ -161,8 +158,13 @@ quantidades(segmentacao, SegmentosCaracteristicas, len(caminhosdict), diA, nomes
 """
 
 SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1p2'), ('Ptempo', 'p1p2')]
+
+
+
+
 segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA)
 segmentacao = f_sf.sem_cont_inte3(segmentacao)
+
 #nomes = [f_d.caminho_nome(x, ['.p']) for x in caminhosdict]
 #quantidades(segmentacao, SegmentosCaracteristicas, len(caminhosdict), diA, nomes, iguaiouigualemaior='==')
 #quantidades(segmentacao, SegmentosCaracteristicas, 1, diA, nomes, iguaiouigualemaior='>=')

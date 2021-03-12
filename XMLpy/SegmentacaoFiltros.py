@@ -4,63 +4,63 @@ import time
 
 #Segmentação___________________________________________
 
-#essa função é chamada para cada tamanho da segmenatção
-def segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho):
-    print(f'\rgerando segmentos de tamanho: {tamanho}', end='')
-    SegmentosLocalizacoes = defaultdict(list)
-    for caminho in caminhosdict:
-        musD = f_d.le_pickle(caminho)
-        nome = musD.pop('nome')
-        for parte in musD:
-            for voz, caracteristicas in musD[parte].items():
-                if 'intDia' in caracteristicas:
-                    p1 = 0
-                    while p1 + tamanho <= len(caracteristicas['intDia']):
-                        p2 = p1 + tamanho
+#gera os segmentos de cada tamanho
+def gerados_de_seg(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho):
+    tamanho -=1
+    while True:
+        tamanho += 1
+        print(f'\rgerando segmentos de tamanho: {tamanho} ', end='')
+        SegmentosLocalizacoes = defaultdict(list)
+        for caminho in caminhosdict:
+            musD = f_d.le_pickle(caminho)
+            nome = musD.pop('nome')
+            for parte in musD:
+                for voz, caracteristicas in musD[parte].items():
+                    if 'intDia' in caracteristicas:
+                        p1 = 0
+                        while p1 + tamanho <= len(caracteristicas['intDia']):
+                            p2 = p1 + tamanho
 
-                        segmento = []
-                        for caracteristica in SegmentosCaracteristicas:
-                            if caracteristica[1] == 'p1':
-                                segmento.append(tuple(caracteristicas[caracteristica[0]][p1:p1+1]))
-                            elif caracteristica[1] == 'p1p2':
-                                segmento.append(tuple(caracteristicas[caracteristica[0]][p1:p2]))
-                            elif caracteristica[1] == 'p2':
-                               segmento.append(tuple(caracteristicas[caracteristica[0]][p2-1:p2]))
-                            else:
-                                raise ValueError('caracteristica deve ser p1, p1p2 ou p2')
-                        segmento = tuple(segmento)
-                        
-                        localizacao = [nome, parte, voz, (p1, p2)]
-                        for caracteristica in LocalizacoesCaracteristicas:
-                            if caracteristica[1] == 'p1':
-                                localizacao.append(tuple(caracteristicas[caracteristica[0]][p1:p1+1]))
-                            elif caracteristica[1] == 'p1p2':
-                                localizacao.append(tuple(caracteristicas[caracteristica[0]][p1:p2]))
-                            elif caracteristica[1] == 'p2':
-                                localizacao.append(tuple(caracteristicas[caracteristica[0]][p2-1:p2]))
-                            else:
-                                raise ValueError('caracteristica deve ser p1, p1p2 ou p2')
-                        localizacao = tuple(localizacao)
+                            segmento = []
+                            for caracteristica in SegmentosCaracteristicas:
+                                if caracteristica[1] == 'p1':
+                                    segmento.append(tuple(caracteristicas[caracteristica[0]][p1:p1+1]))
+                                elif caracteristica[1] == 'p1p2':
+                                    segmento.append(tuple(caracteristicas[caracteristica[0]][p1:p2]))
+                                elif caracteristica[1] == 'p2':
+                                    segmento.append(tuple(caracteristicas[caracteristica[0]][p2-1:p2]))
+                                else:
+                                    raise ValueError('caracteristica deve ser p1, p1p2 ou p2')
+                            segmento = tuple(segmento)
+                            
+                            localizacao = [nome, parte, voz, (p1, p2)]
+                            for caracteristica in LocalizacoesCaracteristicas:
+                                if caracteristica[1] == 'p1':
+                                    localizacao.append(tuple(caracteristicas[caracteristica[0]][p1:p1+1]))
+                                elif caracteristica[1] == 'p1p2':
+                                    localizacao.append(tuple(caracteristicas[caracteristica[0]][p1:p2]))
+                                elif caracteristica[1] == 'p2':
+                                    localizacao.append(tuple(caracteristicas[caracteristica[0]][p2-1:p2]))
+                                else:
+                                    raise ValueError('caracteristica deve ser p1, p1p2 ou p2')
+                            localizacao = tuple(localizacao)
 
-                        SegmentosLocalizacoes[segmento].append(localizacao)
-                        p1 += 1
-    return SegmentosLocalizacoes
+                            SegmentosLocalizacoes[segmento].append(localizacao)
+                            p1 += 1
+        yield SegmentosLocalizacoes
 
-#Guarda as recorrencias de cada tamanho até não ter recorrências
-def gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, SegmentosLocalizacoes, caminhosdict, tamanho):
-    SegmentosDoTam = segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho)
-    for localizacoes in SegmentosDoTam.values():
-        if len(localizacoes) > 1:
-            SegmentosLocalizacoes.update(SegmentosDoTam)
-            return gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, SegmentosLocalizacoes, caminhosdict, tamanho+1)
-    QSeg = len(SegmentosLocalizacoes)
-    QLoc = 0
-    for loc in SegmentosLocalizacoes.values():
-        QLoc = QLoc + len(loc)
-    print(f'\nQSu: {QSeg}')
-    print(f'QS: {QLoc}')
-    SegmentosLocalizacoes = [(c, v) for c, v in SegmentosLocalizacoes.items() if len(v) > 1]
-    return SegmentosLocalizacoes
+#Guarda os segmentos de cada tamanho até não ter recorrências
+def gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho):
+    SegmentosLocalizacoes = dict()
+    GeradorDeSeg = gerados_de_seg(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho)
+    for SegmentosDoTam in GeradorDeSeg:
+        for localizacoes in SegmentosDoTam.values():
+            if len(localizacoes) > 1:
+                SegmentosLocalizacoes.update(SegmentosDoTam)
+                break
+        else:
+            SegmentosLocalizacoes = [(c, v) for c, v in SegmentosLocalizacoes.items() if len(v) > 1]
+            return SegmentosLocalizacoes
 
 #Verifica se as recorrências já foram feitas para o repertorio e caracteristicas especificadas, se não, gera
 def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA, tamanho=1):
@@ -76,7 +76,7 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
         return sorecorrencias
     except (FileNotFoundError, KeyError):
         start = time.perf_counter()
-        sorecorrencias = gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, defaultdict(list), caminhosdict, tamanho)
+        sorecorrencias = gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho)
         stop = time.perf_counter()
         segmentacoes.setdefault(chavearquivo,sorecorrencias)
         f_d.escreve_pickle(diA,segmentacoes, '_segmentacoes_', trunca=True)
