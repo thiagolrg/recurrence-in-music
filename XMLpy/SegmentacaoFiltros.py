@@ -43,7 +43,7 @@ def Segmentos_do_tam(SegmentosCaracteristicas, LocalizacoesCaracteristicas, cami
                         p1 += 1
     return SegmentosLocalizacoes
 
-def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA, SegmentosLocalizacoes, tam=1):
+def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, SegmentosLocalizacoes, diA, tam=1):
     print('segmentacao:')
     print('lTV:')
     for caminho in caminhosdict:
