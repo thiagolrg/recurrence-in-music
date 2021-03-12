@@ -1,8 +1,6 @@
 import dirEinp as f_d
 import xmldict as f_xd
 import SegmentacaoFiltros as f_sf
-from collections import defaultdict
-import copy
 import time
 
 #pede diretorio do usuário e cria pastas e caminhos que vão ser usados
@@ -25,15 +23,13 @@ for caminho in caminhosconverter:
         xml = f_d.entrada_xml(caminho)
     elif '.mxl' in caminho:
         xml = f_d.entrada_mxl(caminho, nome)
-
-    
     xml = f_xd.ad_counter(xml)
     musDict = f_xd.xml_mus(xml, metronomes=False)
     musDict.setdefault('nome',nome)
     f_d.escreve_pickle(diD, musDict, nome)
     stop = time.perf_counter()
     t = t + stop-start
-print(f'{stop-start} segundos')
+print(f'\n{t} segundos\n')
 
 #lista com todos os dicionarios
 caminhosdict = f_d.caminhos_extensoes(diD, ['.p'])
@@ -49,6 +45,7 @@ SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ptempo', 
 SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1'), ('Ptempo', 'p1')]
 SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ptempo', 'p1p2')]
 SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1p2'), ('Ptempo', 'p1p2')]
+
 
 def quantidades(segmentacao, SegmentosCaracteristicas, quantidade, diA, nomes, iguaiouigualemaior='=='):
     for quantidade in range(1,quantidade+1):

@@ -60,6 +60,7 @@ def gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, camin
                 break
         else:
             SegmentosLocalizacoes = [(c, v) for c, v in SegmentosLocalizacoes.items() if len(v) > 1]
+            print()
             return SegmentosLocalizacoes
 
 #Verifica se as recorrências já foram feitas para o repertorio e caracteristicas especificadas, se não, gera
