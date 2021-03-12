@@ -5,7 +5,7 @@ import time
 #Segmentação___________________________________________
 
 #gera os segmentos de cada tamanho
-def gerados_de_seg(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho):
+def gerador_de_seg(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho):
     tamanho -=1
     while True:
         tamanho += 1
@@ -52,7 +52,7 @@ def gerados_de_seg(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminh
 #Guarda os segmentos de cada tamanho até não ter recorrências
 def gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho):
     SegmentosLocalizacoes = dict()
-    GeradorDeSeg = gerados_de_seg(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho)
+    GeradorDeSeg = gerador_de_seg(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho)
     for SegmentosDoTam in GeradorDeSeg:
         for localizacoes in SegmentosDoTam.values():
             if len(localizacoes) > 1:
