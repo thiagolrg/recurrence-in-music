@@ -96,19 +96,19 @@ print('por musica:\n')
 for i in range(len(caminhosdict)):
     print(f'{i+1} de {len(caminhosdict)}\n')
     caminho = caminhosdict[i]
-
+ 
     SegmentosCaracteristicas = [('intDia', 'p1p2')]
     segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, [caminho], diA, defaultdict(list))
     emumasozinha(segmentacao, diA, caminho,SegmentosCaracteristicas)
-
+  
     SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2')]
     segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, [caminho], diA, defaultdict(list))
     emumasozinha(segmentacao, diA, caminho,SegmentosCaracteristicas)
-
+  
     SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ptempo', 'p1')]
     segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, [caminho], diA, defaultdict(list))
     emumasozinha(segmentacao, diA, caminho,SegmentosCaracteristicas)
-
+   
     SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1'), ('Ptempo', 'p1')]
     segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, [caminho], diA, defaultdict(list))
     emumasozinha(segmentacao, diA, caminho,SegmentosCaracteristicas)
@@ -116,7 +116,7 @@ for i in range(len(caminhosdict)):
     SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ptempo', 'p1p2')]
     segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, [caminho], diA, defaultdict(list))
     emumasozinha(segmentacao, diA, caminho,SegmentosCaracteristicas)
-
+   
     SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1p2'), ('Ptempo', 'p1p2')]
     segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, [caminho], diA, defaultdict(list))
     emumasozinha(segmentacao, diA, caminho,SegmentosCaracteristicas)
@@ -153,12 +153,15 @@ segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracterist
 nomes = [f_d.caminho_nome(x, ['.p']) for x in caminhosdict]
 quantidades(segmentacao, SegmentosCaracteristicas, len(caminhosdict), diA, nomes, iguaiouigualemaior='==')
 quantidades(segmentacao, SegmentosCaracteristicas, len(caminhosdict), diA, nomes, iguaiouigualemaior='>=')
-
 """
+
 SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1p2'), ('Ptempo', 'p1p2')]
-segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, dict(), diA)
-time.sleep(10)
-#segmentacao = f_sf.sem_cont_inte3(segmentacao)
+
+
+
+
+segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA)
+segmentacao = f_sf.sem_cont_inte3(segmentacao)
 
 #nomes = [f_d.caminho_nome(x, ['.p']) for x in caminhosdict]
 #quantidades(segmentacao, SegmentosCaracteristicas, len(caminhosdict), diA, nomes, iguaiouigualemaior='==')
