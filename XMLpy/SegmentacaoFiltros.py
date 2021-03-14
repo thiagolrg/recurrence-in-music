@@ -71,16 +71,24 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
     print(f'segmentacao caracteristicas: {SegmentosCaracteristicas}')
     nomes = tuple([f_d.caminho_nome(x, ['.p']) for x in caminhosdict])
     chavearquivo = (nomes,tuple(SegmentosCaracteristicas))
-    segmentacoes = dict()
     try:
         segmentacoes = f_d.le_pickle(diA+'\\_segmentacoes_.p')
         sorecorrencias = segmentacoes[chavearquivo]
         print(f'resgatada do arquivo:')
+        print('quantidade so recorrencias:')
         dadosseg(sorecorrencias)
         print()
         return sorecorrencias
-    except (FileNotFoundError, KeyError):
+    except FileNotFoundError:
+        segmentacoes = dict()
         sorecorrencias = gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho)
+        segmentacoes.setdefault(chavearquivo,sorecorrencias)
+        f_d.escreve_pickle(diA,segmentacoes, '_segmentacoes_', trunca=True)
+        return sorecorrencias
+    except KeyError:
+        del(segmentacoes)
+        sorecorrencias = gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho)
+        segmentacoes = f_d.le_pickle(diA+'\\_segmentacoes_.p')
         segmentacoes.setdefault(chavearquivo,sorecorrencias)
         f_d.escreve_pickle(diA,segmentacoes, '_segmentacoes_', trunca=True)
         return sorecorrencias

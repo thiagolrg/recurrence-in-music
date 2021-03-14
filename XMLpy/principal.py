@@ -14,11 +14,11 @@ f_d.cria_pasta(diA)
 #converte xmls que não existem na pasta Dicts e salva usando pickle
 caminhosconverter = f_d.xml_sem_dict(di, extensoes, diD, ['.p'])
 
-t = 0
+
 nomes = [f_d.caminho_nome(x, ['.xml', '.mxl']) for x in caminhosconverter]
 print(f'MusicXMLs para conversao: {len(nomes)}')
+start = time.perf_counter()
 for caminho in caminhosconverter:
-    start = time.perf_counter()
     nome = f_d.caminho_nome(caminho, extensoes)
     if '.xml' in caminho:
         xml = f_d.entrada_xml(caminho)
@@ -28,9 +28,11 @@ for caminho in caminhosconverter:
     musDict = f_xd.xml_mus(xml, metronomes=False)
     musDict.setdefault('nome',nome)
     f_d.escreve_pickle(diD, musDict, nome)
-    stop = time.perf_counter()
-    t = t + stop-start
-print(f'{t} segundos\n')
+stop = time.perf_counter()
+if len(nomes) > 0:
+    print(f'{stop-start} segundos\n')
+else:
+    print()
 
 #lista com todos os dicionarios
 caminhosdict = f_d.caminhos_extensoes(diD, ['.p'])
