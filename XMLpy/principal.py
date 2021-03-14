@@ -15,10 +15,11 @@ f_d.cria_pasta(diA)
 caminhosconverter = f_d.xml_sem_dict(di, extensoes, diD, ['.p'])
 
 t = 0
+nomes = [f_d.caminho_nome(x, ['.xml', '.mxl']) for x in caminhosconverter]
+print(f'MusicXMLs para conversao: {len(nomes)}')
 for caminho in caminhosconverter:
     start = time.perf_counter()
     nome = f_d.caminho_nome(caminho, extensoes)
-    print(f'\rconvertendo {nome}, {caminhosconverter.index(caminho)+1} de {len(caminhosconverter)} '  , end='')
     if '.xml' in caminho:
         xml = f_d.entrada_xml(caminho)
     elif '.mxl' in caminho:
@@ -29,7 +30,7 @@ for caminho in caminhosconverter:
     f_d.escreve_pickle(diD, musDict, nome)
     stop = time.perf_counter()
     t = t + stop-start
-print(f'\n{t} segundos\n')
+print(f'{t} segundos\n')
 
 #lista com todos os dicionarios
 caminhosdict = f_d.caminhos_extensoes(diD, ['.p'])
@@ -156,10 +157,6 @@ quantidades(segmentacao, SegmentosCaracteristicas, len(caminhosdict), diA, nomes
 """
 
 SegmentosCaracteristicas = [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1p2'), ('Ptempo', 'p1p2')]
-
-
-
-
 segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA)
 segmentacao = f_sf.sem_cont_inte3(segmentacao)
 

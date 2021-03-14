@@ -6,9 +6,9 @@ import time
 
 #gera os segmentos de cada tamanho
 def gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho):
+    start = time.perf_counter()
     SegmentosLocalizacoes = dict()
     while True:
-        print(f'\rgerando segmentos de tamanho: {tamanho} ', end='')
         SegmentosDoTam = defaultdict(list)
         for caminho in caminhosdict:
             musD = f_d.le_pickle(caminho)
@@ -52,8 +52,18 @@ def gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, camin
                 SegmentosLocalizacoes.update(SegmentosDoTam)
                 break
         else:
+            stop = time.perf_counter()
+            print(f'gerados segmentos até tamanho: {tamanho-1} ')
+            print('quantidade tudo:')
+            dadosseg(SegmentosLocalizacoes)
+            t = stop-start
+            start = time.perf_counter()
             SegmentosLocalizacoes = [(c, v) for c, v in SegmentosLocalizacoes.items() if len(v) > 1]
-            print()
+            stop = time.perf_counter()
+            t = t+stop-start
+            print('quantidade so recorrencias:')
+            dadosseg(SegmentosLocalizacoes)
+            print(f'{t} segundos\n')
             return SegmentosLocalizacoes
 
 #Verifica se as recorrências já foram feitas para o repertorio e caracteristicas especificadas, se não, gera
@@ -67,24 +77,28 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
         sorecorrencias = segmentacoes[chavearquivo]
         print(f'resgatada do arquivo:')
         dadosseg(sorecorrencias)
+        print()
         return sorecorrencias
     except (FileNotFoundError, KeyError):
-        start = time.perf_counter()
         sorecorrencias = gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho)
-        stop = time.perf_counter()
         segmentacoes.setdefault(chavearquivo,sorecorrencias)
         f_d.escreve_pickle(diA,segmentacoes, '_segmentacoes_', trunca=True)
-        dadosseg(sorecorrencias)
-        print(f'{stop-start} segundos')
         return sorecorrencias
 
 def dadosseg(sorecorrencias):
-    QSeg = len(sorecorrencias)
-    QLoc = 0
-    for segloc in sorecorrencias:
-        QLoc = QLoc + len(segloc[1])
-    print(f'QSu: {QSeg}')
-    print(f'QS: {QLoc}\n')
+    QSu = len(sorecorrencias)
+    if isinstance(sorecorrencias, list):
+        QLoc = 0
+        for segloc in sorecorrencias:
+            QLoc = QLoc + len(segloc[1])
+        print(f'QSuni: {QSu}')
+        print(f'QSloc: {QLoc}')
+    elif isinstance(sorecorrencias, dict):
+        QLoc = 0
+        for segloc in sorecorrencias.items():
+            QLoc = QLoc + len(segloc[1])
+        print(f'QSuni: {QSu}')
+        print(f'QSloc: {QLoc}')
 
 #Filtros___________________________________
 
@@ -122,7 +136,7 @@ def intercalada3(listaposicoes, posicao, distancia=0):
     return 
     
 def sem_cont3(listarecorrencias):
-    print(f'sem cont:')
+    print(f'filtro sem cont:')
     start = time.perf_counter()
     listarecorrencias = sort_continte3(listarecorrencias)
     dictrecorrencias = defaultdict(list)
@@ -133,22 +147,26 @@ def sem_cont3(listarecorrencias):
                 quepassaram.append(posicao)
         for posicao, segmento in quepassaram:
             dictrecorrencias[(segmento, grupo[0])].append(posicao)
-            print(f'\rQSu: {len(dictrecorrencias)} ', end='')
+    stop = time.perf_counter()
+    print('quantidade tudo:')
+    dadosseg(dictrecorrencias)
+    t = stop-start
+    start = time.perf_counter()
     listarecorrenciaspronta = []
     for chave, valor in dictrecorrencias.items():
         if len(valor) > 1:
-            setv = set()
-            for v in valor:
-                setv.add(v[0:3])
+            setv = {v[0:3] for v in valor}
             if tuple(sorted(setv)) == chave[1]:
                 listarecorrenciaspronta.append((chave[0], valor))
     stop = time.perf_counter()
+    t = t+stop-start
+    print('quantidade so recorrencias:')
     dadosseg(listarecorrenciaspronta)
-    print(f'{stop-start} segundos\n')
-    return listarecorrencias
+    print(f'{t} segundos\n')
+    return listarecorrenciaspronta
 
 def sem_cont_inte3(listarecorrencias, distancia=0):
-    print(f'sem cont inte:')
+    print(f'filtro sem cont inte:')
     start = time.perf_counter()
     listarecorrencias = sort_continte3(listarecorrencias)
     dictrecorrencias = defaultdict(list)
@@ -159,7 +177,11 @@ def sem_cont_inte3(listarecorrencias, distancia=0):
                 quepassaram.append(posicao)
         for posicao, segmento in quepassaram:
             dictrecorrencias[(segmento, grupo[0])].append(posicao)
-            print(f'\rQSu: {len(dictrecorrencias)} ', end='')
+    stop = time.perf_counter()
+    print('quantidade tudo:')
+    dadosseg(dictrecorrencias)
+    t = stop-start
+    start = time.perf_counter()
     listarecorrenciaspronta = []
     for chave, valor in dictrecorrencias.items():
         if len(valor) > 1:
@@ -167,9 +189,10 @@ def sem_cont_inte3(listarecorrencias, distancia=0):
             if tuple(sorted(setv)) == chave[1]:
                 listarecorrenciaspronta.append((chave[0], valor))
     stop = time.perf_counter()
-    print()
+    t = t+stop-start
+    print('quantidade so recorrencias:')
     dadosseg(listarecorrenciaspronta)
-    print(f'{stop-start} segundos\n')
+    print(f'{t} segundos\n')
     return listarecorrenciaspronta
 
 #Por Quantidade
