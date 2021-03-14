@@ -5,12 +5,11 @@ import time
 #Segmentação___________________________________________
 
 #gera os segmentos de cada tamanho
-def gerador_de_seg(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho):
-    tamanho -=1
+def gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho):
+    SegmentosLocalizacoes = dict()
     while True:
-        tamanho += 1
         print(f'\rgerando segmentos de tamanho: {tamanho} ', end='')
-        SegmentosLocalizacoes = defaultdict(list)
+        SegmentosDoTam = defaultdict(list)
         for caminho in caminhosdict:
             musD = f_d.le_pickle(caminho)
             nome = musD.pop('nome')

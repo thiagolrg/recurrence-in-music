@@ -68,9 +68,9 @@ def entrada_mxl(caminho, nome):
     return xml
 
 def le_pickle(caminho):
-   with open(caminho, 'rb') as f:
-      arquivo = pickle.loads(f.read())
-   return arquivo
+    with open(caminho, 'rb') as f:
+        arquivo = pickle.loads(f.read())
+    return arquivo
 
 def escreve_pickle(diretorio, arquivo ,nome, trunca=False):
     if trunca == False:
