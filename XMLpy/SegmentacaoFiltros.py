@@ -80,8 +80,8 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
         print()
         return sorecorrencias
     except FileNotFoundError:
-        segmentacoes = dict()
         sorecorrencias = gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, tamanho)
+        segmentacoes = dict()
         segmentacoes.setdefault(chavearquivo,sorecorrencias)
         f_d.escreve_pickle(diA,segmentacoes, '_segmentacoes_', trunca=True)
         return sorecorrencias
