@@ -15,7 +15,7 @@ def gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, camin
             nome = musD.pop('nome')
             for parte in musD:
                 for voz, caracteristicas in musD[parte].items():
-                    if 'intDia' in caracteristicas:
+                    if 'intDia' in caracteristicas and len(caracteristicas['intDia']) >=  tamanho:
                         p1 = 0
                         while p1 + tamanho <= len(caracteristicas['intDia']):
                             p2 = p1 + tamanho
