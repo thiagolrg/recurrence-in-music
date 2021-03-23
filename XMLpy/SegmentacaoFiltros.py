@@ -134,7 +134,7 @@ def contida3(listaposicoes, posicao):
             return True
     return False
 
-def intercalada3(listaposicoes, posicao, distancia=0):
+def intercalada3(listaposicoes, posicao, distancia):
     for quepassou in listaposicoes:
         if posicao[0:3] == quepassou[0][0:3] and posicao[3][0] > quepassou[0][3][0] and posicao[3][0] < quepassou[0][3][1]+distancia and posicao[3][1] > quepassou[0][3][1]:
             return True
@@ -171,7 +171,7 @@ def sem_cont3(listarecorrencias):
     print('quantidade so recorrencias:')
     dadosseg(listarecorrenciaspronta)
     print(f'{t} segundos\n')
-    return listarecorrenciaspronta
+    return sorted([(c, v) for c, v in listarecorrenciaspronta if len(v) > 1], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)
 
 def sem_cont_inte3(listarecorrencias, distancia=0):
     print(f'filtro sem cont inte:')
@@ -201,7 +201,7 @@ def sem_cont_inte3(listarecorrencias, distancia=0):
     print('quantidade so recorrencias:')
     dadosseg(listarecorrenciaspronta)
     print(f'{t} segundos\n')
-    return listarecorrenciaspronta
+    return sorted([(c, v) for c, v in listarecorrenciaspronta if len(v) > 1], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)
 
 #Por Quantidade
 def porquantidade(segmentacao, quantidade, iguaiouigualemaior):
