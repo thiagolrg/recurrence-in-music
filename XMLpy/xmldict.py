@@ -1,154 +1,161 @@
 import conversoes as f_c
-import xmltodict
 
-def ad_counter(xmlIn):
-    counter = 0
-    xmlCounter = []
-    chord = False
-    for p in range(len(xmlIn)):
-        assert 'score-timewise' not in xmlIn[p], NotImplementedError('conversao XML score-timewise')
-        xmlCounter.append(xmlIn[p])
-        if p > 2 and p < len(xmlIn):
-            if '</' not in xmlCounter[p] and '/>' not in xmlCounter[p] and '<!' not in xmlCounter[p]:
-                xmlCounter[p] = xmlCounter[p].rstrip('>')+' counter ='+'"'+str(counter)+'"'+'>'       
-        if 'chord' in xmlIn[p]:
-            chord = True
-        if '<duration>' in xmlIn[p]:
-            duration = int(xmlIn[p].replace('<duration>','').replace('</duration>',''))
-            if '<backup>' in xmlIn[p-1]:
-                counter = counter - duration
-            elif chord == True:
-                chord = False
-            else:
-                counter = counter + duration
-        if '</part>' in xmlIn[p]:
-            counter = 0
-    return xmltodict.parse(''.join(xmlCounter))
+def time_certo(times,compasso):
+    for p in range(len(times)):
+        if times[p][0] >= compasso:
+            return times[p-1]
+    return times[-1]
 
-def to_list(node):
-    if isinstance(node, list) == True:
-        return node
-    else:
-        return [node]
+def NoneText(element):
+    if element == None:
+        return element
+    return element.text
 
-def xml_mus(xmlIn, metronomes=True, keys=True):
+def NoneTag(element):
+    if element == None:
+        return element
+    return element.tag
+
+def NoneInt(element):
+    if element == None:
+        return element
+    return int(element.text)
+
+def NoneAtr(element):
+    if element == None:
+        return element
+    return element.attrib['type']
+
+def xml_mus(xml):
     xmlDict = {}
-    for part in to_list(xmlIn['score-partwise']['part']):
-        partID = part['@id']
-        #numero do compasso
-        for measure in to_list(part['measure']):
-            if measure['@number'] == 'X1':
+    for part in xml.iter('part'):
+        keys = []
+        times = []
+        metronomes = []
+        compassos = []
+        elements = {}
+        partid = part.get('id')
+        divisions = part.findall('.//divisions')
+        assert len(divisions) == 1
+        divisions = int(divisions[0].text)
+        for measure in part:
+            if measure.get('number') == 'X1':
                 pass
             else:
-                measureN = int(measure['@number'])
+                measureN = int(measure.get('number'))
+                compassos.append(measureN)
+            beats = measure.findall('.//beats')
+            beatType = measure.findall('.//beat-type')
+            assert len(beats) <= len(beatType) <= 1
+            if len(beats) == len(beatType) == 1 and measureN not in [t[0] for t in times]:
+                beats = int(beats[0].text)
+                beatType = int(beatType[0].text)
+                times.append([measureN,[beats, beatType]])
+            for element in measure.iter():
+                if element.tag == 'key' or element.tag == 'note' or element.tag == 'backup' or element.tag == 'forward' or  element.tag == 'metronome' or 'tempo' in element.attrib.keys():
+                    elements.setdefault(measureN, []).append(element)
+        for t in times:  
+            t[1].append(int(divisions*4/t[1][1]*t[1][0]))
 
-            #atributos do compasso
-            if 'attributes' in measure and measure['attributes'] != None:
-                for attributes in to_list(measure['attributes']):
+        compassoscounter = []
+        if compassos[0] == 0:
+            compasso0voice = {}
+            counter = 0
+            for compasso, elementosdocompasso in elements.items():
+                for element in elementosdocompasso:
+                    if element.tag == 'note':
+                        counter = counter + int(element.find('.//duration').text)
+                        voice = int(element.find('.//voice').text)
+                    elif element.tag == 'backup':
+                        compasso0voice.update({voice: times[0][1][2] - counter})
+                        counter = counter - int(element.find('duration').text)
+                    elif element.tag == 'forward':
+                        counter = counter + int(element.find('duration').text)
+                compasso0voice.update({voice: times[0][1][2] - counter})
+                counter = counter - int(element.find('duration').text)
+                break
+        compassoscounter.append([compassos[0], 0])
+        for compasso in compassos[1:]:
+            timecerto = time_certo(times, compasso)
+            compassoscounter.append([compasso, compassoscounter[-1][1]+timecerto[1][2]])
+        compassoscounter = {c : v for c, v in compassoscounter}
 
-                    #divisions
-                    if 'divisions' in attributes:
-                        divisions = int(attributes['divisions'])
-                        try:
-                            assert divisions == xmlDict[partID]['divisions']
-                        except KeyError:
-                            xmlDict.setdefault('notes',{}).setdefault(partID, {}).setdefault('divisions', divisions)
+        
+        xmlDict.setdefault(partid, {}).setdefault('notes', {})
+        for compasso, elementosdocompasso in elements.items():
+            counter = compassoscounter[compasso]
+            for element in elementosdocompasso:
+                if element.tag == 'note':
+                    grace = NoneTag(element.find('.//grace'))
+                    if grace == 'grace':
+                        continue
+                    step = NoneText(element.find('.//step'))
+                    octave =  NoneInt(element.find('.//octave'))
+                    alter = NoneInt(element.find('.//alter'))
+                    tie =  NoneAtr(element.find('.//tie'))
+                    chord =  NoneTag(element.find('.//chord'))
+                    voice = int(element.find('.//voice').text)
 
-                    #keys
-                    if keys == True:
-                        if 'key' in attributes:
-                            for k in to_list(attributes['key']):
-                                assert 'mode' in k, '"key" sem "mode" no XML'
-                                assert 'fifths' in k, '"key" sem "fifths" no XML'
-                                key = ((int(k['@counter']), measureN) , f_c.key_(int(k['fifths']), k['mode']))
-                                try:
-                                    if key not in xmlDict['keys']:
-                                        keylocs = [f_c.loc(x) for x in xmlDict['keys']]
-                                        assert(f_c.loc(key) not in keylocs)
-                                        xmlDict.setdefault('keys', []).append(key)
-                                except KeyError:
-                                    xmlDict.setdefault('keys', []).append(key)
-                    
-                    #times
-                    if 'time' in attributes:
-                        for t in to_list(attributes['time']):
-                            time = [(int(t['@counter']), measureN), [int(t['beats']), int(t['beat-type'])]]
-                            try:
-                                if time not in xmlDict['times']:
-                                    timelocs = [f_c.loc(x) for x in xmlDict['times']]
-                                    assert(f_c.loc(time) not in timelocs)
-                                    xmlDict.setdefault('times', []).append(time)
-                            except:
-                                xmlDict.setdefault('times', []).append(time)
-            
-            #metronomes
-            if metronomes == True:
-                if 'direction' in measure:
-                    for direction in to_list(measure['direction']):
-                        if 'sound' in direction:
-                            for sound in to_list(direction['sound']):
-                                if '@tempo' in sound:
-                                    metronome = ((int(direction['@counter']), measureN), f_c.m_soundtempo(int(sound['@tempo']),time))
-                        elif 'direction-type' in direction:
-                            for directionType in to_list(direction['direction-type']):
-                                if 'metronome' in directionType:
-                                    for m in to_list(directionType['metronome']):
-                                        metronome = ((int(m['@counter']), measureN), f_c.m_metronome(m))
-                        try:
-                            if metronome not in xmlDict['metronomes']:
-                                metronomelocs = [f_c.loc(x) for x in xmlDict['metronomes']]
-                                assert(f_c.loc(metronome) not in metronomelocs)
-                                xmlDict.setdefault('metronomes', []).append(metronome)
-                        except KeyError:
-                            xmlDict.setdefault('metronomes', []).append(metronome)
-            
-            #notas
-            for note in to_list(measure['note']):
-                step = None
-                octave = None
-                alter = None 
-                tie = None
-                counter = int(note['@counter'])
-                if 'rest' in note:
-                    voice = int(note['voice'])
-                    note = ((counter, measureN), (step,octave,alter,tie))
-                    xmlDict.setdefault('notes',{}).setdefault(partID, {}).setdefault(voice, []).append(note)
-                    continue
-                if 'tie' in note:
-                    tie = to_list(note['tie'])[-1]['@type']
-                for pitch in to_list(note['pitch']): 
-                    step = pitch['step']
-                    octave = int(pitch['octave'])
-                    if 'alter' in pitch:
-                        alter = int(pitch['alter'])
-                if 'chord' in note:
-                    if isinstance(xmlDict['notes'][partID][voice][-1], list) == False:
-                        xmlDict['notes'][partID][voice][-1] = [xmlDict['notes'][partID][voice][-1]]
-                    counter = xmlDict['notes'][partID][voice][-1][0][0][0]
-                    note = ((counter, measureN), (step,octave,alter,tie))
-                    counter = xmlDict['notes'][partID][voice][-1].append(note)
-                else:
-                    assert 'voice' in note, '"note" sem "voice"'
-                    voice = int(note['voice'])
-                    note = ((counter, measureN), (step,octave,alter,tie))
-                    xmlDict.setdefault('notes',{}).setdefault(partID, {}).setdefault(voice, []).append(note)
-    xmlDict['times'] = f_c.times_com_duracoes(xmlDict['times'])
-    if metronomes == True:
-        assert 'metronomes' in xmlDict,'algo faltando no xml?, nao foram extraidos metronomos'
-    if keys == True:
-        assert 'keys' in xmlDict,'algo faltando no xml?, nao foram extraidas armaduras'
-    assert 'times' in xmlDict,'algo faltando no xml?, nao foram extraidas formulas de compasso'
-    assert 'notes' in xmlDict,'algo faltando no xml?, nao foram extraidas notas'
-    
-    
-    return mus_dict(xmlDict, keys=keys, metronomes=metronomes)
+                    if chord == 'chord':
+                        if isinstance(xmlDict[partid]['notes'][voice][-1], list):
+                            counter = xmlDict[partid]['notes'][voice][-1][0][0][0]
+                        else:
+                            counter = xmlDict[partid]['notes'][voice][-1][0][0]
+                            xmlDict[partid]['notes'][voice][-1] = [xmlDict[partid]['notes'][voice][-1]]
+                        note = ((counter,compasso), (step,octave,alter,tie))
+                        xmlDict[partid]['notes'][voice][-1].append(note)
+                    else:
+                        if compasso == 0:
+                            counter = compasso0voice[voice]
+                        note = ((counter,compasso), (step,octave,alter,tie))
+                        xmlDict[partid]['notes'].setdefault(voice, []).append(note)
+                    counter = counter + int(element.find('.//duration').text)
+                    if compasso == 0: 
+                        compasso0voice[voice] = counter
+
+                elif element.tag == 'backup':
+                    counter = counter - int(element.find('duration').text)
+                elif element.tag == 'forward':
+                    counter = counter + int(element.find('duration').text)
+                elif element.tag == 'key':
+                    fifths = int(element.find('fifths').text)
+                    mode = element.find('mode').text
+                    key = ((counter,compasso), f_c.key_(fifths, mode))
+                    if key[0][0] in [k[0][0] for k in keys]:
+                        keys[[k[0][0] for k in keys].index(key[0][0])] = key
+                    else:
+                        keys.append(key)
+                elif element.tag == 'metronome':
+                    beatUnit = NoneText(element.find('.//beat-unit'))
+                    beatUnitiDot = NoneTag(element.find('.//beat-unit-dot'))
+                    perMinute = NoneInt(element.find('.//per-minute'))
+                    metronome = ((counter,compasso), (f_c.m_metronome(beatUnit, beatUnitiDot), perMinute))
+                    if metronome[0][0] not in [m[0][0] for m in metronomes]:
+                        metronomes.append(metronome)
+                elif element.tag == 'sound':
+                    tempo = int(element.attrib['tempo'])
+                    metronome = ((counter,compasso), f_c.m_soundtempo(tempo, time_certo(times, compasso)))
+                    if metronome[0][0] not in [m[0][0] for m in metronomes]:
+                        metronomes.append(metronome)
+        for p in range(len(times)):
+            times[p] = [(compassoscounter[times[p][0]], times[p][0]), times[p][1][0:2]]
+        times = f_c.times_com_duracoes(times)
+        xmlDict[partid].update({'keys': keys})
+        xmlDict[partid].update({'times': times})
+        xmlDict[partid].update({'metronomes': metronomes})
+        xmlDict[partid].update({'divisions': divisions})
+
+        for voice in xmlDict[partid]['notes'].items():
+            for note in voice[1]:
+                print(voice[0], note)
+        return musDict(xmlDict)
 
 def mus_dict(xmlDict, tie=None, rest=None, chord=True, keys=True, metronomes=True):
     musDict = {}
-    for part, voices in xmlDict['notes'].items():
-        divisions = xmlDict['notes'][part].pop('divisions')
-        for voice, notes in voices.items():
-            musDict.setdefault(part,{}).setdefault(voice,{})
+    for partvalues in xmlDict.items():
+        divisions = partvalues[1]['divisions']
+        for voice, notes in partvalues[1]['notes'].items():
+            musDict.setdefault(partvalues[0],{}).setdefault(voice,{})
             g = 0
             while g < len(notes):
                 note1 = notes[g]
@@ -163,12 +170,12 @@ def mus_dict(xmlDict, tie=None, rest=None, chord=True, keys=True, metronomes=Tru
                         intDiaL = []
                         intQuaL = []
                         for p in range(len(note1)):
-                            Fcompasso1 = f_c.referencia(note1[p],xmlDict['times'])
+                            Fcompasso1 = f_c.referencia(note1[p],partvalues[1]['times'])
                             if keys == True:
-                                tonalidade = f_c.referencia(note1[p],xmlDict['keys'])
+                                tonalidade = f_c.referencia(note1[p],partvalues[1]['keys'])
                                 grau = f_c.grau_escala(tonalidade,note1[p])
                             if metronomes == True:
-                                andamento = f_c.referencia(note1[p],xmlDict['metronomes'])
+                                andamento = f_c.referencia(note1[p],partvalues[1]['metronomes'])
                             Ncompasso = f_c.Ncompasso(note1[p])
                             Pcompasso = round(f_c.P_compasso(divisions,Fcompasso1,note1[p]),2)
                             Ntempo = f_c.N_tempo(divisions,Fcompasso1,note1[p])
@@ -185,7 +192,7 @@ def mus_dict(xmlDict, tie=None, rest=None, chord=True, keys=True, metronomes=Tru
                                 grauL.append(grau)
 
                             if p+1 < len(note1):
-                                Fcompasso2 = f_c.referencia(note1[p+1],xmlDict['times'])
+                                Fcompasso2 = f_c.referencia(note1[p+1],partvalues[1]['times'])
                                 duracao = round(f_c.duracao_inicio(divisions,Fcompasso2,note1[p+1]) - f_c.duracao_inicio(divisions,Fcompasso1,note1[p]),2)
                                 intCro = f_c.int_cromatico(note1[p],note1[p+1])
                                 intDia = f_c.int_diatonico(note1[p],note1[p+1])
@@ -197,22 +204,22 @@ def mus_dict(xmlDict, tie=None, rest=None, chord=True, keys=True, metronomes=Tru
                                 intQuaL.append(intQua)
 
                         if keys == True:
-                            musDict[part][voice].setdefault('tonalidade', []).append(tonalidade)
-                            musDict[part][voice].setdefault('grau', []).append(tuple(grauL))
+                            musDict[partvalues[0]][voice].setdefault('tonalidade', []).append(tonalidade)
+                            musDict[partvalues[0]][voice].setdefault('grau', []).append(tuple(grauL))
                         if metronomes == True:
-                            musDict[part][voice].setdefault('andamento', []).append(andamento)
-                        musDict[part][voice].setdefault('Fcompasso', []).append(Fcompasso1)
-                        musDict[part][voice].setdefault('Ncompasso', []).append(Ncompasso)
-                        musDict[part][voice].setdefault('Pcompasso', []).append(Pcompasso)
-                        musDict[part][voice].setdefault('Ntempo', []).append(Ntempo)
-                        musDict[part][voice].setdefault('Ptempo', []).append(Ptempo)
-                        musDict[part][voice].setdefault('notaStep', []).append(tuple(notaStepL))
-                        musDict[part][voice].setdefault('notaOitava', []).append(tuple(notaOitavaL))
-                        musDict[part][voice].setdefault('notaAlter', []).append(tuple(notaAlterL))
-                        musDict[part][voice].setdefault('duracao', []).append(tuple(duracaoL))
-                        musDict[part][voice].setdefault('intCro', []).append(tuple(intCroL))
-                        musDict[part][voice].setdefault('intDia', []).append(tuple(intDiaL))
-                        musDict[part][voice].setdefault('intQua', []).append(tuple(intQuaL))
+                            musDict[partvalues[0]][voice].setdefault('andamento', []).append(andamento)
+                        musDict[partvalues[0]][voice].setdefault('Fcompasso', []).append(Fcompasso1)
+                        musDict[partvalues[0]][voice].setdefault('Ncompasso', []).append(Ncompasso)
+                        musDict[partvalues[0]][voice].setdefault('Pcompasso', []).append(Pcompasso)
+                        musDict[partvalues[0]][voice].setdefault('Ntempo', []).append(Ntempo)
+                        musDict[partvalues[0]][voice].setdefault('Ptempo', []).append(Ptempo)
+                        musDict[partvalues[0]][voice].setdefault('notaStep', []).append(tuple(notaStepL))
+                        musDict[partvalues[0]][voice].setdefault('notaOitava', []).append(tuple(notaOitavaL))
+                        musDict[partvalues[0]][voice].setdefault('notaAlter', []).append(tuple(notaAlterL))
+                        musDict[partvalues[0]][voice].setdefault('duracao', []).append(tuple(duracaoL))
+                        musDict[partvalues[0]][voice].setdefault('intCro', []).append(tuple(intCroL))
+                        musDict[partvalues[0]][voice].setdefault('intDia', []).append(tuple(intDiaL))
+                        musDict[partvalues[0]][voice].setdefault('intQua', []).append(tuple(intQuaL))
                         note1 = note1[0]
 
                         g += 1
@@ -232,7 +239,7 @@ def mus_dict(xmlDict, tie=None, rest=None, chord=True, keys=True, metronomes=Tru
                         if g >= len(notes):
                             continue
 
-                        Fcompasso2 = f_c.referencia(note2,xmlDict['times'])
+                        Fcompasso2 = f_c.referencia(note2,partvalues[1]['times'])
                         duracao = round(f_c.duracao_inicio(divisions,Fcompasso2,note2) - f_c.duracao_inicio(divisions,Fcompasso1,note1),2)
                         intCro = f_c.int_cromatico(note1,note2)
                         intDia = f_c.int_diatonico(note1,note2)
@@ -243,19 +250,19 @@ def mus_dict(xmlDict, tie=None, rest=None, chord=True, keys=True, metronomes=Tru
                         intDiaL.append(intDia)
                         intQuaL.append(intQua)
 
-                        musDict[part][voice]['duracao'][-1] = tuple(duracaoL)
-                        musDict[part][voice]['intCro'][-1] = tuple(intCroL)
-                        musDict[part][voice]['intDia'][-1] = tuple(intDiaL)
-                        musDict[part][voice]['intQua'][-1] = tuple(intQuaL)
+                        musDict[partvalues[0]][voice]['duracao'][-1] = tuple(duracaoL)
+                        musDict[partvalues[0]][voice]['intCro'][-1] = tuple(intCroL)
+                        musDict[partvalues[0]][voice]['intDia'][-1] = tuple(intDiaL)
+                        musDict[partvalues[0]][voice]['intQua'][-1] = tuple(intQuaL)
                         continue
                     else:
                         note1 = note1[0]
                 if keys == True:
-                    tonalidade = f_c.referencia(note1,xmlDict['keys'])
+                    tonalidade = f_c.referencia(note1,partvalues[1]['keys'])
                     grau = f_c.grau_escala(tonalidade,note1)
                 if metronomes == True:
-                    andamento = f_c.referencia(note1,xmlDict['metronomes'])
-                Fcompasso1 = f_c.referencia(note1,xmlDict['times'])
+                    andamento = f_c.referencia(note1,partvalues[1]['metronomes'])
+                Fcompasso1 = f_c.referencia(note1,partvalues[1]['times'])
                 Ncompasso = f_c.Ncompasso(note1)
                 Pcompasso = round(f_c.P_compasso(divisions,Fcompasso1,note1),2)
                 Ntempo = f_c.N_tempo(divisions,Fcompasso1,note1)
@@ -265,18 +272,18 @@ def mus_dict(xmlDict, tie=None, rest=None, chord=True, keys=True, metronomes=Tru
                 notaAlter = note1[1][2]
 
                 if keys == True:
-                    musDict[part][voice].setdefault('tonalidade', []).append(tonalidade)
-                    musDict[part][voice].setdefault('grau', []).append(grau)
+                    musDict[partvalues[0]][voice].setdefault('tonalidade', []).append(tonalidade)
+                    musDict[partvalues[0]][voice].setdefault('grau', []).append(grau)
                 if metronomes == True:
-                    musDict[part][voice].setdefault('andamento', []).append(andamento)
-                musDict[part][voice].setdefault('Fcompasso', []).append(Fcompasso1)
-                musDict[part][voice].setdefault('Ncompasso', []).append(Ncompasso)
-                musDict[part][voice].setdefault('Pcompasso', []).append(Pcompasso)
-                musDict[part][voice].setdefault('Ntempo', []).append(Ntempo)
-                musDict[part][voice].setdefault('Ptempo', []).append(Ptempo)
-                musDict[part][voice].setdefault('notaStep', []).append(notaStep)
-                musDict[part][voice].setdefault('notaOitava', []).append(notaOitava)
-                musDict[part][voice].setdefault('notaAlter', []).append(notaAlter)
+                    musDict[partvalues[0]][voice].setdefault('andamento', []).append(andamento)
+                musDict[partvalues[0]][voice].setdefault('Fcompasso', []).append(Fcompasso1)
+                musDict[partvalues[0]][voice].setdefault('Ncompasso', []).append(Ncompasso)
+                musDict[partvalues[0]][voice].setdefault('Pcompasso', []).append(Pcompasso)
+                musDict[partvalues[0]][voice].setdefault('Ntempo', []).append(Ntempo)
+                musDict[partvalues[0]][voice].setdefault('Ptempo', []).append(Ptempo)
+                musDict[partvalues[0]][voice].setdefault('notaStep', []).append(notaStep)
+                musDict[partvalues[0]][voice].setdefault('notaOitava', []).append(notaOitava)
+                musDict[partvalues[0]][voice].setdefault('notaAlter', []).append(notaAlter)
                 
                 g += 1
                 if g >= len(notes):
@@ -295,14 +302,14 @@ def mus_dict(xmlDict, tie=None, rest=None, chord=True, keys=True, metronomes=Tru
                 if g >= len(notes):
                     continue
 
-                Fcompasso2 = f_c.referencia(note2,xmlDict['times'])
+                Fcompasso2 = f_c.referencia(note2,partvalues[1]['times'])
                 duracao = round(f_c.duracao_inicio(divisions,Fcompasso2,note2) - f_c.duracao_inicio(divisions,Fcompasso1,note1),2)
                 intCro = f_c.int_cromatico(note1,note2)
                 intDia = f_c.int_diatonico(note1,note2)
                 intQua = f_c.int_qualidade(intDia,intCro)
 
-                musDict[part][voice].setdefault('duracao', []).append(duracao)
-                musDict[part][voice].setdefault('intCro', []).append(intCro)
-                musDict[part][voice].setdefault('intDia', []).append(intDia)
-                musDict[part][voice].setdefault ('intQua', []).append(intQua)
+                musDict[partvalues[0]][voice].setdefault('duracao', []).append(duracao)
+                musDict[partvalues[0]][voice].setdefault('intCro', []).append(intCro)
+                musDict[partvalues[0]][voice].setdefault('intDia', []).append(intDia)
+                musDict[partvalues[0]][voice].setdefault ('intQua', []).append(intQua)
     return musDict
