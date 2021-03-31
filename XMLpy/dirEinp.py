@@ -1,5 +1,6 @@
 import os
 import pickle
+import xml.etree.ElementTree as et
 
 def diretorio_ler(extensoes):
     di=input(f'diretorio para ler {extensoes}:')
@@ -52,10 +53,10 @@ def xml_sem_dict(di, extensoes, diD, extensaoP):
     return caminhosxmlsemdict
 
 def entrada_xml(caminho):
-    with open(caminho) as f:
-        xml = []
-        for l in f.read().splitlines():
-            xml.append(l.strip())
+    with open(caminho, "r") as xmlfile:
+        xml = xmlfile.readlines()
+    xml = [line.strip() for line in xml]
+    xml = et.fromstring(''.join(xml))
     return xml
 
 def entrada_mxl(caminho, nome):
