@@ -24,8 +24,7 @@ for caminho in caminhosconverter:
         xml = f_d.entrada_xml(caminho)
     elif '.mxl' in caminho:
         xml = f_d.entrada_mxl(caminho, nome)
-    xml = f_xd.ad_counter(xml)
-    musDict = f_xd.xml_mus(xml, metronomes=False)
+    musDict = f_xd.xml_mus(xml)
     musDict.setdefault('nome',nome)
     f_d.escreve_pickle(diD, musDict, nome)
 stop = time.perf_counter()
