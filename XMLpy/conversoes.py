@@ -151,30 +151,31 @@ def key_(fifths,mode):
         if fifths == -7:
             return tuple(['Ab',mode])
 
-def m_soundtempo(soundtempo, time):
-    d = den(time)
-    if num(time)%3 == 0:
+def m_soundtempo(tempo, time):
+    d = time[1][1]
+    num = time[1][0]
+    if num%3 == 0:
         c = 3
     else:
         c = 1
-    return ( (d/ (d/4*d) ) *c, ( (soundtempo/4) *d) / c)
+    return ( (d/ (d/4*d) ) *c, ( (tempo/4) *d) / c)
 
-def m_metronome(m):
-    if m['beat-unit'] == 'quarter':
+def m_metronome(beatUnit, beatUnitiDot):
+    if beatUnit == 'quarter':
         bu = 1
-    elif m['beat-unit'] == 'eighth':
+    elif beatUnit == 'eighth':
         bu = 0.5
-    elif m['beat-unit'] == 'half':
+    elif beatUnit == 'half':
         bu = 2
-    elif m['beat-unit'] == 'whole':
+    elif beatUnit == 'whole':
         bu = 4
-    elif m['beat-unit'] == '16th':
+    elif beatUnit == '16th':
         bu = 0,25
     else:
-        raise NotImplementedError('{} não implementado'.format(m['beat-unit']))
-    if 'beat-unit-dot' in m:
+        raise NotImplementedError('{} não implementado'.format(beatUnit))
+    if beatUnitiDot == 'beat-unit-dot':
         bu = bu+(bu/2)
-    return (bu, int(m['per-minute']))
+    return bu
 
 #duracao desde o inicio da musica
 def duracao_inicio(divisions,time,nota):
