@@ -144,11 +144,7 @@ def xml_mus(xml):
         xmlDict[partid].update({'times': times})
         xmlDict[partid].update({'metronomes': metronomes})
         xmlDict[partid].update({'divisions': divisions})
-
-        for voice in xmlDict[partid]['notes'].items():
-            for note in voice[1]:
-                print(voice[0], note)
-        return musDict(xmlDict)
+        return mus_dict(xmlDict)
 
 def mus_dict(xmlDict, tie=None, rest=None, chord=True, keys=True, metronomes=True):
     musDict = {}
