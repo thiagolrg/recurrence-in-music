@@ -220,7 +220,7 @@ def m_metronome(beatUnit, beatUnitiDot):
         bu = bu+(bu/2)
     return bu
 
-#recebe todas as Fcompasso e coloca seu inicio em duracoes
+#recebe todas as Fcompasso e coloca seu inicio em duracao
 def times_com_duracoes(times):
     if counter(times[0]) == 0:
         val(times[0]).append(0)
@@ -228,27 +228,36 @@ def times_com_duracoes(times):
         times[0] = tuple(times[0])
         for p in range(len(times)):
             if p+1 < len(times):
-                tempos = ((Ncompasso(times[p+1])-Ncompasso(times[p]))*num(times[p]))+duracao(times[p])
+                utc = utc_duration(times[p])
+                tempos = int(((Ncompasso(times[p+1]) - Ncompasso(times[p])) * utc + duracao(times[p])))
                 val(times[p+1]).append(tempos)
                 times[p+1][1] = tuple(val(times[p+1]))
                 times[p+1] = tuple(times[p+1])
     return times
 
-
 #duracao desde o inicio da musica
 def duracao_inicio(divisions,time,nota):
     return duracao_Fcompasso(divisions,time,nota)+duracao(time)
+#duracao desde a formula de compasso
 def duracao_Fcompasso(divisions,time,note):
-    return (counter(note) - counter(time))/ut_duration(divisions,time)
-def ut_duration(divisions,time):
-    return (divisions*4)/den(time)
+    return (counter(note) - counter(time))/utc_divisions(divisions,time)
+#unidades de tempo do compasso em divisions
+def utc_divisions(divisions,time, composto=True):
+    if composto == True and (num(time)/3)%1 == 0 and den(time) > 4:
+        return (((divisions * 4) / den(time))*num(time)) / (num(time)/3)
+    return divisions*4/den(time)
+#unidades de tempo com compasso em duracao
+def utc_duration(time, composto=True):
+    if composto == True and (num(time)/3)%1 == 0 and den(time) > 4:
+        return num(time)/3
+    return num(time)
 
 #posicao dentro do compasso (tempo.fracaodetempo)
 def P_compasso(divisions,time,nota):
     d = duracao_Fcompasso(divisions,time,nota)
-    n = num(time)
-    while d//n > 0:
-        d = d - n
+    utc = utc_duration(time)
+    while d//utc > 0:
+        d = d - utc
     return d+1
 #posicao dentro tempo (resto de Pcompasso)
 def P_tempo(divisions,time,nota):
