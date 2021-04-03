@@ -189,7 +189,7 @@ def mus_dict(xmlDict, tie=None, rest=None, chord=True, keys=True, metronomes=Tru
 
                             if p+1 < len(note1):
                                 Fcompasso2 = f_c.referencia(note1[p+1],partvalues[1]['times'])
-                                duracao = round(f_c.duracao_inicio(divisions,Fcompasso2,note1[p+1]) - f_c.duracao_inicio(divisions,Fcompasso1,note1[p]),2)
+                                duracao = float((str(f_c.duracao_inicio(divisions,Fcompasso2,note1[p+1]) - f_c.duracao_inicio(divisions,Fcompasso1,note1[p]))[0:4]))
                                 intCro = f_c.int_cromatico(note1[p],note1[p+1])
                                 intDia = f_c.int_diatonico(note1[p],note1[p+1])
                                 intQua = f_c.int_qualidade(intDia,intCro)
@@ -236,7 +236,7 @@ def mus_dict(xmlDict, tie=None, rest=None, chord=True, keys=True, metronomes=Tru
                             continue
 
                         Fcompasso2 = f_c.referencia(note2,partvalues[1]['times'])
-                        duracao = round(f_c.duracao_inicio(divisions,Fcompasso2,note2) - f_c.duracao_inicio(divisions,Fcompasso1,note1),2)
+                        duracao = float(str(f_c.duracao_inicio(divisions,Fcompasso2,note2) - f_c.duracao_inicio(divisions,Fcompasso1,note1))[0:4])
                         intCro = f_c.int_cromatico(note1,note2)
                         intDia = f_c.int_diatonico(note1,note2)
                         intQua = f_c.int_qualidade(intDia,intCro)
@@ -299,7 +299,7 @@ def mus_dict(xmlDict, tie=None, rest=None, chord=True, keys=True, metronomes=Tru
                     continue
 
                 Fcompasso2 = f_c.referencia(note2,partvalues[1]['times'])
-                duracao = round(f_c.duracao_inicio(divisions,Fcompasso2,note2) - f_c.duracao_inicio(divisions,Fcompasso1,note1),2)
+                duracao = float(str(f_c.duracao_inicio(divisions,Fcompasso2,note2) - f_c.duracao_inicio(divisions,Fcompasso1,note1))[0:4])
                 intCro = f_c.int_cromatico(note1,note2)
                 intDia = f_c.int_diatonico(note1,note2)
                 intQua = f_c.int_qualidade(intDia,intCro)
