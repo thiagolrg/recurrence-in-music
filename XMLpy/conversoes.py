@@ -70,20 +70,6 @@ def int_qualidade(intDiatonic,intCromatic):
     if intDiatonic == 7:
         return intMm(intDiatonic,intCromatic, 11)
 
-#recebe todas as Fcompasso e coloca seu inicio em duracoes
-def times_com_duracoes(times):
-    if counter(times[0]) == 0:
-        val(times[0]).append(0)
-        times[0][1] = tuple(val(times[0]))
-        times[0] = tuple(times[0])
-        for p in range(len(times)):
-            if p+1 < len(times):
-                tempos = ((Ncompasso(times[p+1])-Ncompasso(times[p]))*num(times[p]))+duracao(times[p])
-                val(times[p+1]).append(tempos)
-                times[p+1][1] = tuple(val(times[p+1]))
-                times[p+1] = tuple(times[p+1])
-    return times
-
 #tom e modo a partir de fifths e mode
 def key_(fifths,mode):
     if mode == None:
@@ -151,6 +137,62 @@ def key_(fifths,mode):
         if fifths == -7:
             return tuple(['Ab',mode])
 
+#Intervalos
+def octa_base(step):
+    p = base(step)
+    octa_base = [0,0,0,0,0,0,0,1,1,1,1,1,1]
+    return octa_base[p:p+7]
+def step_base(step):
+    p = base(step)
+    stepBase = 'CDEFGABCDEFGA'
+    return stepBase[p:p+7]
+def base(step):
+    stepBase = 'CDEFGABCDEFGA'
+    for p in range(len(stepBase)):
+        if stepBase[p] == step:
+            return p
+def intMm(intDiatonic, intCromatic, M):
+        m = M-1
+        if intCromatic < m:
+            return 'd'*(m-intCromatic)
+        if intCromatic == m:
+            return 'm'
+        if intCromatic == M:
+            return 'M'
+        if intCromatic > M:
+            return 'A'*(intCromatic-M)
+def intP(intDiatonic, intCromatic, P):
+        if intCromatic < P:
+            return 'd'*(P-intCromatic)
+        if intCromatic == P:
+            return 'P'
+        if intCromatic > P:
+            return 'A'*(intCromatic-P)   
+def note_to_midi(note):
+    s = step(note)
+    a = alter(note)
+    o = octave(note)
+    if s == 'C':
+        midiN = 60
+    elif s == 'D':
+        midiN = 62
+    elif s == 'E':
+        midiN = 64
+    elif s == 'F':
+        midiN = 65
+    elif s == 'G':
+        midiN = 67
+    elif s == 'A':
+        midiN = 69
+    elif s == 'B':
+        midiN = 71
+    if a == None:
+        a = 0
+    if s == None and o == None:
+        return None
+    return (midiN+((o - 4)*12))+a
+
+#metronomo a paritr do soundtempo
 def m_soundtempo(tempo, time):
     d = time[1][1]
     num = time[1][0]
@@ -160,6 +202,7 @@ def m_soundtempo(tempo, time):
         c = 1
     return ( (d/ (d/4*d) ) *c, ( (tempo/4) *d) / c)
 
+#metronomo a partir do metronome
 def m_metronome(beatUnit, beatUnitiDot):
     if beatUnit == 'quarter':
         bu = 1
@@ -177,6 +220,20 @@ def m_metronome(beatUnit, beatUnitiDot):
         bu = bu+(bu/2)
     return bu
 
+#recebe todas as Fcompasso e coloca seu inicio em duracoes
+def times_com_duracoes(times):
+    if counter(times[0]) == 0:
+        val(times[0]).append(0)
+        times[0][1] = tuple(val(times[0]))
+        times[0] = tuple(times[0])
+        for p in range(len(times)):
+            if p+1 < len(times):
+                tempos = ((Ncompasso(times[p+1])-Ncompasso(times[p]))*num(times[p]))+duracao(times[p])
+                val(times[p+1]).append(tempos)
+                times[p+1][1] = tuple(val(times[p+1]))
+                times[p+1] = tuple(times[p+1])
+    return times
+    
 #duracao desde o inicio da musica
 def duracao_inicio(divisions,time,nota):
     return duracao_Fcompasso(divisions,time,nota)+duracao(time)
@@ -196,6 +253,9 @@ def P_tempo(divisions,time,nota):
 #numero do tempo (inteiro de Pcompasso)
 def N_tempo(divisions,time,nota):
     return int(P_compasso(divisions,time,nota))
+
+def duracao_Fcompasso(divisions,time,note):
+    return (counter(note) - counter(time))/ut_duration(divisions,time)
 
 #usadas pelas outras funcoes
 def val(mensagem):
@@ -231,71 +291,5 @@ def den(time):
 def duracao(time):
     return val(time)[2]
 
-def octa_base(step):
-    p = base(step)
-    octa_base = [0,0,0,0,0,0,0,1,1,1,1,1,1]
-    return octa_base[p:p+7]
-def step_base(step):
-    p = base(step)
-    stepBase = 'CDEFGABCDEFGA'
-    return stepBase[p:p+7]
-def base(step):
-    stepBase = 'CDEFGABCDEFGA'
-    for p in range(len(stepBase)):
-        if stepBase[p] == step:
-            return p
-def intMm(intDiatonic, intCromatic, M):
-        m = M-1
-        if intCromatic < m:
-            return 'd'*(m-intCromatic)
-        if intCromatic == m:
-            return 'm'
-        if intCromatic == M:
-            return 'M'
-        if intCromatic > M:
-            return 'A'*(intCromatic-M)
-def intP(intDiatonic, intCromatic, P):
-        if intCromatic < P:
-            return 'd'*(P-intCromatic)
-        if intCromatic == P:
-            return 'P'
-        if intCromatic > P:
-            return 'A'*(intCromatic-P)
-        
-def note_to_midi(note):
-    s = step(note)
-    a = alter(note)
-    o = octave(note)
-    if s == 'C':
-        midiN = 60
-    elif s == 'D':
-        midiN = 62
-    elif s == 'E':
-        midiN = 64
-    elif s == 'F':
-        midiN = 65
-    elif s == 'G':
-        midiN = 67
-    elif s == 'A':
-        midiN = 69
-    elif s == 'B':
-        midiN = 71
-    if a == None:
-        a = 0
-    if s == None and o == None:
-        return None
-    return (midiN+((o - 4)*12))+a
-
 def ut_duration(divisions,time):
     return (divisions*4)/den(time)
-
-def duracao_Fcompasso(divisions,time,note):
-    return (counter(note) - counter(time))/ut_duration(divisions,time)
-
-def duration_time(divisions,time,counter):
-    ut = (divisions*4)/time[1][1]
-    uc = ut*time[1][0]
-    durationTime = counter - time[0]
-    while durationTime//uc > 0:
-        durationTime = durationTime - uc
-    return durationTime/ut
