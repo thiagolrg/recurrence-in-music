@@ -233,10 +233,15 @@ def times_com_duracoes(times):
                 times[p+1][1] = tuple(val(times[p+1]))
                 times[p+1] = tuple(times[p+1])
     return times
-    
+
+
 #duracao desde o inicio da musica
 def duracao_inicio(divisions,time,nota):
     return duracao_Fcompasso(divisions,time,nota)+duracao(time)
+def duracao_Fcompasso(divisions,time,note):
+    return (counter(note) - counter(time))/ut_duration(divisions,time)
+def ut_duration(divisions,time):
+    return (divisions*4)/den(time)
 
 #posicao dentro do compasso (tempo.fracaodetempo)
 def P_compasso(divisions,time,nota):
@@ -245,17 +250,14 @@ def P_compasso(divisions,time,nota):
     while d//n > 0:
         d = d - n
     return d+1
-
 #posicao dentro tempo (resto de Pcompasso)
 def P_tempo(divisions,time,nota):
     return P_compasso(divisions,time,nota)%1
-
 #numero do tempo (inteiro de Pcompasso)
 def N_tempo(divisions,time,nota):
     return int(P_compasso(divisions,time,nota))
 
-def duracao_Fcompasso(divisions,time,note):
-    return (counter(note) - counter(time))/ut_duration(divisions,time)
+
 
 #usadas pelas outras funcoes
 def val(mensagem):
@@ -290,6 +292,3 @@ def den(time):
     return val(time)[1]
 def duracao(time):
     return val(time)[2]
-
-def ut_duration(divisions,time):
-    return (divisions*4)/den(time)
