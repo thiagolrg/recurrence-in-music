@@ -40,8 +40,8 @@ LocalizacoesCaracteristicas = [('Ncompasso', 'p1'), ('Pcompasso', 'p1'), ('Ncomp
 #Combinações de caracteristicas nos segmentos:
 ListaSegmentosCaracteristicas = [[('intDia', 'p1p2')],
                                 [('intDia', 'p1p2'), ('duracao', 'p1p2')],
-                                [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ptempo', 'p1')],
                                 [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1')],
+                                [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ptempo', 'p1')],
                                 [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1'), ('Ptempo', 'p1')]]
 
 
