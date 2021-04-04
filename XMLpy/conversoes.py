@@ -195,9 +195,9 @@ def note_to_midi(note):
 #metronomo a paritr do soundtempo
 def m_soundtempo(tempo, time):
     utc = utc_duration(time)
-    num = num(time)
-    den = den(time)
-    return ((4/den)*(num/utc), ((tempo/4)*den)/(num/utc))
+    nu = num(time)
+    de = den(time)
+    return ((4/de)*(nu/utc), ((tempo/4)*de)/(nu/utc))
 
 #metronomo a partir do metronome
 def m_metronome(beatUnit, beatUnitiDot):
