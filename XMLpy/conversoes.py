@@ -241,6 +241,10 @@ def duracao_inicio(divisions,time,nota):
 #duracao desde a formula de compasso
 def duracao_Fcompasso(divisions,time,note):
     return (counter(note) - counter(time))/utc_divisions(divisions,time)
+
+
+#composto == True interpreta qualquer compasso com numerador divisível por 3 e denominador > que semínima com tempo composto
+#composto == False interpreta sempre o numerador do compasso como a quantidade de tempos do compasso    
 #unidades de tempo do compasso em divisions
 def utc_divisions(divisions,time, composto=True):
     if composto == True and (num(time)/3)%1 == 0 and den(time) > 4:
