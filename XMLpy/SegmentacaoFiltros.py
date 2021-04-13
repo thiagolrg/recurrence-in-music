@@ -109,9 +109,7 @@ def dadosseg(sorecorrencias):
         print(f'QSloc: {QLoc}')
 
 #Filtros___________________________________
-
-#set=1 retira todas na mesma combinacao de músicas, set=3 retira todas na mesma combinacao de vozes
-def sort_continte3(listarecorrencias, set=1):
+def sort_continte3(listarecorrencias, set):
     #recorrencias em organizadas posicao, conjunto e segmentos
     p_pset_pseg = []
     for seg, pos in listarecorrencias:
@@ -143,11 +141,12 @@ def intercalada3(listaposicoes, posicao, distancia):
             assert posicao[3][1] - posicao[3][0] < quepassou[0][3][1] - quepassou[0][3][0]
             return True
     return 
-    
-def sem_cont3(listarecorrencias):
+
+#set=1 retira todas na mesma combinacao de músicas, set=3 retira todas na mesma combinacao de vozes
+def sem_cont3(listarecorrencias, set=1):
     print(f'filtro sem cont:')
     start = time.perf_counter()
-    listarecorrencias = sort_continte3(listarecorrencias)
+    listarecorrencias = sort_continte3(listarecorrencias,set)
     dictrecorrencias = defaultdict(list)
     for grupo in listarecorrencias:
         quepassaram = []
@@ -164,7 +163,7 @@ def sem_cont3(listarecorrencias):
     listarecorrenciaspronta = []
     for chave, valor in dictrecorrencias.items():
         if len(valor) > 1:
-            setv = {v[0:3] for v in valor}
+            setv = {v[0:set] for v in valor}
             if tuple(sorted(setv)) == chave[1]:
                 listarecorrenciaspronta.append((chave[0], valor))
     stop = time.perf_counter()
@@ -174,10 +173,11 @@ def sem_cont3(listarecorrencias):
     print(f'{t} segundos\n')
     return sorted([(c, v) for c, v in listarecorrenciaspronta if len(v) > 1], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)
 
-def sem_cont_inte3(listarecorrencias, distancia=0):
+#set=1 retira todas na mesma combinacao de músicas, set=3 retira todas na mesma combinacao de vozes
+def sem_cont_inte3(listarecorrencias, distancia=0, set=1):
     print(f'filtro sem cont inte:')
     start = time.perf_counter()
-    listarecorrencias = sort_continte3(listarecorrencias)
+    listarecorrencias = sort_continte3(listarecorrencias, set)
     dictrecorrencias = defaultdict(list)
     for grupo in listarecorrencias:
         quepassaram = []
@@ -194,7 +194,7 @@ def sem_cont_inte3(listarecorrencias, distancia=0):
     listarecorrenciaspronta = []
     for chave, valor in dictrecorrencias.items():
         if len(valor) > 1:
-            setv = {v[0:3] for v in valor}
+            setv = {v[0:set] for v in valor}
             if tuple(sorted(setv)) == chave[1]:
                 listarecorrenciaspronta.append((chave[0], valor))
     stop = time.perf_counter()
