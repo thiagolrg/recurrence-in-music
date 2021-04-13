@@ -110,14 +110,15 @@ def dadosseg(sorecorrencias):
 
 #Filtros___________________________________
 
-def sort_continte3(listarecorrencias):
+#set=1 retira todas na mesma combinacao de músicas, set=3 retira todas na mesma combinacao de vozes
+def sort_continte3(listarecorrencias, set=1):
     #recorrencias em organizadas posicao, conjunto e segmentos
     p_pset_pseg = []
     for seg, pos in listarecorrencias:
-        posset = {p[0:3] for p in pos}
+        posset = {p[0:set] for p in pos}
         for p in pos:
             p_pset_pseg.append((p,tuple(sorted(posset)),seg))
-    #por nome, conjunto, tamanho maior, posicao menor
+    #sort por nome, conjunto, tamanho maior, posicao menor
     p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (item[0][3][0]))
     p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (len(item[2][0])), reverse=True)
     p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (item[1]))
