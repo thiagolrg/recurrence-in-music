@@ -69,8 +69,8 @@ for i in range(len(caminhosdict)):
 
     for SegmentosCaracteristicas in ListaSegmentosCaracteristicas:
         segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminho, diA)
-        distancia = 0
-        segmentacao = f_sf.sem_cont_inte3(segmentacao, distancia=distancia)
+        distancia = 1
+        segmentacao = f_sf.sem_cont_inte(segmentacao, distancia=distancia)
 
         quantidadeT = len(caminhosdict)
         nomes = [f_d.caminho_nome(x, ['.p']) for x in caminhosdict]
@@ -84,7 +84,7 @@ for i in range(len(caminhosdict)):
 print('por quantidade:\n')
 for SegmentosCaracteristicas in ListaSegmentosCaracteristicas:
     segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA)
-    distancia = 0
-    segmentacao = f_sf.sem_cont_inte3(segmentacao, distancia=distancia)
+    distancia = 1
+    segmentacao = f_sf.sem_cont_inte(segmentacao, distancia=distancia)
     semcontinte_porquantidade(segmentacao, caminhosdict, diA, SegmentosCaracteristicas, '==', distancia)
     semcontinte_porquantidade(segmentacao, caminhosdict, diA, SegmentosCaracteristicas, '>=', distancia)
