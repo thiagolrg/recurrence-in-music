@@ -109,41 +109,10 @@ def dadosseg(sorecorrencias):
         print(f'QSloc: {QLoc}')
 
 #Filtros___________________________________
-def sort_continte3(listarecorrencias, set):
-    #recorrencias em organizadas posicao, conjunto e segmentos
-    p_pset_pseg = []
-    for seg, pos in listarecorrencias:
-        posset = {p[0:set] for p in pos}
-        for p in pos:
-            p_pset_pseg.append((p,tuple(sorted(posset)),seg))
-    #sort por nome, conjunto, tamanho maior, posicao menor
-    p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (item[0][3][0]))
-    p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (len(item[2][0])), reverse=True)
-    p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (item[1]))
-    p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (item[0][0:3]))
-    locpset = defaultdict(list)
-    for p, pset, pseg in p_pset_pseg:
-        locpset[(p[0:3], pset)].append((p,pseg))
-    locpset = [(c[1],v) for c, v in locpset.items()]
-    return locpset
 
-def contida3(listaposicoes, posicao):
-    for quepassou in listaposicoes:
-        if posicao[0:3] == quepassou[0][0:3] and posicao[3][0] >= quepassou[0][3][0] and posicao[3][1] <= quepassou[0][3][1]:
-            return True
-    return False
-
-def intercalada3(listaposicoes, posicao, distancia):
-    for quepassou in listaposicoes:
-        if posicao[0:3] == quepassou[0][0:3] and posicao[3][0] > quepassou[0][3][0] and posicao[3][0] < quepassou[0][3][1]+distancia and posicao[3][1] > quepassou[0][3][1]:
-            return True
-        if posicao[0:3] == quepassou[0][0:3] and posicao[3][1] > quepassou[0][3][0]-distancia and posicao[3][1] < quepassou[0][3][1] and posicao[3][0] < quepassou[0][3][0]:
-            assert posicao[3][1] - posicao[3][0] < quepassou[0][3][1] - quepassou[0][3][0]
-            return True
-    return 
-
+#Novo Filtro por conjuntos
 #set=1 retira todas na mesma combinacao de músicas, set=3 retira todas na mesma combinacao de vozes
-def sem_cont3(listarecorrencias, set=1):
+def sem_cont_conj(listarecorrencias, set=1):
     print(f'filtro sem cont:')
     start = time.perf_counter()
     listarecorrencias = sort_continte3(listarecorrencias,set)
@@ -174,18 +143,18 @@ def sem_cont3(listarecorrencias, set=1):
     return sorted([(c, v) for c, v in listarecorrenciaspronta if len(v) > 1], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)
 
 #set=1 retira todas na mesma combinacao de músicas, set=3 retira todas na mesma combinacao de vozes
-def sem_cont_inte3(listarecorrencias, distancia=0, set=1):
+def sem_cont_inte_conj(listarecorrencias, distancia=0, set=1):
     print(f'filtro sem cont inte:')
     start = time.perf_counter()
     listarecorrencias = sort_continte3(listarecorrencias, set)
     dictrecorrencias = defaultdict(list)
-    for grupo in listarecorrencias:
+    for grupovoz in listarecorrencias:
         quepassaram = []
-        for posicao in grupo[1]:
+        for posicao in grupovoz[1]:
             if not contida3(quepassaram, posicao[0]) and not intercalada3(quepassaram, posicao[0], distancia=distancia):
                 quepassaram.append(posicao)
         for posicao, segmento in quepassaram:
-            dictrecorrencias[(segmento, grupo[0])].append(posicao)
+            dictrecorrencias[(segmento, grupovoz[0])].append(posicao)
     stop = time.perf_counter()
     print('quantidade tudo:')
     dadosseg(dictrecorrencias)
@@ -203,6 +172,103 @@ def sem_cont_inte3(listarecorrencias, distancia=0, set=1):
     dadosseg(listarecorrenciaspronta)
     print(f'{t} segundos\n')
     return sorted([(c, v) for c, v in listarecorrenciaspronta if len(v) > 1], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)
+
+def sort_cont_conj(listarecorrencias, set):
+    #recorrencias em organizadas posicao, conjunto e segmentos
+    p_pset_pseg = []
+    for seg, pos in listarecorrencias:
+        posset = {p[0:set] for p in pos}
+        for p in pos:
+            p_pset_pseg.append((p,tuple(sorted(posset)),seg))
+    #sort por nome, conjunto, tamanho maior, posicao menor
+    p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (item[0][3][0]))
+    p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (len(item[2][0])), reverse=True)
+    p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (item[1]))
+    p_pset_pseg = sorted([(p, pset, pseg) for p, pset, pseg in p_pset_pseg], key=lambda item: (item[0][0:3]))
+    locpset = defaultdict(list)
+    for p, pset, pseg in p_pset_pseg:
+        locpset[(p[0:3], pset)].append((p,pseg))
+    locpset = [(c[1],v) for c, v in locpset.items()]
+    return locpset    
+def contida3(listaposicoes, posicao):
+    for quepassou in listaposicoes:
+        if posicao[0:3] == quepassou[0][0:3] and posicao[3][0] >= quepassou[0][3][0] and posicao[3][1] <= quepassou[0][3][1]:
+            return True
+    return False
+def intercalada3(listaposicoes, posicao, distancia):
+    for quepassou in listaposicoes:
+        if posicao[0:3] == quepassou[0][0:3] and posicao[3][0] > quepassou[0][3][0] and posicao[3][0] < quepassou[0][3][1]+distancia and posicao[3][1] > quepassou[0][3][1]:
+            return True
+        if posicao[0:3] == quepassou[0][0:3] and posicao[3][1] > quepassou[0][3][0]-distancia and posicao[3][1] < quepassou[0][3][1] and posicao[3][0] < quepassou[0][3][0]:
+            assert posicao[3][1] - posicao[3][0] < quepassou[0][3][1] - quepassou[0][3][0]
+            return True
+    return 
+
+#Antigo filtro geral
+def sem_cont(listarecorrencias):
+    listarecorrencias = sort_recorrencias(listarecorrencias)
+    print(f'sem cont:')
+    start = time.perf_counter()
+    semcont = []
+    quepassaram = []
+    for segmento, posicoes in listarecorrencias:
+        posicoessegmento = []
+        for posicao in posicoes:
+            if not contida(quepassaram, posicao):
+                posicoessegmento.append(posicao)
+        if len(posicoessegmento) > 1:
+            for v in posicoessegmento:
+                quepassaram.append(v)
+            semcont.append((segmento,posicoessegmento))
+            print(f'\rQuaSegUnicos: {len(semcont)} ', end='')
+    stop = time.perf_counter()
+    QSR = 0
+    for SegPos in semcont:
+        for Pos in SegPos[1]:
+            QSR = QSR + len(Pos)
+    print(f'\nQuaSegRep: {QSR}')
+    print(f'{stop-start} segundos\n')
+    return semcont
+
+def sem_cont_inte(listarecorrencias, distancia=0):
+    listarecorrencias = sort_recorrencias(listarecorrencias)
+    print(f'sem cont inte:')
+    start = time.perf_counter()
+    semcontinte = []
+    quepassaram = []
+    for segmento, posicoes in listarecorrencias:
+        posicoessegmento = []
+        for posicao in posicoes:
+            if not contida(quepassaram, posicao) and not intercalada(posicoessegmento, posicao, distancia=distancia) and not intercalada(quepassaram, posicao, distancia=distancia):
+                posicoessegmento.append(posicao)
+        if len(posicoessegmento) > 1:
+            for v in posicoessegmento:
+                quepassaram.append(v)
+            semcontinte.append((segmento,posicoessegmento))
+            print(f'\rQuaSegUnicos: {len(semcontinte)} ', end='')
+    stop = time.perf_counter()
+    QSR = 0
+    for SegPos in semcontinte:
+        for Pos in SegPos[1]:
+            QSR = QSR + len(Pos)
+    print(f'\nQuaSegRep: {QSR}')
+    print(f'{stop-start} segundos\n')
+    return semcontinte
+
+def sort_recorrencias(segmentacao):
+    return sorted([(c, v) for c, v in segmentacao], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)
+def contida(listaposicoes, posicao):
+    for outra in listaposicoes:
+        if posicao[0:3] == outra[0:3] and posicao[3][0] >= outra[3][0] and posicao[3][1] <= outra[3][1]:
+            return True
+    return False
+def intercalada(listaposicoes, posicao, distancia=0):
+    for outra in listaposicoes:
+        if posicao[0:3] == outra[0:3] and posicao[3][0] > outra[3][0] and posicao[3][0] < outra[3][1]+distancia and posicao[3][1] > outra[3][1]:
+            return True
+        if posicao[0:3] == outra[0:3] and posicao[3][1] > outra[3][0]-distancia and posicao[3][1] < outra[3][1] and posicao[3][0] < outra[3][0]:
+            return True
+    return False
 
 #Por Quantidade
 def porquantidade(segmentacao, quantidade, iguaiouigualemaior):
