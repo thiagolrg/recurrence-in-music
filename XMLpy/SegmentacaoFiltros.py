@@ -127,11 +127,7 @@ def sem_cont(listarecorrencias):
             semcont.append((segmento,posicoessegmento))
             print(f'\rQuaSegUnicos: {len(semcont)} ', end='')
     stop = time.perf_counter()
-    QSR = 0
-    for SegPos in semcont:
-        for Pos in SegPos[1]:
-            QSR = QSR + len(Pos)
-    print(f'\nQuaSegRep: {QSR}')
+    dadosseg(semcontinte)
     print(f'{stop-start} segundos\n')
     return semcont
 
@@ -153,6 +149,7 @@ def sem_cont_inte(listarecorrencias, distancia=0):
             print(f'\rQuaSegUnicos: {len(semcontinte)} ', end='')
     stop = time.perf_counter()
     dadosseg(semcontinte)
+    print(f'{stop-start} segundos\n')
     return sorted([(c, v) for c, v in semcontinte if len(v) > 1], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)
 
 def sort_recorrencias(segmentacao):
@@ -193,6 +190,7 @@ def sem_cont_inte_conj1(listarecorrencias, distancia=0, setgrupo=1):
             print(f'\rQuaSegUnicos: {len(semcontinte)} ', end='')
     stop = time.perf_counter()
     dadosseg(semcontinte)
+    print(f'{stop-start} segundos\n')
     return sorted([(c, v) for c, v in semcontinte if len(v) > 1], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)
 
 def sort_cont_conj1(listarecorrencias, setgrupo):
