@@ -127,7 +127,7 @@ def sem_cont(listarecorrencias):
             semcont.append((segmento,posicoessegmento))
             print(f'\rQuaSegUnicos: {len(semcont)} ', end='')
     stop = time.perf_counter()
-    dadosseg(semcontinte)
+    dadosseg(semcont)
     print(f'{stop-start} segundos\n')
     return semcont
 
