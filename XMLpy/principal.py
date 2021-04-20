@@ -69,6 +69,7 @@ for i in range(len(caminhosdict)):
 
     for SegmentosCaracteristicas in ListaSegmentosCaracteristicas:
         segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminho, diA)
+"""
         distancia = 1
         segmentacao = f_sf.sem_cont_inte(segmentacao, distancia=distancia)
 
@@ -80,11 +81,14 @@ for i in range(len(caminhosdict)):
         parametros.setdefault('analise', [f'{SegmentosCaracteristicas} SemContInte Distancia: {distancia}'])
         f_d.escreve_txt(diA, parametros, nomeanalise)
         f_d.escreve_txt(diA, {x:y for x,y in segmentacao}, nomeanalise)
+"""
 
 print('por quantidade:\n')
 for SegmentosCaracteristicas in ListaSegmentosCaracteristicas:
     segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA)
+"""
     distancia = 1
     segmentacao = f_sf.sem_cont_inte(segmentacao, distancia=distancia)
     semcontinte_porquantidade(segmentacao, caminhosdict, diA, SegmentosCaracteristicas, '==', distancia)
     semcontinte_porquantidade(segmentacao, caminhosdict, diA, SegmentosCaracteristicas, '>=', distancia)
+"""
