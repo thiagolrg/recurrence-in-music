@@ -11,11 +11,9 @@ def combinacoes_semRepeticoes_semOrdem(n,r):
     return int(math.factorial(n)/(math.factorial(r)*math.factorial(n-r)))
 
 n = 155
-combinacoes = 0
+numCombinacoes = 0
 for r in range(1,n+1):
-    combinacoes = combinacoes + combinacoes_semRepeticoes_semOrdem(n,r)
+    numCombinacoes = numCombinacoes + combinacoes_semRepeticoes_semOrdem(n,r)
 
-
-lista = [x for x in range(155)]
-
-exdecombinacoesgeradas = list(it.combinations(lista, 2))
+lista = [x for x in range(n)]
+exCombinacoes = list(it.combinations(lista, 2))
