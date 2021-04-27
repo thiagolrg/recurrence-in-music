@@ -66,7 +66,7 @@ def gerandotamanhos(SegmentosCaracteristicas, LocalizacoesCaracteristicas, camin
             print(f'{t} segundos\n')
             return SegmentosLocalizacoes
 
-#Verifica se as recorrências já foram feitas para o repertorio e caracteristicas especificadas, se não, gera
+#Verifica se as recorrências já foram feitas para o repertorio e caracteristicas especificadas, se não, gera as recorrencias
 def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA, tamanho=1):
     print(f'segmentacao caracteristicas: {SegmentosCaracteristicas}')
     nomes = tuple([f_d.caminho_nome(x, ['.p']) for x in caminhosdict])
@@ -93,6 +93,7 @@ def Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosd
         f_d.escreve_pickle(diA,segmentacoes, '_segmentacoes_', trunca=True)
         return sorecorrencias
 
+#imprimi o tamanho das recorrencias e filtros
 def dadosseg(sorecorrencias):
     QSu = len(sorecorrencias)
     if isinstance(sorecorrencias, list):
@@ -109,7 +110,28 @@ def dadosseg(sorecorrencias):
         print(f'QSloc: {QLoc}')
 
 #Filtros___________________________________
+
 #Antigo filtro geral
+def sem_cont_inte(listarecorrencias, distancia):
+    listarecorrencias = sort_recorrencias(listarecorrencias)
+    print(f'sem cont inte:')
+    start = time.perf_counter()
+    semcontinte = []
+    quepassaram = []
+    for segmentoposicoes in listarecorrencias:
+        posicoessegmento = []
+        for posicao in segmentoposicoes[1]:
+            if not contida(quepassaram, posicao) and not intercalada(posicoessegmento, posicao, distancia=distancia) and not intercalada(quepassaram, posicao, distancia=distancia):
+                posicoessegmento.append(posicao)
+        if len(posicoessegmento) > 1:
+            for v in posicoessegmento:
+                quepassaram.append(v)
+            semcontinte.append((segmentoposicoes[0],posicoessegmento))
+    stop = time.perf_counter()
+    dadosseg(semcontinte)
+    print(f'{stop-start} segundos\n')
+    return sort_recorrencias(semcontinte)
+
 def sem_cont(listarecorrencias):
     listarecorrencias = sort_recorrencias(listarecorrencias)
     print(f'sem cont:')
@@ -125,32 +147,10 @@ def sem_cont(listarecorrencias):
             for v in posicoessegmento:
                 quepassaram.append(v)
             semcont.append((segmento,posicoessegmento))
-            print(f'\rQuaSegUnicos: {len(semcont)} ', end='')
     stop = time.perf_counter()
     dadosseg(semcont)
     print(f'{stop-start} segundos\n')
-    return semcont
-
-def sem_cont_inte(listarecorrencias, distancia=0):
-    listarecorrencias = sort_recorrencias(listarecorrencias)
-    print(f'sem cont inte:')
-    start = time.perf_counter()
-    semcontinte = []
-    quepassaram = []
-    for segmento, posicoes in listarecorrencias:
-        posicoessegmento = []
-        for posicao in posicoes:
-            if not contida(quepassaram, posicao) and not intercalada(posicoessegmento, posicao, distancia=distancia) and not intercalada(quepassaram, posicao, distancia=distancia):
-                posicoessegmento.append(posicao)
-        if len(posicoessegmento) > 1:
-            for v in posicoessegmento:
-                quepassaram.append(v)
-            semcontinte.append((segmento,posicoessegmento))
-            print(f'\rQuaSegUnicos: {len(semcontinte)} ', end='')
-    stop = time.perf_counter()
-    dadosseg(semcontinte)
-    print(f'{stop-start} segundos\n')
-    return sorted([(c, v) for c, v in semcontinte if len(v) > 1], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)
+    return sort_recorrencias(semcont)
 
 def sort_recorrencias(segmentacao):
     return sorted([(c, v) for c, v in segmentacao], key=lambda item: (len(item[0][0]), len(item[1])), reverse=True)
