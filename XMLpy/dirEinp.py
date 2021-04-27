@@ -91,7 +91,21 @@ def escreve_txt(diretorio, arquivo, nome):
             for val in item[1]:
                 print(val,file=f)
             print(f'\n',end="",file=f)
-    return None
+
+def escreve_txt_grupos(diretorio, arquivo, nome):
+    with open(diretorio+'\\'+nome+'.txt', 'a') as f:
+        grupoL = 1
+        segmentoL = 1
+        for grupo, segmentos in arquivo.items():
+            print(f'{grupoL}. {grupo}',file=f)
+            grupoL += 1
+            for segmento, localizacoes in segmentos:
+                print(f'    {segmentoL}. {segmento}',file=f)
+                segmentoL += 1
+                for localizacao in localizacoes:
+                    print(f'    {localizacao}',file=f)
+                print(f'\n',end="",file=f)
+        print(f'\n',end="",file=f)
 
 #inputs gerais do usuario
 def inp(texto, opcoes):
