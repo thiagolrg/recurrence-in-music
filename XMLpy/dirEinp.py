@@ -84,28 +84,32 @@ def escreve_pickle(diretorio, arquivo ,nome, trunca=False):
 
 def escreve_txt(diretorio, arquivo, nome):
     with open(diretorio+'\\'+nome+'.txt', 'a') as f:
-        linha = 0
-        for item in arquivo.items():
-            linha = linha + 1
-            print(f'{linha}.    {item[0]}:',file=f)
-            for val in item[1]:
-                print(val,file=f)
-            print(f'\n',end="",file=f)
+        segL = 1
+        for seg, poss in arquivo.items():
+            print(f'{segL}. {seg}:',file=f)
+            segL += 1
+            posL = 1
+            for pos in poss:
+                print(f'    {posL}. {pos}',file=f)
+                posL += 1
+            print(f'\n', end="", file=f)
 
 def escreve_txt_grupos(diretorio, arquivo, nome):
     with open(diretorio+'\\'+nome+'.txt', 'a') as f:
         grupoL = 1
-        segmentoL = 1
         for grupo, segmentos in arquivo.items():
             print(f'{grupoL}. {grupo}',file=f)
             grupoL += 1
+            segmentoL = 1
             for segmento, localizacoes in segmentos:
                 print(f'    {segmentoL}. {segmento}',file=f)
                 segmentoL += 1
+                localizacaoL = 1
                 for localizacao in localizacoes:
-                    print(f'    {localizacao}',file=f)
-                print(f'\n',end="",file=f)
-        print(f'\n',end="",file=f)
+                    print(f'        {localizacaoL}. {localizacao}',file=f)
+                    localizacaoL += 1
+                print(f'\n', end="", file=f)
+        print(f'\n', end="", file=f)
 
 #inputs gerais do usuario
 def inp(texto, opcoes):
