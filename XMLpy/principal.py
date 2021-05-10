@@ -38,11 +38,7 @@ caminhosdict = f_d.caminhos_extensoes(diD, ['.p'])
 LocalizacoesCaracteristicas = [('Ncompasso', 'p1'), ('Pcompasso', 'p1'), ('Ncompasso', 'p2'), ('Pcompasso', 'p2')]
 
 #Combinações de caracteristicas nos segmentos:
-ListaSegmentosCaracteristicas = [[('intDia', 'p1p2')],
-                                [('intDia', 'p1p2'), ('duracao', 'p1p2')],
-                                [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1')],
-                                [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ptempo', 'p1')],
-                                [('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1'), ('Ptempo', 'p1')]]
+ListaSegmentosCaracteristicas = [[('intDia', 'p1p2'), ('duracao', 'p1p2'), ('Ntempo', 'p1'), ('Ptempo', 'p1')]]
 
 
 def porquantidade_conj(segmentacao, caminhosdict, diA, SegmentosCaracteristicas, diatancia):
