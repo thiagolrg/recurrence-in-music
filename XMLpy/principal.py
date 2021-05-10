@@ -119,7 +119,9 @@ def porquantidade_geral(segmentacao, caminhosdict, diA, SegmentosCaracteristicas
 
 for SegmentosCaracteristicas in ListaSegmentosCaracteristicas:
     segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA)
-    distancia = 0
+    distancia = 1
     segmentacao = f_sf.sem_cont_inte_conj(segmentacao, distancia=distancia, conj=1)
+    """
     porquantidade_conj(f_sf.dictConj(segmentacao, 1), caminhosdict, diA, SegmentosCaracteristicas, distancia)
     porquantidade_geral(segmentacao, caminhosdict, diA, SegmentosCaracteristicas, distancia)
+    """
