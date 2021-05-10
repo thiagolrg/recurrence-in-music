@@ -1,6 +1,6 @@
 import dirEinp as f_d
 import xmldict as f_xd
-import SegmentacaoFiltros as f_sf
+import segmentacaoFiltros as f_sf
 import time
 
 #pede diretorio do usuário e cria pastas e caminhos que vão ser usados
@@ -119,7 +119,7 @@ def porquantidade_geral(segmentacao, caminhosdict, diA, SegmentosCaracteristicas
 
 for SegmentosCaracteristicas in ListaSegmentosCaracteristicas:
     segmentacao = f_sf.Segmentacao(SegmentosCaracteristicas, LocalizacoesCaracteristicas, caminhosdict, diA)
-    distancia = 1
+    distancia = 0
     segmentacao = f_sf.sem_cont_inte_conj(segmentacao, distancia=distancia, conj=1)
     porquantidade_conj(f_sf.dictConj(segmentacao, 1), caminhosdict, diA, SegmentosCaracteristicas, distancia)
     porquantidade_geral(segmentacao, caminhosdict, diA, SegmentosCaracteristicas, distancia)
