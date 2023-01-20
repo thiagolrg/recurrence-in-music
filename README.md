@@ -5,4 +5,4 @@ Once this is donne I will write a proper readme.
 
 I takes as input musicXML files and finds all identical sequences of notes per voice.
 
-sequences can be considered identical given certein parameters. eg: notes. notes and intervals. notes, invertals and durations, etc.
+sequences can be considered identical given certein parameters. eg: notes names. notes names and intervals. invertals and durations, etc.
